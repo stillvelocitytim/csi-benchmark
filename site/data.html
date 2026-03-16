@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data — CSI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <a href="index.html" class="logo">Capability<span>-Seconds</span> Index</a>
+    <nav>
+      <a href="index.html">Dashboard</a>
+      <a href="methodology.html">Methodology</a>
+      <a href="data.html" class="active">Data</a>
+      <a href="sources.html">Sources</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+
+  <section>
+    <h1>Raw Measurements</h1>
+    <p>
+      Every API call is recorded with its full response, token counts, latency,
+      cost, and score. Select a run date to browse.
+    </p>
+
+    <div style="margin:1.25rem 0;">
+      <label for="date-select" style="font-family:var(--font-mono);font-size:0.8rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--slate-light);margin-right:0.5rem;">
+        Run date:
+      </label>
+      <select id="date-select" style="font-family:var(--font-mono);font-size:0.85rem;padding:0.4em 0.75em;border:1px solid #dde1e6;border-radius:4px;background:var(--white);">
+        <option>loading&hellip;</option>
+      </select>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>Task</th>
+            <th>Domain</th>
+            <th class="num">Score</th>
+            <th class="num">Latency</th>
+            <th class="num">Tokens</th>
+            <th class="num">Cost</th>
+          </tr>
+        </thead>
+        <tbody id="data-table-body">
+          <tr><td colspan="7" style="text-align:center;padding:2rem;">
+            <span class="spinner"></span>
+          </td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="container">
+    Capability-Seconds Index &middot; Updated daily &middot;
+    <a href="https://github.com/">Source on GitHub</a>
+  </div>
+</footer>
+
+<script src="data.js"></script>
+</body>
+</html>

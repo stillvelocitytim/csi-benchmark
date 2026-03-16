@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSI — Capability-Seconds Index</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <a href="index.html" class="logo">Capability<span>-Seconds</span> Index</a>
+    <nav>
+      <a href="index.html" class="active">Dashboard</a>
+      <a href="methodology.html">Methodology</a>
+      <a href="data.html">Data</a>
+      <a href="sources.html">Sources</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="container">
+    <div class="hero-label">CSI Aggregate Index</div>
+    <div class="hero-number" id="hero-number"><span class="spinner"></span></div>
+    <span id="hero-delta" class="badge badge-neutral" style="display:inline-block;min-width:1px;"></span>
+    <div class="hero-date" id="hero-date">loading&hellip;</div>
+    <div class="hero-sub">
+      A composite measure of AI model efficiency: how much capability
+      is delivered per second of latency per dollar of cost.
+    </div>
+  </div>
+</div>
+
+<main class="container">
+
+  <section>
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="label">Capability / Second</div>
+        <div class="value" id="stat-cs"><span class="spinner"></span></div>
+        <div class="unit">score &divide; latency</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Capability / Dollar</div>
+        <div class="value" id="stat-cd"><span class="spinner"></span></div>
+        <div class="unit">score &divide; cost</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Models Tracked</div>
+        <div class="value" id="stat-models"><span class="spinner"></span></div>
+        <div class="unit">frontier models</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Model Breakdown</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th class="num">Avg Score</th>
+            <th class="num">Avg Latency</th>
+            <th class="num">Avg Cost</th>
+            <th class="num">CS</th>
+            <th class="num">CD</th>
+            <th class="num">CSI</th>
+          </tr>
+        </thead>
+        <tbody id="model-table-body">
+          <tr><td colspan="7" style="text-align:center;padding:2rem;">
+            <span class="spinner"></span>
+          </td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="prose">
+    <h2>What is the CSI?</h2>
+    <p>
+      The <strong>Capability-Seconds Index</strong> measures how efficiently frontier
+      AI models convert compute time and money into useful output. It combines three
+      dimensions&mdash;quality, speed, and cost&mdash;into a single number that tracks
+      the practical value of AI inference over time.
+    </p>
+    <p>
+      A higher CSI means models are getting better, faster, or cheaper&mdash;or all three.
+      See <a href="methodology.html">Methodology</a> for the full formula and scoring details.
+    </p>
+  </section>
+
+</main>
+
+<footer>
+  <div class="container">
+    Capability-Seconds Index &middot; Updated daily &middot;
+    <a href="https://github.com/">Source on GitHub</a>
+  </div>
+</footer>
+
+<script src="data.js"></script>
+</body>
+</html>

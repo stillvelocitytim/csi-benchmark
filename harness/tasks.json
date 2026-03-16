@@ -1,0 +1,101 @@
+[
+  {
+    "task_id": "R1",
+    "domain": "reasoning",
+    "prompt": "A farmer has 17 sheep. All but 9 die. How many sheep are left? Explain your reasoning step by step, then give the final answer.",
+    "scoring_type": "exact_match",
+    "expected": "9"
+  },
+  {
+    "task_id": "R2",
+    "domain": "reasoning",
+    "prompt": "What is the next number in the sequence: 2, 6, 12, 20, 30, __? Explain the pattern and give the answer.",
+    "scoring_type": "exact_match",
+    "expected": "42"
+  },
+  {
+    "task_id": "R3",
+    "domain": "reasoning",
+    "prompt": "If it takes 5 machines 5 minutes to make 5 widgets, how long would it take 100 machines to make 100 widgets? Show your work.",
+    "scoring_type": "exact_match",
+    "expected": "5"
+  },
+  {
+    "task_id": "R4",
+    "domain": "reasoning",
+    "prompt": "Estimate the number of piano tuners in Chicago. Show your reasoning using a Fermi estimation approach.",
+    "scoring_type": "graded",
+    "expected": null,
+    "grading_criteria": ["population estimate", "piano ownership rate", "tuning frequency", "tuner capacity"]
+  },
+  {
+    "task_id": "C1",
+    "domain": "coding",
+    "prompt": "Write a Python function called `is_palindrome` that takes a string and returns True if it's a palindrome (ignoring case and non-alphanumeric characters), False otherwise. Include 3 test cases.",
+    "scoring_type": "code",
+    "expected": null,
+    "code_checks": ["def is_palindrome", ".lower()", ".isalnum()", "True", "False"]
+  },
+  {
+    "task_id": "C2",
+    "domain": "coding",
+    "prompt": "Write a Python function called `merge_sorted` that takes two sorted lists of integers and returns a single sorted list. Do not use the built-in sort function. Include test cases.",
+    "scoring_type": "code",
+    "expected": null,
+    "code_checks": ["def merge_sorted", "while", "append", "return"]
+  },
+  {
+    "task_id": "C3",
+    "domain": "coding",
+    "prompt": "Write a SQL query that finds the top 5 customers by total order value from tables `customers` (id, name) and `orders` (id, customer_id, amount). Return customer name and total amount, ordered by total descending.",
+    "scoring_type": "code",
+    "expected": null,
+    "code_checks": ["JOIN", "GROUP BY", "ORDER BY", "LIMIT 5", "SUM"]
+  },
+  {
+    "task_id": "C4",
+    "domain": "coding",
+    "prompt": "Debug this Python code and explain what's wrong:\n\ndef factorial(n):\n    if n == 0:\n        return 1\n    return n * factorial(n)\n\nExplain the bug and provide the corrected version.",
+    "scoring_type": "code",
+    "expected": null,
+    "code_checks": ["n - 1", "recursion", "factorial(n - 1)"]
+  },
+  {
+    "task_id": "A1",
+    "domain": "applied",
+    "prompt": "A company has revenue of $10M, COGS of $4M, operating expenses of $3M, interest expense of $500K, and a 25% tax rate. Calculate the net income. Show each step.",
+    "scoring_type": "exact_match",
+    "expected": "1875000"
+  },
+  {
+    "task_id": "A2",
+    "domain": "applied",
+    "prompt": "A patient presents with sudden onset chest pain, shortness of breath, and unilateral leg swelling. What is the most likely diagnosis, and what is the recommended initial diagnostic test? Explain your reasoning.",
+    "scoring_type": "graded",
+    "expected": null,
+    "grading_criteria": ["pulmonary embolism", "CT pulmonary angiography|D-dimer|CTPA"]
+  },
+  {
+    "task_id": "A3",
+    "domain": "applied",
+    "prompt": "Summarize the key differences between a merger and an acquisition from a legal and structural perspective in exactly 3 bullet points.",
+    "scoring_type": "graded",
+    "expected": null,
+    "grading_criteria": ["legal structure|entity|combine|new entity", "survival|surviving|dissolved|absorbed", "shareholder|consideration|stock|payment|ownership"]
+  },
+  {
+    "task_id": "A4",
+    "domain": "applied",
+    "prompt": "Extract the following structured data from this text and return it as JSON: 'John Smith, age 45, was admitted to General Hospital on March 3, 2026 with a primary diagnosis of Type 2 Diabetes (ICD-10: E11.9). His attending physician is Dr. Sarah Chen.'\n\nReturn JSON with fields: patient_name, age, facility, admission_date, diagnosis, icd_code, physician.",
+    "scoring_type": "json_extract",
+    "expected": {
+      "patient_name": "John Smith",
+      "age": "45",
+      "facility": "General Hospital",
+      "admission_date": "March 3, 2026",
+      "diagnosis": "Type 2 Diabetes",
+      "icd_code": "E11.9",
+      "physician": "Sarah Chen"
+    }
+  }
+]

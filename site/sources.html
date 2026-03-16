@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sources — CSI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <a href="index.html" class="logo">Capability<span>-Seconds</span> Index</a>
+    <nav>
+      <a href="index.html">Dashboard</a>
+      <a href="methodology.html">Methodology</a>
+      <a href="data.html">Data</a>
+      <a href="sources.html" class="active">Sources</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+
+  <section class="prose">
+    <h1>Sources &amp; Attribution</h1>
+    <p>
+      All data used in the CSI is derived from direct API measurements and
+      publicly available pricing information. No synthetic or estimated data
+      is used for the core index calculations.
+    </p>
+  </section>
+
+  <section class="prose">
+    <h2>Model APIs</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>Provider</th>
+            <th>Access Method</th>
+            <th class="num">Input $/1M</th>
+            <th class="num">Output $/1M</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="model-name">Claude Sonnet 4</td>
+            <td>Anthropic</td>
+            <td>Native SDK</td>
+            <td class="num">$3.00</td>
+            <td class="num">$15.00</td>
+          </tr>
+          <tr>
+            <td class="model-name">GPT-4o</td>
+            <td>OpenAI</td>
+            <td>Native SDK</td>
+            <td class="num">$2.50</td>
+            <td class="num">$10.00</td>
+          </tr>
+          <tr>
+            <td class="model-name">Gemini 2.0 Flash</td>
+            <td>Google</td>
+            <td>Native SDK</td>
+            <td class="num">$0.10</td>
+            <td class="num">$0.40</td>
+          </tr>
+          <tr>
+            <td class="model-name">Llama 3.3 70B Instruct</td>
+            <td>Meta via OpenRouter</td>
+            <td>OpenAI-compatible</td>
+            <td class="num">$0.39</td>
+            <td class="num">$0.39</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Pricing is sourced from each provider&rsquo;s official pricing page and stored
+      in the database. It is refreshed manually when providers announce changes.
+    </p>
+  </section>
+
+  <section class="prose">
+    <h2>Pricing Sources</h2>
+    <ul>
+      <li><strong>Anthropic</strong> &mdash; Claude model pricing from official documentation</li>
+      <li><strong>OpenAI</strong> &mdash; GPT-4o pricing from the API pricing page</li>
+      <li><strong>Google</strong> &mdash; Gemini pricing from Google AI developer pricing</li>
+      <li><strong>OpenRouter</strong> &mdash; Llama 3.3 70B pricing from the OpenRouter model page</li>
+    </ul>
+  </section>
+
+  <section class="prose">
+    <h2>Infrastructure</h2>
+    <ul>
+      <li><strong>Database:</strong> Supabase (PostgreSQL) for measurement storage and index computation</li>
+      <li><strong>Benchmark harness:</strong> Python, executing from a single location to ensure consistent network latency</li>
+      <li><strong>Scoring:</strong> Deterministic regex and keyword-based scoring applied identically across all models</li>
+      <li><strong>Frontend:</strong> Static HTML/CSS/JS reading directly from the Supabase REST API</li>
+    </ul>
+  </section>
+
+  <section class="prose">
+    <h2>Limitations</h2>
+    <ul>
+      <li>Latency measurements include network round-trip time and may vary by geography and time of day.</li>
+      <li>Scoring functions use keyword and pattern matching, not semantic evaluation. Edge cases in model responses may be scored imperfectly.</li>
+      <li>The task set (12 tasks) is intentionally small for v1. It tests breadth, not depth, within each domain.</li>
+      <li>OpenRouter pricing and latency for Llama include the intermediary&rsquo;s margin and routing overhead.</li>
+      <li>Token counts are as reported by each provider&rsquo;s API and may use different tokenization schemes.</li>
+    </ul>
+  </section>
+
+  <section class="prose">
+    <h2>License</h2>
+    <p>
+      The CSI methodology, code, and data are provided for informational and
+      research purposes. The benchmark results reflect point-in-time measurements
+      and should not be used as the sole basis for procurement decisions.
+    </p>
+  </section>
+
+</main>
+
+<footer>
+  <div class="container">
+    Capability-Seconds Index &middot; Updated daily &middot;
+    <a href="https://github.com/">Source on GitHub</a>
+  </div>
+</footer>
+
+</body>
+</html>

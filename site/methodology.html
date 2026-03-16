@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Methodology — CSI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <a href="index.html" class="logo">Capability<span>-Seconds</span> Index</a>
+    <nav>
+      <a href="index.html">Dashboard</a>
+      <a href="methodology.html" class="active">Methodology</a>
+      <a href="data.html">Data</a>
+      <a href="sources.html">Sources</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+
+  <section class="prose">
+    <h1>Methodology</h1>
+    <p>
+      The CSI combines three independent dimensions of AI model performance
+      into a single efficiency metric. Each dimension is measured empirically
+      on every benchmark run.
+    </p>
+  </section>
+
+  <section class="prose">
+    <h2>Three Dimensions</h2>
+
+    <h3>1. Capability (Score)</h3>
+    <p>
+      Each model is evaluated on 12 standardized tasks spanning three domains:
+      <strong>reasoning</strong> (4 tasks), <strong>coding</strong> (4 tasks),
+      and <strong>applied knowledge</strong> (4 tasks). Every task is scored
+      on a 0&ndash;1 scale using deterministic, reproducible scoring functions
+      applied identically across all models.
+    </p>
+
+    <h3>2. Speed (Latency)</h3>
+    <p>
+      Wall-clock latency in seconds from request submission to full response
+      receipt. Measured via non-streaming API calls to isolate total inference
+      time. All calls originate from the same network location.
+    </p>
+
+    <h3>3. Cost</h3>
+    <p>
+      Dollar cost per request, computed from each provider&rsquo;s published
+      per-token pricing:
+    </p>
+    <div class="formula-block">
+      <span class="var">cost</span> = (<span class="var">prompt_tokens</span> &times; input_price / 1M)
+        + (<span class="var">completion_tokens</span> &times; output_price / 1M)
+    </div>
+  </section>
+
+  <section class="prose">
+    <h2>Index Formulas</h2>
+
+    <p>For each model <em>m</em>, we compute three ratios:</p>
+
+    <div class="formula-block">
+      <span class="comment">-- Capability per Second</span><br>
+      <span class="var">CS(m)</span> = avg_score / avg_latency<br><br>
+      <span class="comment">-- Capability per Dollar</span><br>
+      <span class="var">CD(m)</span> = avg_score / avg_cost<br><br>
+      <span class="comment">-- Capability-Seconds Index (per model)</span><br>
+      <span class="var">CSI(m)</span> = avg_score / (avg_latency &times; avg_cost)
+    </div>
+
+    <p>The aggregate index is the <strong>median</strong> across all tracked models:</p>
+
+    <div class="formula-block">
+      <span class="var">CSI</span> = median( CSI(m<sub>1</sub>), CSI(m<sub>2</sub>), &hellip;, CSI(m<sub>n</sub>) )
+    </div>
+
+    <p>
+      Using the median rather than the mean prevents any single outlier model
+      (very cheap or very expensive) from distorting the aggregate.
+    </p>
+  </section>
+
+  <section class="prose">
+    <h2>Task Set</h2>
+
+    <h3>Reasoning (R1&ndash;R4)</h3>
+    <ul>
+      <li><strong>R1:</strong> Sheep riddle &mdash; exact-match scoring</li>
+      <li><strong>R2:</strong> Number sequence &mdash; exact-match scoring</li>
+      <li><strong>R3:</strong> Widget production &mdash; exact-match scoring</li>
+      <li><strong>R4:</strong> Fermi estimation &mdash; graded rubric (structured reasoning with reasonable assumptions)</li>
+    </ul>
+
+    <h3>Coding (C1&ndash;C4)</h3>
+    <ul>
+      <li><strong>C1:</strong> Palindrome function &mdash; code correctness checks</li>
+      <li><strong>C2:</strong> Merge sorted lists &mdash; algorithm correctness checks</li>
+      <li><strong>C3:</strong> SQL query &mdash; syntax and logic element checks</li>
+      <li><strong>C4:</strong> Debug factorial &mdash; bug identification checks</li>
+    </ul>
+
+    <h3>Applied (A1&ndash;A4)</h3>
+    <ul>
+      <li><strong>A1:</strong> Net income calculation &mdash; exact-match scoring</li>
+      <li><strong>A2:</strong> Medical diagnosis &mdash; graded rubric (diagnosis + test)</li>
+      <li><strong>A3:</strong> Merger vs. acquisition &mdash; graded rubric (3 key distinctions)</li>
+      <li><strong>A4:</strong> JSON extraction &mdash; per-field accuracy scoring</li>
+    </ul>
+  </section>
+
+  <section class="prose">
+    <h2>Scoring Functions</h2>
+    <p>Four scoring modes are used, chosen per task:</p>
+    <ul>
+      <li><code>exact_match</code> &mdash; Extracts numbers from the response; scores 1.0 if the expected value appears, 0.0 otherwise.</li>
+      <li><code>code</code> &mdash; Checks for required code elements (function names, keywords, patterns); scores 1.0 if &ge;80% present, 0.5 if &ge;50%, 0.0 otherwise.</li>
+      <li><code>graded</code> &mdash; Checks for conceptual elements from a rubric; same threshold logic as code scoring.</li>
+      <li><code>json_extract</code> &mdash; Parses JSON from response, scores proportionally by number of correctly extracted fields.</li>
+    </ul>
+    <p>
+      All scoring is deterministic and applied identically across models.
+      The same response always receives the same score regardless of which
+      model produced it.
+    </p>
+  </section>
+
+  <section class="prose">
+    <h2>Measurement Protocol</h2>
+    <ol>
+      <li>Load the standardized prompt for the task.</li>
+      <li>Record wall-clock start time.</li>
+      <li>Send prompt to the model&rsquo;s API (non-streaming).</li>
+      <li>Record wall-clock end time; compute latency.</li>
+      <li>Extract token counts from API response metadata.</li>
+      <li>Look up per-token pricing; compute cost.</li>
+      <li>Score the response with the task&rsquo;s scoring function.</li>
+      <li>Store all raw data (response text, tokens, latency, score, cost) in the database.</li>
+    </ol>
+    <p>
+      A 2-second delay is inserted between API calls to avoid rate limiting.
+      Failed calls are logged and skipped without aborting the run.
+    </p>
+  </section>
+
+</main>
+
+<footer>
+  <div class="container">
+    Capability-Seconds Index &middot; Updated daily &middot;
+    <a href="https://github.com/">Source on GitHub</a>
+  </div>
+</footer>
+
+</body>
+</html>
