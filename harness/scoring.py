@@ -31,8 +31,9 @@ def score_code(response: str, task_id: str, checks: list[str]) -> float:
     response_lower = response.lower()
     hits = 0
     for check in checks:
-        # Case-insensitive check, but preserve SQL keywords
-        if check.lower() in response_lower:
+        # Each check can have alternatives separated by |
+        alternatives = check.lower().split("|")
+        if any(alt.strip() in response_lower for alt in alternatives):
             hits += 1
 
     if not checks:

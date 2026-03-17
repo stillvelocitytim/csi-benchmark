@@ -87,10 +87,9 @@ async function loadDashboard() {
     heroDate.textContent = idx.run_date;
     if (statCS) statCS.textContent = fmt(idx.cs_aggregate, 4);
     if (statCD) statCD.textContent = fmt(idx.cd_aggregate, 2);
-    if (statModels) statModels.textContent = idx.n_models;
-
     // Fetch per-model breakdown for latest date
     const models = await sbFetch('csi_by_model', `run_date=eq.${idx.run_date}&order=csi.desc`);
+    if (statModels) statModels.textContent = models.length;
     if (modelTable && models.length) {
       modelTable.innerHTML = models.map(m => `
         <tr>

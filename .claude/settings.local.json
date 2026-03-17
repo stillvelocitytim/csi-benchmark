@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh secret:*)",
+      "Bash(curl:*)",
+      "Bash(git add:*)"
+    ]
+  }
+}

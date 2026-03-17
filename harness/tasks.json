@@ -26,7 +26,7 @@
     "prompt": "Estimate the number of piano tuners in Chicago. Show your reasoning using a Fermi estimation approach.",
     "scoring_type": "graded",
     "expected": null,
-    "grading_criteria": ["population estimate", "piano ownership rate", "tuning frequency", "tuner capacity"]
+    "grading_criteria": ["population|chicago|million|city", "piano|household|ownership", "tuning|tuned|tune|per year|annually", "tuner|capacity|workload|per day"]
   },
   {
     "task_id": "C1",
@@ -58,7 +58,7 @@
     "prompt": "Debug this Python code and explain what's wrong:\n\ndef factorial(n):\n    if n == 0:\n        return 1\n    return n * factorial(n)\n\nExplain the bug and provide the corrected version.",
     "scoring_type": "code",
     "expected": null,
-    "code_checks": ["n - 1", "recursion", "factorial(n - 1)"]
+    "code_checks": ["n - 1|n-1|n -1|n- 1", "recursion|recursive|infinite|base case", "factorial(n - 1)|factorial(n-1)|factorial(n -1)"]
   },
   {
     "task_id": "A1",
