@@ -62,17 +62,6 @@
     </div>
   </section>
 
-  <!-- SECTION 0: CSI Over Time -->
-  <section>
-    <h2>CSI over time</h2>
-    <p style="color:var(--slate);font-size:0.92rem;max-width:740px;margin:0 0 1.5rem;line-height:1.65;">
-      The aggregate Capability-Seconds Index tracked daily. With only a few days of data, the line is sparse&mdash;as measurements accumulate, this chart will reveal the deflation trajectory of AI inference economics. Once 7+ data points exist, the published index switches from raw daily values to a 7-day rolling average.
-    </p>
-    <div class="table-wrap" style="padding:1.5rem;">
-      <canvas id="csi-chart" height="280"></canvas>
-    </div>
-  </section>
-
   <!-- SECTION 1: Efficiency Frontier -->
   <section id="viz-frontier" style="display:none;">
     <h2>The efficiency frontier</h2>
@@ -129,6 +118,17 @@
     <p style="font-family:var(--font-mono);font-size:0.78rem;color:var(--slate-light);opacity:0.6;margin-top:1rem;">
       Pricing as of most recent snapshot in database.
     </p>
+  </section>
+
+  <!-- SECTION 4: CSI Over Time -->
+  <section>
+    <h2>CSI over time</h2>
+    <p style="color:var(--slate);font-size:0.92rem;max-width:740px;margin:0 0 1.5rem;line-height:1.65;">
+      The aggregate Capability-Seconds Index tracked daily. With only a few days of data, the line is sparse&mdash;as measurements accumulate, this chart will reveal the deflation trajectory of AI inference economics. Once 7+ data points exist, the published index switches from raw daily values to a 7-day rolling average.
+    </p>
+    <div class="table-wrap" style="padding:1.5rem;">
+      <canvas id="csi-chart" height="280"></canvas>
+    </div>
   </section>
 
 </main>
