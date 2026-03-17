@@ -17,13 +17,13 @@
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <meta property="og:title" content="Capability-Seconds Index (CSI)">
-  <meta property="og:description" content="Measuring AI productive capability per second per dollar. 8 models, 271x efficiency spread. Updated weekly.">
+  <meta property="og:description" content="Measuring AI productive capability per second per dollar. 16 models, 271x efficiency spread. Updated weekly.">
   <meta property="og:image" content="https://www.csi-index.com/og-image.png">
   <meta property="og:url" content="https://www.csi-index.com">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Capability-Seconds Index (CSI)">
-  <meta name="twitter:description" content="Measuring AI productive capability per second per dollar. 8 models, 271x efficiency spread.">
+  <meta name="twitter:description" content="Measuring AI productive capability per second per dollar. 16 models, 271x efficiency spread.">
   <meta name="twitter:image" content="https://www.csi-index.com/og-image.png">
 </head>
 <body>
@@ -69,61 +69,121 @@
           </tr>
         </thead>
         <tbody>
+          <!-- Anthropic (Direct API) -->
           <tr>
             <td class="model-name">Claude Opus 4</td>
             <td>Anthropic</td>
-            <td>Native SDK</td>
+            <td>Direct API</td>
             <td class="num">$15.00</td>
             <td class="num">$75.00</td>
           </tr>
           <tr>
             <td class="model-name">Claude Sonnet 4</td>
             <td>Anthropic</td>
-            <td>Native SDK</td>
+            <td>Direct API</td>
             <td class="num">$3.00</td>
             <td class="num">$15.00</td>
           </tr>
           <tr>
-            <td class="model-name">Gemini 2.5 Flash</td>
-            <td>Google</td>
-            <td>Native SDK</td>
-            <td class="num">$0.15</td>
-            <td class="num">$0.60</td>
+            <td class="model-name">Claude Haiku 4.5</td>
+            <td>Anthropic</td>
+            <td>Direct API</td>
+            <td class="num">$1.00</td>
+            <td class="num">$5.00</td>
           </tr>
-          <tr>
-            <td class="model-name">Gemini 2.5 Pro</td>
-            <td>Google</td>
-            <td>Native SDK</td>
-            <td class="num">$1.25</td>
-            <td class="num">$10.00</td>
-          </tr>
-          <tr>
-            <td class="model-name">Llama 3.3 70B Instruct</td>
-            <td>Meta via OpenRouter</td>
-            <td>OpenAI-compatible</td>
-            <td class="num">$0.39</td>
-            <td class="num">$0.39</td>
-          </tr>
-          <tr>
-            <td class="model-name">Mistral Large</td>
-            <td>Mistral via OpenRouter</td>
-            <td>OpenAI-compatible</td>
-            <td class="num">$2.00</td>
-            <td class="num">$6.00</td>
-          </tr>
+          <!-- OpenAI (Direct API) -->
           <tr>
             <td class="model-name">GPT-4o</td>
             <td>OpenAI</td>
-            <td>Native SDK</td>
+            <td>Direct API</td>
             <td class="num">$2.50</td>
             <td class="num">$10.00</td>
           </tr>
           <tr>
             <td class="model-name">GPT-4o Mini</td>
             <td>OpenAI</td>
-            <td>Native SDK</td>
+            <td>Direct API</td>
             <td class="num">$0.15</td>
             <td class="num">$0.60</td>
+          </tr>
+          <!-- Google (Direct API) -->
+          <tr>
+            <td class="model-name">Gemini 2.5 Flash</td>
+            <td>Google</td>
+            <td>Direct API</td>
+            <td class="num">$0.15</td>
+            <td class="num">$0.60</td>
+          </tr>
+          <tr>
+            <td class="model-name">Gemini 2.5 Pro</td>
+            <td>Google</td>
+            <td>Direct API</td>
+            <td class="num">$1.25</td>
+            <td class="num">$10.00</td>
+          </tr>
+          <!-- OpenRouter models -->
+          <tr>
+            <td class="model-name">Grok 3</td>
+            <td>xAI via OpenRouter</td>
+            <td>OpenRouter</td>
+            <td class="num">$3.00</td>
+            <td class="num">$15.00</td>
+          </tr>
+          <tr>
+            <td class="model-name">DeepSeek V3.2</td>
+            <td>DeepSeek via OpenRouter</td>
+            <td>OpenRouter</td>
+            <td class="num">$0.26</td>
+            <td class="num">$0.38</td>
+          </tr>
+          <tr>
+            <td class="model-name">DeepSeek R1</td>
+            <td>DeepSeek via OpenRouter</td>
+            <td>OpenRouter</td>
+            <td class="num">$0.45</td>
+            <td class="num">$2.15</td>
+          </tr>
+          <tr>
+            <td class="model-name">Cohere Command A</td>
+            <td>Cohere via OpenRouter</td>
+            <td>OpenRouter</td>
+            <td class="num">$2.50</td>
+            <td class="num">$10.00</td>
+          </tr>
+          <tr>
+            <td class="model-name">Cohere Command R+</td>
+            <td>Cohere via OpenRouter</td>
+            <td>OpenRouter</td>
+            <td class="num">$2.50</td>
+            <td class="num">$10.00</td>
+          </tr>
+          <tr>
+            <td class="model-name">Llama 3.3 70B Instruct</td>
+            <td>Meta via OpenRouter</td>
+            <td>OpenRouter</td>
+            <td class="num">$0.39</td>
+            <td class="num">$0.39</td>
+          </tr>
+          <tr>
+            <td class="model-name">Mistral Large</td>
+            <td>Mistral via OpenRouter</td>
+            <td>OpenRouter</td>
+            <td class="num">$2.00</td>
+            <td class="num">$6.00</td>
+          </tr>
+          <tr>
+            <td class="model-name">Nemotron Super 49B</td>
+            <td>NVIDIA via OpenRouter</td>
+            <td>OpenRouter</td>
+            <td class="num">$0.10</td>
+            <td class="num">$0.40</td>
+          </tr>
+          <tr>
+            <td class="model-name">Qwen 2.5 72B</td>
+            <td>Alibaba via OpenRouter</td>
+            <td>OpenRouter</td>
+            <td class="num">$0.12</td>
+            <td class="num">$0.39</td>
           </tr>
         </tbody>
       </table>
@@ -137,10 +197,10 @@
   <section class="prose">
     <h2>Pricing Sources</h2>
     <ul>
-      <li><strong>Anthropic</strong> &mdash; Claude Opus 4 and Sonnet 4 pricing from official documentation</li>
+      <li><strong>Anthropic</strong> &mdash; Claude Opus 4, Sonnet 4, and Haiku 4.5 pricing from official documentation</li>
       <li><strong>Google</strong> &mdash; Gemini 2.5 Flash and 2.5 Pro pricing from Google AI developer pricing</li>
       <li><strong>OpenAI</strong> &mdash; GPT-4o and GPT-4o Mini pricing from the API pricing page</li>
-      <li><strong>OpenRouter</strong> &mdash; Llama 3.3 70B and Mistral Large pricing from OpenRouter model pages</li>
+      <li><strong>OpenRouter</strong> &mdash; Grok 3, DeepSeek V3.2, DeepSeek R1, Cohere Command A, Cohere Command R+, Llama 3.3 70B, Mistral Large, Nemotron Super 49B, and Qwen 2.5 72B pricing from OpenRouter model pages</li>
     </ul>
   </section>
 
@@ -160,7 +220,7 @@
       <li>Latency measurements include network round-trip time and may vary by geography and time of day.</li>
       <li>Scoring functions use keyword and pattern matching, not semantic evaluation. Edge cases in model responses may be scored imperfectly.</li>
       <li>The task set (12 tasks) is intentionally small for v1. It tests breadth, not depth, within each domain.</li>
-      <li>OpenRouter pricing and latency for Llama and Mistral include the intermediary&rsquo;s margin and routing overhead.</li>
+      <li>OpenRouter pricing and latency for routed models (Grok, DeepSeek, Cohere, Llama, Mistral, Nemotron, Qwen) include the intermediary&rsquo;s margin and routing overhead.</li>
       <li>Token counts are as reported by each provider&rsquo;s API and may use different tokenization schemes.</li>
     </ul>
   </section>
