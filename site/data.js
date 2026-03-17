@@ -648,9 +648,9 @@ async function loadCostEqualizer() {
           scales: {
             x: {
               type: 'logarithmic',
-              title: { display: true, text: 'Tasks per $1 (log scale)', color: '#8494a7', font: { size: 13 } },
+              title: { display: true, text: 'Tasks per $1 (log scale)', color: '#1a1a1a', font: { size: 13 } },
               ticks: {
-                color: '#8494a7',
+                color: '#1a1a1a',
                 callback: function(val) {
                   if ([1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000].includes(val)) {
                     return val.toLocaleString();
@@ -658,10 +658,10 @@ async function loadCostEqualizer() {
                   return '';
                 }
               },
-              grid: { color: 'rgba(255,255,255,0.05)' },
+              grid: { color: 'rgba(0,0,0,0.06)' },
             },
             y: {
-              ticks: { color: '#c9d1d9', font: { size: 13 } },
+              ticks: { color: '#1a1a1a', font: { size: 13 } },
               grid: { display: false },
             }
           },
@@ -671,7 +671,7 @@ async function loadCostEqualizer() {
               const chart = this;
               const ctx = chart.ctx;
               ctx.font = '13px "IBM Plex Mono", monospace';
-              ctx.fillStyle = '#c9d1d9';
+              ctx.fillStyle = '#1a1a1a';
               ctx.textAlign = 'left';
               ctx.textBaseline = 'middle';
               const meta = chart.getDatasetMeta(0);
@@ -706,8 +706,7 @@ function csiTierColor(csi) {
 
 // Chart instance refs for cleanup on redraw
 let _frontierChart = null;
-let _viz10kChart = null;
-let _vizDcfChart = null;
+let _vizDollarCharts = [];
 
 // Cached pricing (doesn't change with date)
 let _vizPricing = null;
@@ -778,6 +777,11 @@ function drawFrontier(models) {
     color: csiTierColor(Number(m.csi)),
   }));
 
+  // Auto-calculate y-axis range from data
+  const scores = data.map(d => d.y);
+  const yMin = Math.max(0, Math.min(...scores) - 0.05);
+  const yMax = Math.min(1, Math.max(...scores) + 0.05);
+
   // Build legend
   const legendEl = document.getElementById('frontier-legend');
   if (legendEl) {
@@ -805,6 +809,7 @@ function drawFrontier(models) {
     },
     options: {
       responsive: true,
+      layout: { padding: { top: 40, right: 40, bottom: 40, left: 40 } },
       plugins: {
         legend: { display: false },
         tooltip: {
@@ -836,8 +841,8 @@ function drawFrontier(models) {
           title: { display: true, text: 'Capability Score', color: '#1a1a1a', font: { size: 13 } },
           ticks: { color: '#1a1a1a' },
           grid: { color: 'rgba(0,0,0,0.06)' },
-          min: 0,
-          max: 1,
+          min: yMin,
+          max: yMax,
         }
       },
       animation: {
@@ -848,10 +853,19 @@ function drawFrontier(models) {
           ctx.fillStyle = '#1a1a1a';
           ctx.textAlign = 'center';
           const meta = chart.getDatasetMeta(0);
+          // Collect label positions to avoid overlaps
+          const placed = [];
           meta.data.forEach(function(point, i) {
             const d = data[i];
-            const yOffset = d.r > 15 ? -(d.r + 8) : (d.r + 12);
-            ctx.fillText(d.name, point.x, point.y + yOffset);
+            var labelY = point.y - d.r - 10;
+            // Check for overlap with already placed labels
+            for (var j = 0; j < placed.length; j++) {
+              if (Math.abs(point.x - placed[j].x) < 60 && Math.abs(labelY - placed[j].y) < 14) {
+                labelY = placed[j].y - 15;
+              }
+            }
+            ctx.fillText(d.name, point.x, labelY);
+            placed.push({ x: point.x, y: labelY });
           });
         }
       }
@@ -951,8 +965,9 @@ function drawDollarCharts(models) {
   const section = document.getElementById('viz-dollar');
   if (!section || typeof Chart === 'undefined' || !_vizPricing) return;
 
-  if (_viz10kChart) { _viz10kChart.destroy(); _viz10kChart = null; }
-  if (_vizDcfChart) { _vizDcfChart.destroy(); _vizDcfChart = null; }
+  // Destroy previous charts
+  for (const c of _vizDollarCharts) { c.destroy(); }
+  _vizDollarCharts = [];
 
   // Build CSI lookup from models
   const csiMap = {};
@@ -961,11 +976,12 @@ function drawDollarCharts(models) {
   }
 
   const TASKS = [
-    { canvasId: 'viz-chart-10k', insightId: 'viz-insight-10k', inputTokens: 80000, outputTokens: 2000, taskName: "summarize NVIDIA\u2019s 10-K" },
-    { canvasId: 'viz-chart-dcf', insightId: 'viz-insight-dcf', inputTokens: 1500, outputTokens: 8000, taskName: "build a DCF model" },
+    { canvasId: 'viz-chart-10k', inputTokens: 80000, outputTokens: 2000 },
+    { canvasId: 'viz-chart-dcf', inputTokens: 1500, outputTokens: 8000 },
+    { canvasId: 'viz-chart-legal', inputTokens: 12000, outputTokens: 1500 },
   ];
 
-  const charts = [];
+  const spreads = [];
 
   for (const task of TASKS) {
     const canvas = document.getElementById(task.canvasId);
@@ -985,12 +1001,8 @@ function drawDollarCharts(models) {
 
     if (!data.length) continue;
 
-    // Populate dynamic insight
-    const insightEl = document.getElementById(task.insightId);
-    if (insightEl && data.length >= 2) {
-      const spread = Math.round(data[0].tasksPerDollar / data[data.length - 1].tasksPerDollar);
-      insightEl.innerHTML = '<strong>The cheapest model can ' + task.taskName + ' ' + spread + '\u00d7 more times per dollar than the most expensive.</strong>';
-      insightEl.style.display = '';
+    if (data.length >= 2) {
+      spreads.push(data[0].tasksPerDollar / data[data.length - 1].tasksPerDollar);
     }
 
     const labels = data.map(d => d.name);
@@ -1025,7 +1037,7 @@ function drawDollarCharts(models) {
         scales: {
           x: {
             type: 'logarithmic',
-            title: { display: true, text: 'Tasks per $1 (log scale)', color: '#1a1a1a', font: { size: 13 } },
+            title: { display: true, text: 'Tasks per $1 (log)', color: '#1a1a1a', font: { size: 13 } },
             ticks: {
               color: '#1a1a1a',
               callback: function(val) {
@@ -1038,34 +1050,39 @@ function drawDollarCharts(models) {
             grid: { color: 'rgba(0,0,0,0.06)' },
           },
           y: {
-            ticks: { color: '#1a1a1a', font: { size: 13 } },
+            ticks: { color: '#1a1a1a', font: { size: 12 } },
             grid: { display: false },
           }
         },
-        layout: { padding: { right: 60 } },
+        layout: { padding: { right: 55 } },
         animation: {
           onComplete: function() {
             const ch = this;
             const cx = ch.ctx;
-            cx.font = '13px "IBM Plex Mono", monospace';
+            cx.font = '12px "IBM Plex Mono", monospace';
             cx.fillStyle = '#1a1a1a';
             cx.textAlign = 'left';
             cx.textBaseline = 'middle';
             const meta = ch.getDatasetMeta(0);
             meta.data.forEach(function(bar, i) {
               const val = Math.round(values[i]).toLocaleString();
-              cx.fillText(val, bar.x + 6, bar.y);
+              cx.fillText(val, bar.x + 4, bar.y);
             });
           }
         }
       }
     });
 
-    charts.push(chart);
+    _vizDollarCharts.push(chart);
   }
 
-  _viz10kChart = charts[0] || null;
-  _vizDcfChart = charts[1] || null;
+  // Average spread insight
+  const avgInsightEl = document.getElementById('viz-insight-avg');
+  if (avgInsightEl && spreads.length) {
+    const avgSpread = Math.round(spreads.reduce((a, b) => a + b, 0) / spreads.length);
+    avgInsightEl.innerHTML = '<strong>Across these three tasks, the cheapest model averages ' + avgSpread + '\u00d7 more output per dollar than the most expensive.</strong>';
+    avgInsightEl.style.display = '';
+  }
 
   section.style.display = '';
 }

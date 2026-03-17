@@ -65,50 +65,55 @@
   <!-- SECTION 1: Efficiency Frontier -->
   <section id="viz-frontier" style="display:none;">
     <h2>The efficiency frontier</h2>
+    <p style="color:var(--slate);font-size:0.92rem;max-width:740px;margin:0 0 1.5rem;line-height:1.65;">
+      The efficiency frontier maps every model by what it costs per task (x-axis) against how well it performs (y-axis). Bubble size represents overall CSI&mdash;the composite efficiency score. Models in the top-left corner deliver the highest capability at the lowest cost. The striking pattern: most frontier models score within a narrow capability band (0.90&ndash;1.00), but their costs span three orders of magnitude. The market isn&rsquo;t differentiated by quality&mdash;it&rsquo;s differentiated by price. This is the central insight of the Capability-Seconds Index: intelligence is becoming a commodity, and cost is the primary axis of competition.
+    </p>
     <div style="display:flex;gap:1.5rem;flex-wrap:wrap;margin-bottom:1rem;" id="frontier-legend"></div>
     <div class="table-wrap" style="padding:1.5rem;">
-      <canvas id="frontier-chart" height="400"></canvas>
+      <canvas id="frontier-chart" height="550"></canvas>
     </div>
-    <p style="color:var(--slate-light);font-size:0.85rem;margin-top:0.75rem;">
-      Each bubble is a frontier AI model. The x-axis shows what it costs to run a single benchmark task; the y-axis shows how well the model scores. Bubble size reflects the model&rsquo;s overall CSI&mdash;the bigger the bubble, the more efficiency you get per dollar per second. Models in the top-left corner are the efficient frontier: high capability at low cost.
-    </p>
   </section>
 
   <!-- SECTION 2: Treemap -->
   <section id="viz-treemap" style="display:none;">
     <h2>Where your dollar goes</h2>
+    <p style="color:var(--slate);font-size:0.92rem;max-width:740px;margin:0 0 1.5rem;line-height:1.65;">
+      Each rectangle represents one AI model, sized proportionally to its CSI score. The visual makes the efficiency gap visceral&mdash;no chart literacy required. The largest rectangles deliver the most useful intelligence per dollar. The smallest slivers are the premium models where you&rsquo;re paying for brand, safety infrastructure, or frontier capability that hasn&rsquo;t yet been commoditized. When the cheapest model&rsquo;s rectangle is 300&times; larger than the most expensive, you&rsquo;re looking at a market in the early stages of radical deflation.
+    </p>
     <div class="table-wrap" style="padding:1.5rem;">
       <div id="treemap-container" style="width:100%;height:480px;position:relative;"></div>
     </div>
-    <p style="color:var(--slate-light);font-size:0.85rem;margin-top:0.75rem;">
-      Each rectangle is sized by its model&rsquo;s CSI score&mdash;the composite measure of capability per second per dollar. Larger rectangles represent models that deliver more useful intelligence for the money. Color indicates the efficiency tier. If you spent $1 on every model, this is roughly how much productive output you&rsquo;d get back from each.
-    </p>
   </section>
 
   <!-- SECTION 3: What Does $1 Buy? -->
   <section id="viz-dollar" style="display:none;">
     <h2>What does $1 buy?</h2>
-    <p style="color:var(--slate-light);font-size:0.9rem;max-width:740px;margin:0 0 2rem;">
-      The same task costs radically different amounts depending on which model you use. We priced two real tasks&mdash;summarizing NVIDIA&rsquo;s 80,000-token 10-K filing, and building a DCF valuation model&mdash;across all 16 frontier models using published API pricing. The bars show how many times each model can perform the task for one dollar.
+    <p style="color:var(--slate);font-size:0.92rem;max-width:740px;margin:0 0 2rem;line-height:1.65;">
+      We priced three real-world tasks across all 16 frontier models using published API pricing. The results reveal the staggering cost disparity hiding behind uniform-looking AI interfaces. The same task that costs pennies on one model costs dollars on another&mdash;with no guaranteed improvement in output quality.
     </p>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem;">
       <div>
         <h3 style="font-size:1rem;margin-bottom:0.75rem;">Summarize NVIDIA&rsquo;s 10-K</h3>
-        <div class="table-wrap" style="padding:1.5rem;">
+        <div class="table-wrap" style="padding:1rem;">
           <canvas id="viz-chart-10k" height="400"></canvas>
         </div>
-        <p id="viz-insight-10k" style="display:none;font-size:0.88rem;color:var(--text);margin-top:0.75rem;"></p>
       </div>
       <div>
         <h3 style="font-size:1rem;margin-bottom:0.75rem;">Build a DCF Model</h3>
-        <div class="table-wrap" style="padding:1.5rem;">
+        <div class="table-wrap" style="padding:1rem;">
           <canvas id="viz-chart-dcf" height="400"></canvas>
         </div>
-        <p id="viz-insight-dcf" style="display:none;font-size:0.88rem;color:var(--text);margin-top:0.75rem;"></p>
+      </div>
+      <div>
+        <h3 style="font-size:1rem;margin-bottom:0.75rem;">Summarize a Legal Contract</h3>
+        <div class="table-wrap" style="padding:1rem;">
+          <canvas id="viz-chart-legal" height="400"></canvas>
+        </div>
       </div>
     </div>
+    <p id="viz-insight-avg" style="display:none;font-size:0.92rem;color:var(--navy);margin-top:1.25rem;"></p>
     <p style="color:var(--slate-light);font-size:0.85rem;margin-top:1rem;">
-      Based on published API pricing. Token estimates: 10-K summary = 80K input / 2K output. DCF model = 1.5K input / 8K output.
+      Based on published API pricing. Token estimates: 10-K summary = 80K input / 2K output. DCF model = 1.5K input / 8K output. Legal contract summary = 12K input / 1.5K output.
     </p>
     <p style="font-family:var(--font-mono);font-size:0.78rem;color:var(--slate-light);opacity:0.6;margin-top:0.25rem;">
       Pricing as of most recent snapshot in database.
