@@ -56,6 +56,20 @@ function shortModel(m) {
   return map[m] || m;
 }
 
+/* — Tier color by CSI — */
+function csiTierColor(csi) {
+  if (csi >= 400) return '#1D9E75';
+  if (csi >= 40) return '#378ADD';
+  if (csi >= 5) return '#BA7517';
+  return '#A32D2D';
+}
+
+function fmtTaskCost(cost) {
+  if (cost >= 1) return '$' + cost.toFixed(2);
+  if (cost >= 0.01) return '$' + cost.toFixed(2);
+  return '$' + cost.toFixed(3);
+}
+
 /* — Show fallback when no data — */
 function showFallback(el, msg) {
   el.innerHTML = `
@@ -171,7 +185,7 @@ async function loadDashboard() {
 }
 
 /* =========================================================================
-   CHART: CSI Over Time (index.html)
+   CHART: CSI Over Time (visualize.html)
    ========================================================================= */
 
 async function loadCSIChart() {
@@ -200,12 +214,12 @@ async function loadCSIChart() {
         datasets: [{
           label: 'CSI Aggregate',
           data: values,
-          borderColor: '#6ee7b7',
-          backgroundColor: 'rgba(110,231,183,0.1)',
+          borderColor: '#2a9d6e',
+          backgroundColor: 'rgba(42,157,110,0.1)',
           fill: true,
           tension: 0.3,
           pointRadius: values.length === 1 ? 6 : 3,
-          pointBackgroundColor: '#6ee7b7',
+          pointBackgroundColor: '#2a9d6e',
         }]
       },
       options: {
@@ -215,12 +229,12 @@ async function loadCSIChart() {
         },
         scales: {
           x: {
-            ticks: { color: '#8494a7' },
-            grid: { color: 'rgba(255,255,255,0.05)' },
+            ticks: { color: '#1a1a1a' },
+            grid: { color: 'rgba(0,0,0,0.06)' },
           },
           y: {
-            ticks: { color: '#8494a7' },
-            grid: { color: 'rgba(255,255,255,0.05)' },
+            ticks: { color: '#1a1a1a' },
+            grid: { color: 'rgba(0,0,0,0.06)' },
             beginAtZero: false,
           }
         }
@@ -228,6 +242,104 @@ async function loadCSIChart() {
     });
   } catch (err) {
     console.error('Chart load error:', err);
+  }
+}
+
+/* =========================================================================
+   CHART: Dashboard cost-per-task (index.html)
+   ========================================================================= */
+
+let _dashCostCharts = [];
+
+async function loadDashboardCost() {
+  const section = document.getElementById('dash-cost');
+  if (!section || typeof Chart === 'undefined') return;
+
+  try {
+    // Fetch pricing
+    const pricingRows = await sbFetch('pricing', 'select=model,input_price_per_million,output_price_per_million&order=snapshot_date.desc');
+    if (!pricingRows.length) return;
+    const seen = {};
+    const pricing = [];
+    for (const r of pricingRows) {
+      if (!seen[r.model]) { seen[r.model] = true; pricing.push(r); }
+    }
+
+    // Fetch CSI for tier colors
+    const agg = await sbFetch('csi_index', 'order=run_date.desc&limit=1');
+    const csiMap = {};
+    if (agg.length) {
+      const models = await sbFetch('csi_by_model', `run_date=eq.${agg[0].run_date}`);
+      for (const m of models) csiMap[m.model] = Number(m.csi);
+    }
+
+    // Destroy previous
+    for (const c of _dashCostCharts) c.destroy();
+    _dashCostCharts = [];
+
+    const TASKS = [
+      { canvasId: 'dash-chart-10k', insightId: 'dash-insight-10k', inputTokens: 80000, outputTokens: 2000, taskVerb: "Summarizing NVIDIA\u2019s 10-K" },
+      { canvasId: 'dash-chart-dcf', insightId: 'dash-insight-dcf', inputTokens: 1500, outputTokens: 8000, taskVerb: "Building a DCF model" },
+      { canvasId: 'dash-chart-legal', insightId: 'dash-insight-legal', inputTokens: 12000, outputTokens: 1500, taskVerb: "Summarizing a legal contract" },
+    ];
+
+    const spreads = [];
+
+    for (const task of TASKS) {
+      const canvas = document.getElementById(task.canvasId);
+      if (!canvas) continue;
+
+      const data = pricing.map(p => {
+        const inPrice = Number(p.input_price_per_million);
+        const outPrice = Number(p.output_price_per_million);
+        const costPerTask = (task.inputTokens / 1e6 * inPrice) + (task.outputTokens / 1e6 * outPrice);
+        return { name: shortModel(p.model), cost: costPerTask, csi: csiMap[p.model] || 0 };
+      }).filter(d => d.cost > 0).sort((a, b) => a.cost - b.cost);
+
+      if (!data.length) continue;
+
+      const cheapest = data[0];
+      const priciest = data[data.length - 1];
+      if (data.length >= 2) spreads.push(priciest.cost / cheapest.cost);
+
+      const insightEl = document.getElementById(task.insightId);
+      if (insightEl && data.length >= 2) {
+        const spread = Math.round(priciest.cost / cheapest.cost);
+        insightEl.innerHTML = '<strong>' + task.taskVerb + ' costs ' + spread + '\u00d7 more on ' + priciest.name + ' (' + fmtTaskCost(priciest.cost) + ') than on ' + cheapest.name + ' (' + fmtTaskCost(cheapest.cost) + ').</strong>';
+        insightEl.style.display = '';
+      }
+
+      const labels = data.map(d => d.name);
+      const values = data.map(d => d.cost);
+      const colors = data.map(d => csiTierColor(d.csi) + 'cc');
+
+      const chart = new Chart(canvas, {
+        type: 'bar',
+        data: { labels, datasets: [{ data: values, backgroundColor: colors, borderColor: data.map(d => csiTierColor(d.csi)), borderWidth: 1, borderRadius: 3 }] },
+        options: {
+          indexAxis: 'y', responsive: true,
+          plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(ctx) { return fmtTaskCost(ctx.parsed.x) + ' per task'; } } } },
+          scales: {
+            x: { type: 'logarithmic', title: { display: true, text: 'Cost per task (USD, log scale)', color: '#1a1a1a', font: { size: 13 } }, ticks: { color: '#1a1a1a', callback: function(val) { if ([0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5].includes(val)) return '$' + val; return ''; } }, grid: { color: 'rgba(0,0,0,0.06)' } },
+            y: { ticks: { color: '#1a1a1a', font: { size: 12 } }, grid: { display: false } }
+          },
+          layout: { padding: { right: 65 } },
+          animation: { onComplete: function() { const ch = this; const cx = ch.ctx; cx.font = '12px "IBM Plex Mono", monospace'; cx.fillStyle = '#1a1a1a'; cx.textAlign = 'left'; cx.textBaseline = 'middle'; const meta = ch.getDatasetMeta(0); meta.data.forEach(function(bar, i) { cx.fillText(fmtTaskCost(values[i]), bar.x + 4, bar.y); }); } }
+        }
+      });
+      _dashCostCharts.push(chart);
+    }
+
+    const avgInsightEl = document.getElementById('dash-insight-avg');
+    if (avgInsightEl && spreads.length) {
+      const avgSpread = Math.round(spreads.reduce((a, b) => a + b, 0) / spreads.length);
+      avgInsightEl.innerHTML = '<strong>Across these three tasks, the most expensive model costs an average of ' + avgSpread + '\u00d7 more per task than the cheapest.</strong>';
+      avgInsightEl.style.display = '';
+    }
+
+    section.style.display = '';
+  } catch (err) {
+    console.error('Dashboard cost load error:', err);
   }
 }
 
@@ -568,14 +680,6 @@ function wireDownloadButtons() {
    PAGE: visualize.html
    ========================================================================= */
 
-// Shared tier color function
-function csiTierColor(csi) {
-  if (csi >= 400) return '#1D9E75';
-  if (csi >= 40) return '#378ADD';
-  if (csi >= 5) return '#BA7517';
-  return '#A32D2D';
-}
-
 // Chart instance refs for cleanup on redraw
 let _frontierChart = null;
 let _vizDollarCharts = [];
@@ -754,10 +858,12 @@ function drawTreemap(models) {
   const section = document.getElementById('viz-treemap');
   if (!container || typeof d3 === 'undefined') return;
 
+  // Show section first so container has dimensions
+  section.style.display = '';
   container.innerHTML = '';
 
-  const width = container.clientWidth;
-  const height = container.clientHeight || 480;
+  const width = container.clientWidth || 800;
+  const height = 480;
 
   const treeData = {
     name: 'root',
@@ -827,17 +933,9 @@ function drawTreemap(models) {
   // Tooltip
   leaves.append('title')
     .text(d => d.data.name + '\nCSI: ' + fmt(d.data.csi, 2));
-
-  section.style.display = '';
 }
 
-/* --- Section 3: What Does $1 Buy? --- */
-
-function fmtTaskCost(cost) {
-  if (cost >= 1) return '$' + cost.toFixed(2);
-  if (cost >= 0.01) return '$' + cost.toFixed(2);
-  return '$' + cost.toFixed(3);
-}
+/* --- Section 3: What does one task cost? --- */
 
 function drawDollarCharts(models) {
   const section = document.getElementById('viz-dollar');
@@ -981,6 +1079,7 @@ function drawDollarCharts(models) {
 
 document.addEventListener('DOMContentLoaded', () => {
   loadDashboard();
+  loadDashboardCost();
   loadCSIChart();
   loadForwardChart();
   loadResearchSpread();

@@ -125,16 +125,6 @@
     </div>
   </section>
 
-  <section>
-    <h2>CSI Over Time</h2>
-    <div class="table-wrap" style="padding:1.5rem;">
-      <canvas id="csi-chart" height="280"></canvas>
-    </div>
-    <p style="color:#8494a7;font-size:0.85rem;margin-top:0.75rem;">
-      Shows 7-day rolling average. Daily measurements began March 2026.
-    </p>
-  </section>
-
   <section class="prose">
     <h2>What is the CSI?</h2>
     <p>
@@ -149,6 +139,40 @@
     </p>
   </section>
 
+  <!-- What does one task cost? -->
+  <section id="dash-cost" style="display:none;">
+    <h2>What does one task cost?</h2>
+    <p style="color:var(--slate);font-size:0.92rem;max-width:740px;margin:0 0 2rem;line-height:1.65;">
+      We priced three real-world tasks across all 16 frontier models using published API pricing. The same task that costs a fraction of a penny on one model costs over a dollar on another.
+    </p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem;">
+      <div>
+        <h3 style="font-size:0.95rem;margin-bottom:0.75rem;">Summarize NVIDIA&rsquo;s 10-K<br><span style="font-weight:400;font-size:0.82rem;color:var(--slate-light);">80,000 tokens in, 2,000 out</span></h3>
+        <div class="table-wrap" style="padding:1rem;">
+          <canvas id="dash-chart-10k" height="400"></canvas>
+        </div>
+        <p id="dash-insight-10k" style="display:none;font-size:0.85rem;color:var(--navy);margin-top:0.75rem;"></p>
+      </div>
+      <div>
+        <h3 style="font-size:0.95rem;margin-bottom:0.75rem;">Build a DCF model<br><span style="font-weight:400;font-size:0.82rem;color:var(--slate-light);">1,500 tokens in, 8,000 out</span></h3>
+        <div class="table-wrap" style="padding:1rem;">
+          <canvas id="dash-chart-dcf" height="400"></canvas>
+        </div>
+        <p id="dash-insight-dcf" style="display:none;font-size:0.85rem;color:var(--navy);margin-top:0.75rem;"></p>
+      </div>
+      <div>
+        <h3 style="font-size:0.95rem;margin-bottom:0.75rem;">Summarize a 20-page legal contract<br><span style="font-weight:400;font-size:0.82rem;color:var(--slate-light);">12,000 tokens in, 1,500 out</span></h3>
+        <div class="table-wrap" style="padding:1rem;">
+          <canvas id="dash-chart-legal" height="400"></canvas>
+        </div>
+        <p id="dash-insight-legal" style="display:none;font-size:0.85rem;color:var(--navy);margin-top:0.75rem;"></p>
+      </div>
+    </div>
+    <p id="dash-insight-avg" style="display:none;font-size:0.92rem;color:var(--navy);margin-top:1.25rem;"></p>
+    <p style="font-family:var(--font-mono);font-size:0.78rem;color:var(--slate-light);opacity:0.6;margin-top:1rem;">
+      Pricing as of most recent snapshot in database.
+    </p>
+  </section>
 
   <section style="text-align:center;padding:3rem 0;">
     <h2>Get Weekly CSI Updates</h2>
