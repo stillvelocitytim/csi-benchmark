@@ -693,6 +693,376 @@ async function loadCostEqualizer() {
 }
 
 /* =========================================================================
+   PAGE: visualize.html
+   ========================================================================= */
+
+// Shared tier color function
+function csiTierColor(csi) {
+  if (csi >= 400) return '#1D9E75';
+  if (csi >= 40) return '#378ADD';
+  if (csi >= 5) return '#BA7517';
+  return '#A32D2D';
+}
+
+// Chart instance refs for cleanup on redraw
+let _frontierChart = null;
+let _viz10kChart = null;
+let _vizDcfChart = null;
+
+// Cached pricing (doesn't change with date)
+let _vizPricing = null;
+
+async function loadVisualizations() {
+  const dateSelect = document.getElementById('viz-date-select');
+  if (!dateSelect) return; // not on visualize page
+
+  try {
+    // Get available dates
+    const allDates = await sbFetch('csi_index', 'select=run_date&order=run_date.desc');
+    if (!allDates.length) return;
+
+    dateSelect.innerHTML = allDates.map(d =>
+      `<option value="${d.run_date}">${d.run_date}</option>`
+    ).join('');
+
+    // Load pricing once
+    const pricingRows = await sbFetch('pricing', 'select=model,input_price_per_million,output_price_per_million&order=snapshot_date.desc');
+    const seen = {};
+    _vizPricing = [];
+    for (const r of pricingRows) {
+      if (!seen[r.model]) {
+        seen[r.model] = true;
+        _vizPricing.push(r);
+      }
+    }
+
+    // Initial draw
+    await drawVisualizations(allDates[0].run_date);
+
+    // Redraw on date change
+    dateSelect.addEventListener('change', () => drawVisualizations(dateSelect.value));
+  } catch (err) {
+    console.error('Visualizations load error:', err);
+  }
+}
+
+async function drawVisualizations(runDate) {
+  try {
+    const models = await sbFetch('csi_by_model', `run_date=eq.${runDate}&order=csi.desc`);
+    if (!models.length) return;
+
+    drawFrontier(models);
+    drawTreemap(models);
+    drawDollarCharts(models);
+  } catch (err) {
+    console.error('Draw visualizations error:', err);
+  }
+}
+
+/* --- Section 1: Efficiency Frontier --- */
+
+function drawFrontier(models) {
+  const canvas = document.getElementById('frontier-chart');
+  const section = document.getElementById('viz-frontier');
+  if (!canvas || typeof Chart === 'undefined') return;
+
+  if (_frontierChart) { _frontierChart.destroy(); _frontierChart = null; }
+
+  const data = models.map(m => ({
+    x: Number(m.avg_cost),
+    y: Number(m.avg_score),
+    r: Math.max(Math.sqrt(Number(m.csi)) * 1.8, 5),
+    csi: Number(m.csi),
+    name: shortModel(m.model),
+    latency: Number(m.avg_latency),
+    color: csiTierColor(Number(m.csi)),
+  }));
+
+  // Build legend
+  const legendEl = document.getElementById('frontier-legend');
+  if (legendEl) {
+    const tiers = [
+      { color: '#1D9E75', label: 'CSI 400+' },
+      { color: '#378ADD', label: 'CSI 40\u2013400' },
+      { color: '#BA7517', label: 'CSI 5\u201340' },
+      { color: '#A32D2D', label: 'CSI < 5' },
+    ];
+    legendEl.innerHTML = tiers.map(t =>
+      `<span style="display:inline-flex;align-items:center;gap:0.4rem;font-size:0.82rem;color:#c9d1d9;">` +
+      `<span style="width:12px;height:12px;border-radius:50%;background:${t.color};display:inline-block;"></span>${t.label}</span>`
+    ).join('');
+  }
+
+  _frontierChart = new Chart(canvas, {
+    type: 'bubble',
+    data: {
+      datasets: [{
+        data: data,
+        backgroundColor: data.map(d => d.color + 'cc'),
+        borderColor: data.map(d => d.color),
+        borderWidth: 1.5,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) {
+              const d = data[ctx.dataIndex];
+              return [
+                d.name,
+                'CSI: ' + fmt(d.csi, 2),
+                'Cost/task: $' + fmt(d.x, 6),
+                'Capability: ' + fmt(d.y, 3),
+                'Latency: ' + fmt(d.latency, 2) + 's',
+              ];
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          type: 'logarithmic',
+          title: { display: true, text: 'Cost per task ($, log scale)', color: '#8494a7', font: { size: 12 } },
+          ticks: {
+            color: '#8494a7',
+            callback: function(val) { return '$' + val; }
+          },
+          grid: { color: 'rgba(255,255,255,0.05)' },
+        },
+        y: {
+          title: { display: true, text: 'Capability Score', color: '#8494a7', font: { size: 12 } },
+          ticks: { color: '#8494a7' },
+          grid: { color: 'rgba(255,255,255,0.05)' },
+          min: 0,
+          max: 1,
+        }
+      },
+      animation: {
+        onComplete: function() {
+          const chart = this;
+          const ctx = chart.ctx;
+          ctx.font = '10px "IBM Plex Mono", monospace';
+          ctx.fillStyle = '#c9d1d9';
+          ctx.textAlign = 'center';
+          const meta = chart.getDatasetMeta(0);
+          meta.data.forEach(function(point, i) {
+            const d = data[i];
+            const yOffset = d.r > 15 ? -(d.r + 8) : (d.r + 12);
+            ctx.fillText(d.name, point.x, point.y + yOffset);
+          });
+        }
+      }
+    }
+  });
+
+  section.style.display = '';
+}
+
+/* --- Section 2: Treemap --- */
+
+function drawTreemap(models) {
+  const container = document.getElementById('treemap-container');
+  const section = document.getElementById('viz-treemap');
+  if (!container || typeof d3 === 'undefined') return;
+
+  container.innerHTML = '';
+
+  const width = container.clientWidth;
+  const height = container.clientHeight || 480;
+
+  const treeData = {
+    name: 'root',
+    children: models.map(m => ({
+      name: shortModel(m.model),
+      value: Math.max(Number(m.csi), 0.01),
+      csi: Number(m.csi),
+    }))
+  };
+
+  const root = d3.hierarchy(treeData)
+    .sum(d => d.value)
+    .sort((a, b) => b.value - a.value);
+
+  d3.treemap()
+    .size([width, height])
+    .padding(2)
+    .round(true)(root);
+
+  const svg = d3.select(container)
+    .append('svg')
+    .attr('width', width)
+    .attr('height', height)
+    .attr('viewBox', `0 0 ${width} ${height}`);
+
+  const leaves = svg.selectAll('g')
+    .data(root.leaves())
+    .join('g')
+    .attr('transform', d => `translate(${d.x0},${d.y0})`);
+
+  leaves.append('rect')
+    .attr('width', d => d.x1 - d.x0)
+    .attr('height', d => d.y1 - d.y0)
+    .attr('fill', d => csiTierColor(d.data.csi))
+    .attr('fill-opacity', 0.85)
+    .attr('rx', 3)
+    .attr('stroke', '#0d1117')
+    .attr('stroke-width', 1);
+
+  // Labels — only show if rectangle is large enough
+  leaves.each(function(d) {
+    const w = d.x1 - d.x0;
+    const h = d.y1 - d.y0;
+    const g = d3.select(this);
+
+    if (w > 50 && h > 30) {
+      g.append('text')
+        .attr('x', (w) / 2)
+        .attr('y', (h) / 2 - 7)
+        .attr('text-anchor', 'middle')
+        .attr('fill', '#fff')
+        .attr('font-family', '"IBM Plex Mono", monospace')
+        .attr('font-size', w > 100 ? '11px' : '9px')
+        .text(d.data.name);
+
+      g.append('text')
+        .attr('x', (w) / 2)
+        .attr('y', (h) / 2 + 9)
+        .attr('text-anchor', 'middle')
+        .attr('fill', 'rgba(255,255,255,0.7)')
+        .attr('font-family', '"IBM Plex Mono", monospace')
+        .attr('font-size', w > 100 ? '10px' : '8px')
+        .text('CSI ' + fmt(d.data.csi, 1));
+    }
+  });
+
+  // Tooltip
+  leaves.append('title')
+    .text(d => d.data.name + '\nCSI: ' + fmt(d.data.csi, 2));
+
+  section.style.display = '';
+}
+
+/* --- Section 3: What Does $1 Buy? --- */
+
+function drawDollarCharts(models) {
+  const section = document.getElementById('viz-dollar');
+  if (!section || typeof Chart === 'undefined' || !_vizPricing) return;
+
+  if (_viz10kChart) { _viz10kChart.destroy(); _viz10kChart = null; }
+  if (_vizDcfChart) { _vizDcfChart.destroy(); _vizDcfChart = null; }
+
+  // Build CSI lookup from models
+  const csiMap = {};
+  for (const m of models) {
+    csiMap[m.model] = Number(m.csi);
+  }
+
+  const TASKS = [
+    { canvasId: 'viz-chart-10k', inputTokens: 80000, outputTokens: 2000 },
+    { canvasId: 'viz-chart-dcf', inputTokens: 1500, outputTokens: 8000 },
+  ];
+
+  const charts = [];
+
+  for (const task of TASKS) {
+    const canvas = document.getElementById(task.canvasId);
+    if (!canvas) continue;
+
+    const data = _vizPricing.map(p => {
+      const inPrice = Number(p.input_price_per_million);
+      const outPrice = Number(p.output_price_per_million);
+      const costPerTask = (task.inputTokens / 1e6 * inPrice) + (task.outputTokens / 1e6 * outPrice);
+      return {
+        name: shortModel(p.model),
+        tasksPerDollar: costPerTask > 0 ? 1 / costPerTask : 0,
+        csi: csiMap[p.model] || 0,
+      };
+    }).filter(d => d.tasksPerDollar > 0)
+      .sort((a, b) => b.tasksPerDollar - a.tasksPerDollar);
+
+    if (!data.length) continue;
+
+    const labels = data.map(d => d.name);
+    const values = data.map(d => d.tasksPerDollar);
+    const colors = data.map(d => csiTierColor(d.csi) + 'cc');
+
+    const chart = new Chart(canvas, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          data: values,
+          backgroundColor: colors,
+          borderColor: data.map(d => csiTierColor(d.csi)),
+          borderWidth: 1,
+          borderRadius: 3,
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(ctx) {
+                return Math.round(ctx.parsed.x).toLocaleString() + ' tasks for $1';
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            type: 'logarithmic',
+            title: { display: true, text: 'Tasks per $1 (log scale)', color: '#8494a7', font: { size: 11 } },
+            ticks: {
+              color: '#8494a7',
+              callback: function(val) {
+                if ([1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000].includes(val)) {
+                  return val.toLocaleString();
+                }
+                return '';
+              }
+            },
+            grid: { color: 'rgba(255,255,255,0.05)' },
+          },
+          y: {
+            ticks: { color: '#c9d1d9', font: { size: 11 } },
+            grid: { display: false },
+          }
+        },
+        layout: { padding: { right: 60 } },
+        animation: {
+          onComplete: function() {
+            const ch = this;
+            const cx = ch.ctx;
+            cx.font = '11px "IBM Plex Mono", monospace';
+            cx.fillStyle = '#c9d1d9';
+            cx.textAlign = 'left';
+            cx.textBaseline = 'middle';
+            const meta = ch.getDatasetMeta(0);
+            meta.data.forEach(function(bar, i) {
+              const val = Math.round(values[i]).toLocaleString();
+              cx.fillText(val, bar.x + 6, bar.y);
+            });
+          }
+        }
+      }
+    });
+
+    charts.push(chart);
+  }
+
+  _viz10kChart = charts[0] || null;
+  _vizDcfChart = charts[1] || null;
+
+  section.style.display = '';
+}
+
+/* =========================================================================
    Boot
    ========================================================================= */
 
@@ -704,4 +1074,5 @@ document.addEventListener('DOMContentLoaded', () => {
   loadResearchSpread();
   loadDataPage();
   wireDownloadButtons();
+  loadVisualizations();
 });

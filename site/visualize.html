@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visualize — CSI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <meta property="og:title" content="Capability-Seconds Index (CSI)">
+  <meta property="og:description" content="Measuring AI productive capability per second per dollar. 16 models, 271x efficiency spread. Updated daily.">
+  <meta property="og:image" content="https://www.csi-index.com/og-image.png">
+  <meta property="og:url" content="https://www.csi-index.com">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Capability-Seconds Index (CSI)">
+  <meta name="twitter:description" content="Measuring AI productive capability per second per dollar. 16 models, 271x efficiency spread.">
+  <meta name="twitter:image" content="https://www.csi-index.com/og-image.png">
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <a href="index.html" class="logo">Capability<span>-Seconds</span>&trade; Index</a>
+    <button class="nav-toggle" aria-label="Toggle navigation" onclick="document.querySelector('nav').classList.toggle('open')">
+      <span></span><span></span><span></span>
+    </button>
+    <nav>
+      <a href="index.html">Dashboard</a>
+      <a href="research.html">Research</a>
+      <a href="methodology.html">Methodology</a>
+      <a href="data.html">Data</a>
+      <a href="visualize.html" class="active">Visualize</a>
+      <a href="sources.html">Sources</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+
+  <section class="prose">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;">
+      <div>
+        <h1>Visualize the intelligence market</h1>
+        <p style="color:var(--slate-light);">Interactive charts built from live CSI data. Updated with every evaluation run.</p>
+      </div>
+      <div>
+        <label for="viz-date-select" style="font-family:var(--font-mono);font-size:0.78rem;color:var(--slate-light);display:block;margin-bottom:0.25rem;">Run date</label>
+        <select id="viz-date-select" style="font-family:var(--font-mono);font-size:0.85rem;padding:0.4em 0.8em;border:1px solid #dde1e6;border-radius:4px;background:var(--bg-card);color:var(--text);">
+          <option>Loading&hellip;</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 1: Efficiency Frontier -->
+  <section id="viz-frontier" style="display:none;">
+    <h2>The efficiency frontier</h2>
+    <div style="display:flex;gap:1.5rem;flex-wrap:wrap;margin-bottom:1rem;" id="frontier-legend"></div>
+    <div class="table-wrap" style="padding:1.5rem;">
+      <canvas id="frontier-chart" height="400"></canvas>
+    </div>
+    <p style="color:var(--slate-light);font-size:0.85rem;margin-top:0.75rem;">
+      Each bubble is a frontier AI model. Position shows cost vs. capability. Size shows overall efficiency (CSI). Top-left is the efficient frontier.
+    </p>
+  </section>
+
+  <!-- SECTION 2: Treemap -->
+  <section id="viz-treemap" style="display:none;">
+    <h2>Where your dollar goes</h2>
+    <div class="table-wrap" style="padding:1.5rem;">
+      <div id="treemap-container" style="width:100%;height:480px;position:relative;"></div>
+    </div>
+    <p style="color:var(--slate-light);font-size:0.85rem;margin-top:0.75rem;">
+      Each rectangle is sized by CSI. If you spent $1 on every model, this is how much useful intelligence you&rsquo;d get back.
+    </p>
+  </section>
+
+  <!-- SECTION 3: What Does $1 Buy? -->
+  <section id="viz-dollar" style="display:none;">
+    <h2>What does $1 buy?</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;">
+      <div>
+        <h3 style="font-size:1rem;margin-bottom:0.75rem;">Summarize NVIDIA&rsquo;s 10-K</h3>
+        <div class="table-wrap" style="padding:1.5rem;">
+          <canvas id="viz-chart-10k" height="400"></canvas>
+        </div>
+      </div>
+      <div>
+        <h3 style="font-size:1rem;margin-bottom:0.75rem;">Build a DCF Model</h3>
+        <div class="table-wrap" style="padding:1.5rem;">
+          <canvas id="viz-chart-dcf" height="400"></canvas>
+        </div>
+      </div>
+    </div>
+    <p style="color:var(--slate-light);font-size:0.85rem;margin-top:0.75rem;">
+      Based on published API pricing. Token estimates: 10-K summary = 80K input / 2K output. DCF model = 1.5K input / 8K output.
+    </p>
+    <p style="font-family:var(--font-mono);font-size:0.78rem;color:var(--slate-light);opacity:0.6;margin-top:0.25rem;">
+      Pricing as of most recent snapshot in database.
+    </p>
+  </section>
+
+</main>
+
+<footer>
+  <div class="container">
+    Capability-Seconds&trade; Index &middot; Updated daily &middot;
+    <a href="https://github.com/stillvelocitytim/csi-benchmark">Source on GitHub</a>
+    <div style="color:#8494a7;font-size:0.75rem;margin-top:0.5rem;">Published by Nine Island Advisory LLC. For research purposes only. Not investment advice.</div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="data.js"></script>
+</body>
+</html>
