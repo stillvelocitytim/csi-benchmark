@@ -120,6 +120,21 @@ async function loadDashboard() {
           callout.style.display = '';
         }
       }
+      // Populate efficiency spread line
+      const effSpread = document.getElementById('efficiency-spread');
+      if (effSpread && models.length >= 2) {
+        const csiVals = models.map(m => ({ name: shortModel(m.model), csi: Number(m.csi) }));
+        const best = csiVals.reduce((a, b) => a.csi > b.csi ? a : b);
+        const worst = csiVals.reduce((a, b) => a.csi < b.csi ? a : b);
+        if (worst.csi > 0) {
+          const ratio = Math.round(best.csi / worst.csi);
+          effSpread.querySelector('span').textContent =
+            ratio + '\u00d7 efficiency spread \u2014 ' +
+            best.name + ' (' + fmt(best.csi, 0) + ') to ' +
+            worst.name + ' (' + fmt(worst.csi, 2) + ')';
+          effSpread.style.display = '';
+        }
+      }
     } else if (modelTable) {
       showFallback(modelTable.closest('.table-wrap') || modelTable, 'No per-model data available.');
     }

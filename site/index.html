@@ -19,24 +19,12 @@
   <meta name="twitter:image" content="https://www.csi-index.com/og-image.png">
 </head>
 <body>
-<script>
-(function(){
-  if(sessionStorage.getItem('csi_auth')) return;
-  var p = prompt('Enter password to continue:');
-  if(p !== 'csi2026'){
-    document.body.innerHTML = '<h1 style="color:white;text-align:center;margin-top:40vh">Access Denied</h1>';
-    throw new Error('auth');
-  }
-  sessionStorage.setItem('csi_auth','true');
-})();
-</script>
 
 <header>
   <div class="container">
     <a href="index.html" class="logo">Capability<span>-Seconds</span>&trade; Index</a>
     <nav>
       <a href="index.html" class="active">Dashboard</a>
-      <a href="forward.html">Forward Curve</a>
       <a href="research.html">Research</a>
       <a href="methodology.html">Methodology</a>
       <a href="data.html">Data</a>
@@ -57,7 +45,7 @@
       is delivered per second of latency per dollar of cost.
     </div>
     <div class="hero-sub" style="font-size:0.85rem;opacity:0.7;margin-top:0.5rem;">
-      Track whether AI is getting cheaper &mdash; or just getting bigger.
+      The unit economics of intelligence, measured daily.
     </div>
     <!-- <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6406658" target="_blank" rel="noopener"
        style="color:#c9a227;font-family:var(--font-mono);font-size:0.85rem;text-decoration:none;opacity:0.85;border-bottom:1px solid rgba(201,162,39,0.3);"
@@ -84,6 +72,9 @@
         <div class="value" id="stat-models"><span class="spinner"></span></div>
         <div class="unit">frontier models</div>
       </div>
+    </div>
+    <div id="efficiency-spread" style="display:none;text-align:center;margin-top:1rem;">
+      <span style="font-family:var(--font-mono);font-size:0.82rem;color:var(--slate-light);"></span>
     </div>
   </section>
 

@@ -19,24 +19,12 @@
   <meta name="twitter:image" content="https://www.csi-index.com/og-image.png">
 </head>
 <body>
-<script>
-(function(){
-  if(sessionStorage.getItem('csi_auth')) return;
-  var p = prompt('Enter password to continue:');
-  if(p !== 'csi2026'){
-    document.body.innerHTML = '<h1 style="color:white;text-align:center;margin-top:40vh">Access Denied</h1>';
-    throw new Error('auth');
-  }
-  sessionStorage.setItem('csi_auth','true');
-})();
-</script>
 
 <header>
   <div class="container">
     <a href="index.html" class="logo">Capability<span>-Seconds</span>&trade; Index</a>
     <nav>
       <a href="index.html">Dashboard</a>
-      <a href="forward.html">Forward Curve</a>
       <a href="research.html" class="active">Research</a>
       <a href="methodology.html">Methodology</a>
       <a href="data.html">Data</a>
@@ -45,11 +33,25 @@
   </div>
 </header>
 
+<!-- Hero stat -->
+<div class="hero" style="padding:3.5rem 0 3rem;">
+  <div class="container">
+    <div class="hero-number" style="color:var(--gold);">271&times;</div>
+    <div class="hero-sub" style="margin-top:0.75rem;">
+      The efficiency spread across today&rsquo;s frontier AI models
+    </div>
+    <div style="font-family:var(--font-mono);font-size:0.78rem;color:var(--slate-light);margin-top:0.75rem;opacity:0.7;">
+      GPT-4o Mini CSI: 1,009 &divide; Claude Opus 4 CSI: 3.72 = 271&times;
+    </div>
+  </div>
+</div>
+
 <main class="container">
 
-  <section class="prose">
+  <!-- The Thesis -->
+  <section class="prose" style="padding-top:3.5rem;">
     <h1>The Thesis</h1>
-    <p>
+    <p style="font-size:1.1rem;line-height:1.75;color:var(--navy);">
       AI inference is rapidly becoming a commodity. As models proliferate and providers
       compete on price, the cost of a unit of AI-generated output is falling on a trajectory
       that resembles earlier technology deflation curves&mdash;semiconductors, bandwidth,
@@ -75,6 +77,56 @@
     </p>
 
     <!-- SSRN link: uncomment when paper is public -->
+  </section>
+
+  <!-- Key Concepts -->
+  <section>
+    <h2>Key Concepts</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-top:1.5rem;">
+      <div style="background:var(--navy);border-radius:6px;padding:1.5rem;">
+        <div style="font-family:var(--font-mono);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--gold);margin-bottom:0.5rem;">Capability-Second</div>
+        <p style="color:var(--slate-light);font-size:0.9rem;line-height:1.65;margin:0;">
+          The amount of useful AI output (score) delivered per second of latency.
+          The speed dimension of the index.
+        </p>
+      </div>
+      <div style="background:var(--navy);border-radius:6px;padding:1.5rem;">
+        <div style="font-family:var(--font-mono);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--gold);margin-bottom:0.5rem;">Capability-Dollar</div>
+        <p style="color:var(--slate-light);font-size:0.9rem;line-height:1.65;margin:0;">
+          The amount of useful AI output delivered per dollar of cost.
+          The economic dimension of the index.
+        </p>
+      </div>
+      <div style="background:var(--navy);border-radius:6px;padding:1.5rem;">
+        <div style="font-family:var(--font-mono);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--gold);margin-bottom:0.5rem;">CSI (Capability-Seconds Index)</div>
+        <p style="color:var(--slate-light);font-size:0.9rem;line-height:1.65;margin:0;">
+          The composite: score divided by the product of latency and cost. A single number
+          capturing efficiency across all three dimensions.
+        </p>
+      </div>
+      <div style="background:var(--navy);border-radius:6px;padding:1.5rem;">
+        <div style="font-family:var(--font-mono);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--gold);margin-bottom:0.5rem;">Cost Deflation Curve</div>
+        <p style="color:var(--slate-light);font-size:0.9rem;line-height:1.65;margin:0;">
+          The observed trajectory of declining AI inference costs over time. CSI tracks
+          whether this curve is accelerating, decelerating, or holding steady.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Forward Curve -->
+  <section class="prose">
+    <h2>Experimental: Forward Curve</h2>
+    <p>
+      We also maintain an experimental forward curve projecting CSI scenarios over
+      3&ndash;24 months. This model is in beta and uses structural assumptions, not
+      statistical fitting. It reflects different cost deflation rate assumptions applied
+      to current model pricing and will transition to empirical fitting once 12+ weeks
+      of measurement data are available.
+    </p>
+    <p>
+      <a href="forward.html" style="color:var(--gold-dim);text-decoration:none;border-bottom:1px solid rgba(201,162,39,0.3);">View Forward Curve &rarr;</a>
+    </p>
   </section>
 
 </main>
