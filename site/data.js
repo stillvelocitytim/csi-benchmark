@@ -788,7 +788,7 @@ function drawFrontier(models) {
       { color: '#A32D2D', label: 'CSI < 5' },
     ];
     legendEl.innerHTML = tiers.map(t =>
-      `<span style="display:inline-flex;align-items:center;gap:0.4rem;font-size:0.82rem;color:#c9d1d9;">` +
+      `<span style="display:inline-flex;align-items:center;gap:0.4rem;font-size:0.82rem;color:#1a1a1a;">` +
       `<span style="width:12px;height:12px;border-radius:50%;background:${t.color};display:inline-block;"></span>${t.label}</span>`
     ).join('');
   }
@@ -825,17 +825,17 @@ function drawFrontier(models) {
       scales: {
         x: {
           type: 'logarithmic',
-          title: { display: true, text: 'Cost per task ($, log scale)', color: '#8494a7', font: { size: 12 } },
+          title: { display: true, text: 'Cost per task ($, log scale)', color: '#1a1a1a', font: { size: 12 } },
           ticks: {
-            color: '#8494a7',
+            color: '#1a1a1a',
             callback: function(val) { return '$' + val; }
           },
-          grid: { color: 'rgba(255,255,255,0.05)' },
+          grid: { color: 'rgba(0,0,0,0.06)' },
         },
         y: {
-          title: { display: true, text: 'Capability Score', color: '#8494a7', font: { size: 12 } },
-          ticks: { color: '#8494a7' },
-          grid: { color: 'rgba(255,255,255,0.05)' },
+          title: { display: true, text: 'Capability Score', color: '#1a1a1a', font: { size: 12 } },
+          ticks: { color: '#1a1a1a' },
+          grid: { color: 'rgba(0,0,0,0.06)' },
           min: 0,
           max: 1,
         }
@@ -845,7 +845,7 @@ function drawFrontier(models) {
           const chart = this;
           const ctx = chart.ctx;
           ctx.font = '10px "IBM Plex Mono", monospace';
-          ctx.fillStyle = '#c9d1d9';
+          ctx.fillStyle = '#1a1a1a';
           ctx.textAlign = 'center';
           const meta = chart.getDatasetMeta(0);
           meta.data.forEach(function(point, i) {
@@ -961,8 +961,8 @@ function drawDollarCharts(models) {
   }
 
   const TASKS = [
-    { canvasId: 'viz-chart-10k', inputTokens: 80000, outputTokens: 2000 },
-    { canvasId: 'viz-chart-dcf', inputTokens: 1500, outputTokens: 8000 },
+    { canvasId: 'viz-chart-10k', insightId: 'viz-insight-10k', inputTokens: 80000, outputTokens: 2000, taskName: "summarize NVIDIA\u2019s 10-K" },
+    { canvasId: 'viz-chart-dcf', insightId: 'viz-insight-dcf', inputTokens: 1500, outputTokens: 8000, taskName: "build a DCF model" },
   ];
 
   const charts = [];
@@ -984,6 +984,14 @@ function drawDollarCharts(models) {
       .sort((a, b) => b.tasksPerDollar - a.tasksPerDollar);
 
     if (!data.length) continue;
+
+    // Populate dynamic insight
+    const insightEl = document.getElementById(task.insightId);
+    if (insightEl && data.length >= 2) {
+      const spread = Math.round(data[0].tasksPerDollar / data[data.length - 1].tasksPerDollar);
+      insightEl.innerHTML = '<strong>The cheapest model can ' + task.taskName + ' ' + spread + '\u00d7 more times per dollar than the most expensive.</strong>';
+      insightEl.style.display = '';
+    }
 
     const labels = data.map(d => d.name);
     const values = data.map(d => d.tasksPerDollar);
@@ -1017,9 +1025,9 @@ function drawDollarCharts(models) {
         scales: {
           x: {
             type: 'logarithmic',
-            title: { display: true, text: 'Tasks per $1 (log scale)', color: '#8494a7', font: { size: 11 } },
+            title: { display: true, text: 'Tasks per $1 (log scale)', color: '#1a1a1a', font: { size: 11 } },
             ticks: {
-              color: '#8494a7',
+              color: '#1a1a1a',
               callback: function(val) {
                 if ([1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000].includes(val)) {
                   return val.toLocaleString();
@@ -1027,10 +1035,10 @@ function drawDollarCharts(models) {
                 return '';
               }
             },
-            grid: { color: 'rgba(255,255,255,0.05)' },
+            grid: { color: 'rgba(0,0,0,0.06)' },
           },
           y: {
-            ticks: { color: '#c9d1d9', font: { size: 11 } },
+            ticks: { color: '#1a1a1a', font: { size: 11 } },
             grid: { display: false },
           }
         },
@@ -1040,7 +1048,7 @@ function drawDollarCharts(models) {
             const ch = this;
             const cx = ch.ctx;
             cx.font = '11px "IBM Plex Mono", monospace';
-            cx.fillStyle = '#c9d1d9';
+            cx.fillStyle = '#1a1a1a';
             cx.textAlign = 'left';
             cx.textBaseline = 'middle';
             const meta = ch.getDatasetMeta(0);

@@ -70,7 +70,7 @@
       <canvas id="frontier-chart" height="400"></canvas>
     </div>
     <p style="color:var(--slate-light);font-size:0.85rem;margin-top:0.75rem;">
-      Each bubble is a frontier AI model. Position shows cost vs. capability. Size shows overall efficiency (CSI). Top-left is the efficient frontier.
+      Each bubble is a frontier AI model. The x-axis shows what it costs to run a single benchmark task; the y-axis shows how well the model scores. Bubble size reflects the model&rsquo;s overall CSI&mdash;the bigger the bubble, the more efficiency you get per dollar per second. Models in the top-left corner are the efficient frontier: high capability at low cost.
     </p>
   </section>
 
@@ -81,28 +81,33 @@
       <div id="treemap-container" style="width:100%;height:480px;position:relative;"></div>
     </div>
     <p style="color:var(--slate-light);font-size:0.85rem;margin-top:0.75rem;">
-      Each rectangle is sized by CSI. If you spent $1 on every model, this is how much useful intelligence you&rsquo;d get back.
+      Each rectangle is sized by its model&rsquo;s CSI score&mdash;the composite measure of capability per second per dollar. Larger rectangles represent models that deliver more useful intelligence for the money. Color indicates the efficiency tier. If you spent $1 on every model, this is roughly how much productive output you&rsquo;d get back from each.
     </p>
   </section>
 
   <!-- SECTION 3: What Does $1 Buy? -->
   <section id="viz-dollar" style="display:none;">
     <h2>What does $1 buy?</h2>
+    <p style="color:var(--slate-light);font-size:0.9rem;max-width:740px;margin:0 0 2rem;">
+      The same task costs radically different amounts depending on which model you use. We priced two real tasks&mdash;summarizing NVIDIA&rsquo;s 80,000-token 10-K filing, and building a DCF valuation model&mdash;across all 16 frontier models using published API pricing. The bars show how many times each model can perform the task for one dollar.
+    </p>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;">
       <div>
         <h3 style="font-size:1rem;margin-bottom:0.75rem;">Summarize NVIDIA&rsquo;s 10-K</h3>
         <div class="table-wrap" style="padding:1.5rem;">
           <canvas id="viz-chart-10k" height="400"></canvas>
         </div>
+        <p id="viz-insight-10k" style="display:none;font-size:0.88rem;color:var(--text);margin-top:0.75rem;"></p>
       </div>
       <div>
         <h3 style="font-size:1rem;margin-bottom:0.75rem;">Build a DCF Model</h3>
         <div class="table-wrap" style="padding:1.5rem;">
           <canvas id="viz-chart-dcf" height="400"></canvas>
         </div>
+        <p id="viz-insight-dcf" style="display:none;font-size:0.88rem;color:var(--text);margin-top:0.75rem;"></p>
       </div>
     </div>
-    <p style="color:var(--slate-light);font-size:0.85rem;margin-top:0.75rem;">
+    <p style="color:var(--slate-light);font-size:0.85rem;margin-top:1rem;">
       Based on published API pricing. Token estimates: 10-K summary = 80K input / 2K output. DCF model = 1.5K input / 8K output.
     </p>
     <p style="font-family:var(--font-mono);font-size:0.78rem;color:var(--slate-light);opacity:0.6;margin-top:0.25rem;">
