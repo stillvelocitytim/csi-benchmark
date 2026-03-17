@@ -8,6 +8,15 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <meta property="og:title" content="Capability-Seconds Index (CSI)">
+  <meta property="og:description" content="Measuring AI productive capability per second per dollar. 8 models, 271x efficiency spread. Updated weekly.">
+  <meta property="og:image" content="https://www.csi-index.com/og-image.png">
+  <meta property="og:url" content="https://www.csi-index.com">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Capability-Seconds Index (CSI)">
+  <meta name="twitter:description" content="Measuring AI productive capability per second per dollar. 8 models, 271x efficiency spread.">
+  <meta name="twitter:image" content="https://www.csi-index.com/og-image.png">
 </head>
 <body>
 <script>
@@ -36,7 +45,7 @@
 
 <div class="hero">
   <div class="container">
-    <div class="hero-label">CSI Aggregate Index</div>
+    <div class="hero-label">CSI Aggregate Index <span style="display:inline-block;font-family:var(--font-mono);font-size:0.55rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#c9a227;border:1px solid #c9a227;border-radius:9999px;padding:0.15em 0.6em;margin-left:0.5em;vertical-align:middle;position:relative;top:-1px;">BETA</span></div>
     <div class="hero-number" id="hero-number"><span class="spinner"></span></div>
     <span id="hero-delta" class="badge badge-neutral" style="display:inline-block;min-width:1px;"></span>
     <div class="hero-date" id="hero-date">loading&hellip;</div>
@@ -45,6 +54,9 @@
       A composite measure of AI model efficiency: how much capability
       is delivered per second of latency per dollar of cost.
     </div>
+    <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6406658" target="_blank" rel="noopener"
+       style="color:#c9a227;font-family:var(--font-mono);font-size:0.85rem;text-decoration:none;opacity:0.85;border-bottom:1px solid rgba(201,162,39,0.3);"
+       onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.85'">Read the Paper &rarr;</a>
   </div>
 </div>
 
@@ -114,6 +126,17 @@
     </p>
   </section>
 
+  <section>
+    <h2>CSI Forward Curve</h2>
+    <div class="table-wrap" style="padding:1.5rem;">
+      <canvas id="forward-chart" height="300"></canvas>
+    </div>
+    <p style="color:#8494a7;font-size:0.82rem;margin-top:0.75rem;line-height:1.5;">
+      Forward projections use structural scenario analysis. Statistical fitting begins at Week&nbsp;12.
+      Scenarios reflect different cost deflation rate assumptions applied to current model pricing.
+    </p>
+  </section>
+
   <section class="prose">
     <h2>What is the CSI?</h2>
     <p>
@@ -134,6 +157,7 @@
   <div class="container">
     Capability-Seconds Index &middot; Updated daily &middot;
     <a href="https://github.com/">Source on GitHub</a>
+    <div style="color:#8494a7;font-size:0.75rem;margin-top:0.5rem;">Published by Nine Island Advisory LLC. For research purposes only. Not investment advice.</div>
   </div>
 </footer>
 

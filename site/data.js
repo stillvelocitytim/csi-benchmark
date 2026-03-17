@@ -196,6 +196,188 @@ async function loadCSIChart() {
 }
 
 /* =========================================================================
+   CHART: CSI Forward Curve (index.html)
+   ========================================================================= */
+
+async function loadForwardChart() {
+  const canvas = document.getElementById('forward-chart');
+  if (!canvas || typeof Chart === 'undefined') return;
+
+  try {
+    // Fetch current CSI aggregate (the "Now" point)
+    const aggRows = await sbFetch('csi_index', 'select=csi_aggregate&order=run_date.desc&limit=1');
+    const currentCSI = aggRows.length ? Number(aggRows[0].csi_aggregate) : null;
+
+    // Fetch latest run_date from forward curve, then fetch that date's rows
+    const dateRows = await sbFetch('csi_forward_curve', 'select=run_date&order=run_date.desc&limit=1');
+    if (!dateRows.length) return;
+    const latestDate = dateRows[0].run_date;
+
+    const rows = await sbFetch('csi_forward_curve',
+      `select=horizon_months,scenario,projected_csi,confidence_lower,confidence_upper&run_date=eq.${latestDate}`);
+
+    const horizons = [3, 6, 12, 24];
+    const xLabels = ['Now', '+3 mo', '+6 mo', '+12 mo', '+24 mo'];
+
+    function extractSeries(scenario) {
+      const pts = [currentCSI];
+      const lo = [currentCSI];
+      const hi = [currentCSI];
+      for (const h of horizons) {
+        const r = rows.find(d => d.horizon_months === h && d.scenario === scenario);
+        pts.push(r ? Number(r.projected_csi) : null);
+        lo.push(r ? Number(r.confidence_lower) : null);
+        hi.push(r ? Number(r.confidence_upper) : null);
+      }
+      return { pts, lo, hi };
+    }
+
+    const below = extractSeries('below_trend');
+    const hist  = extractSeries('historical_trend');
+    const above = extractSeries('above_trend');
+
+    new Chart(canvas, {
+      type: 'line',
+      data: {
+        labels: xLabels,
+        datasets: [
+          // Confidence bands (upper bounds, filled down to lower bounds)
+          {
+            label: '_above_upper',
+            data: above.hi,
+            borderColor: 'transparent',
+            backgroundColor: 'rgba(81,207,102,0.10)',
+            fill: '+1',
+            pointRadius: 0,
+            tension: 0.3,
+          },
+          {
+            label: '_above_lower',
+            data: above.lo,
+            borderColor: 'transparent',
+            backgroundColor: 'transparent',
+            fill: false,
+            pointRadius: 0,
+            tension: 0.3,
+          },
+          {
+            label: '_hist_upper',
+            data: hist.hi,
+            borderColor: 'transparent',
+            backgroundColor: 'rgba(224,224,224,0.10)',
+            fill: '+1',
+            pointRadius: 0,
+            tension: 0.3,
+          },
+          {
+            label: '_hist_lower',
+            data: hist.lo,
+            borderColor: 'transparent',
+            backgroundColor: 'transparent',
+            fill: false,
+            pointRadius: 0,
+            tension: 0.3,
+          },
+          {
+            label: '_below_upper',
+            data: below.hi,
+            borderColor: 'transparent',
+            backgroundColor: 'rgba(255,107,107,0.10)',
+            fill: '+1',
+            pointRadius: 0,
+            tension: 0.3,
+          },
+          {
+            label: '_below_lower',
+            data: below.lo,
+            borderColor: 'transparent',
+            backgroundColor: 'transparent',
+            fill: false,
+            pointRadius: 0,
+            tension: 0.3,
+          },
+          // Main lines
+          {
+            label: 'Above-Trend',
+            data: above.pts,
+            borderColor: '#51cf66',
+            backgroundColor: '#51cf66',
+            borderWidth: 2.5,
+            fill: false,
+            tension: 0.3,
+            pointRadius: 4,
+            pointBackgroundColor: '#51cf66',
+          },
+          {
+            label: 'Historical Trend',
+            data: hist.pts,
+            borderColor: '#e0e0e0',
+            backgroundColor: '#e0e0e0',
+            borderWidth: 2.5,
+            fill: false,
+            tension: 0.3,
+            pointRadius: 4,
+            pointBackgroundColor: '#e0e0e0',
+          },
+          {
+            label: 'Below-Trend',
+            data: below.pts,
+            borderColor: '#ff6b6b',
+            backgroundColor: '#ff6b6b',
+            borderWidth: 2.5,
+            fill: false,
+            tension: 0.3,
+            pointRadius: 4,
+            pointBackgroundColor: '#ff6b6b',
+          },
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            labels: {
+              color: '#c9d1d9',
+              usePointStyle: true,
+              pointStyle: 'line',
+              padding: 20,
+              font: { size: 12 },
+              filter: function(item) {
+                return !item.text.startsWith('_');
+              }
+            }
+          },
+          tooltip: {
+            callbacks: {
+              label: function(ctx) {
+                if (ctx.dataset.label.startsWith('_')) return null;
+                return ctx.dataset.label + ': ' + fmt(ctx.parsed.y, 2);
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            ticks: { color: '#8494a7', font: { size: 12 } },
+            grid: { color: 'rgba(255,255,255,0.05)' },
+          },
+          y: {
+            title: { display: true, text: 'Projected CSI Aggregate', color: '#8494a7', font: { size: 12 } },
+            ticks: { color: '#8494a7' },
+            grid: { color: 'rgba(255,255,255,0.05)' },
+            beginAtZero: false,
+          }
+        }
+      }
+    });
+  } catch (err) {
+    console.error('Forward chart load error:', err);
+  }
+}
+
+/* =========================================================================
    PAGE: data.html (Raw measurements)
    ========================================================================= */
 
@@ -245,11 +427,74 @@ async function loadMeasurements(tbody, runDate) {
 }
 
 /* =========================================================================
+   CSV Downloads (data.html)
+   ========================================================================= */
+
+function downloadCSV(data, filename) {
+  if (!data || !data.length) return;
+  const headers = Object.keys(data[0]);
+  const csv = [
+    headers.join(','),
+    ...data.map(row => headers.map(h => {
+      const val = row[h];
+      if (typeof val === 'string' && (val.includes(',') || val.includes('"'))) {
+        return '"' + val.replace(/"/g, '""') + '"';
+      }
+      return val == null ? '' : val;
+    }).join(','))
+  ].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+let _spotData = null;
+
+function wireDownloadButtons() {
+  const btnSpot = document.getElementById('btn-spot-csv');
+  const btnForward = document.getElementById('btn-forward-csv');
+  if (!btnSpot) return;
+
+  // Load spot data and enable button
+  sbFetch('csi_by_model', 'order=run_date.desc,csi.desc').then(data => {
+    _spotData = data;
+    if (data.length) btnSpot.disabled = false;
+  }).catch(() => {});
+
+  btnSpot.addEventListener('click', () => {
+    if (_spotData) {
+      downloadCSV(_spotData, 'csi_spot_' + new Date().toISOString().slice(0, 10) + '.csv');
+    }
+  });
+
+  btnForward.addEventListener('click', async () => {
+    try {
+      btnForward.disabled = true;
+      btnForward.textContent = 'Fetching\u2026';
+      const forward = await sbFetch('csi_forward_curve', 'order=run_date.desc');
+      downloadCSV(forward, 'csi_forward_curve_' + new Date().toISOString().slice(0, 10) + '.csv');
+    } catch (err) {
+      console.error('Forward curve fetch error:', err);
+      alert('Forward curve data not available yet.');
+    } finally {
+      btnForward.disabled = false;
+      btnForward.textContent = 'Download Forward Curve (CSV)';
+    }
+  });
+}
+
+/* =========================================================================
    Boot
    ========================================================================= */
 
 document.addEventListener('DOMContentLoaded', () => {
   loadDashboard();
   loadCSIChart();
+  loadForwardChart();
   loadDataPage();
+  wireDownloadButtons();
 });

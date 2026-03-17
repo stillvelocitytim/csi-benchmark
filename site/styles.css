@@ -257,6 +257,24 @@ tbody tr:hover { background: #f8f9fb; }
 }
 .fallback p { margin: 0 auto; max-width: 400px; }
 
+/* — Download buttons — */
+.btn-row { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+.btn-download {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.6em 1.25em;
+  background: var(--navy);
+  color: var(--gold);
+  border: 1px solid var(--gold-dim);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.btn-download:hover { background: var(--navy-mid); color: var(--white); }
+.btn-download:disabled { opacity: 0.4; cursor: not-allowed; }
+
 /* — Callout / Insight box — */
 .callout-box {
   background: var(--navy);

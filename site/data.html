@@ -8,6 +8,15 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <meta property="og:title" content="Capability-Seconds Index (CSI)">
+  <meta property="og:description" content="Measuring AI productive capability per second per dollar. 8 models, 271x efficiency spread. Updated weekly.">
+  <meta property="og:image" content="https://www.csi-index.com/og-image.png">
+  <meta property="og:url" content="https://www.csi-index.com">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Capability-Seconds Index (CSI)">
+  <meta name="twitter:description" content="Measuring AI productive capability per second per dollar. 8 models, 271x efficiency spread.">
+  <meta name="twitter:image" content="https://www.csi-index.com/og-image.png">
 </head>
 <body>
 <script>
@@ -43,6 +52,11 @@
       cost, and score. Select a run date to browse.
     </p>
 
+    <div class="btn-row" style="margin:1.5rem 0;">
+      <button class="btn-download" id="btn-spot-csv" disabled>Download Spot CSI (CSV)</button>
+      <button class="btn-download" id="btn-forward-csv">Download Forward Curve (CSV)</button>
+    </div>
+
     <div style="margin:1.25rem 0;">
       <label for="date-select" style="font-family:var(--font-mono);font-size:0.8rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--slate-light);margin-right:0.5rem;">
         Run date:
@@ -74,12 +88,27 @@
     </div>
   </section>
 
+  <section class="prose">
+    <h2>Connect to Excel</h2>
+    <p>
+      Finance professionals can connect directly to live CSI data using Excel
+      Power Query. Use <strong>Data &gt; Get Data &gt; From Web</strong> and
+      enter the endpoint URL below. Data refreshes automatically.
+    </p>
+    <div class="code-block" style="background:var(--navy);color:var(--gold);font-family:var(--font-mono);font-size:0.78rem;padding:1rem 1.25rem;border-radius:6px;overflow-x:auto;margin:1rem 0;word-break:break-all;user-select:all;">https://aclclaazduenkpmdsgsj.supabase.co/rest/v1/csi_by_model?select=*&amp;apikey=sb_publishable_wWJYyf3s9iOgoii7QT3udw_lCXnqrUZ</div>
+    <p style="color:var(--slate-light);font-size:0.85rem;">
+      Returns JSON. Power Query will auto-parse columns. For CSV format, add
+      <code>&amp;format=csv</code> to the URL.
+    </p>
+  </section>
+
 </main>
 
 <footer>
   <div class="container">
     Capability-Seconds Index &middot; Updated daily &middot;
     <a href="https://github.com/">Source on GitHub</a>
+    <div style="color:#8494a7;font-size:0.75rem;margin-top:0.5rem;">Published by Nine Island Advisory LLC. For research purposes only. Not investment advice.</div>
   </div>
 </footer>
 

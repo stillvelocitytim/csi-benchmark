@@ -6,7 +6,14 @@
       "Bash(git add:*)",
       "Bash(git push:*)",
       "Bash(cd:*)",
-      "WebFetch(domain:openrouter.ai)"
+      "WebFetch(domain:openrouter.ai)",
+      "Bash(pip install:*)",
+      "Bash(source .env)",
+      "Bash(python -m json.tool)",
+      "Bash(pip show:*)",
+      "Bash(npx supabase:*)",
+      "Bash(echo \"SUPABASE_URL=$SUPABASE_URL\")",
+      "Bash(env)"
     ]
   }
 }
