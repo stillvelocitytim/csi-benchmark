@@ -833,6 +833,12 @@ function drawTreemap(models) {
 
 /* --- Section 3: What Does $1 Buy? --- */
 
+function fmtTaskCost(cost) {
+  if (cost >= 1) return '$' + cost.toFixed(2);
+  if (cost >= 0.01) return '$' + cost.toFixed(2);
+  return '$' + cost.toFixed(3);
+}
+
 function drawDollarCharts(models) {
   const section = document.getElementById('viz-dollar');
   if (!section || typeof Chart === 'undefined' || !_vizPricing) return;
@@ -848,9 +854,9 @@ function drawDollarCharts(models) {
   }
 
   const TASKS = [
-    { canvasId: 'viz-chart-10k', inputTokens: 80000, outputTokens: 2000 },
-    { canvasId: 'viz-chart-dcf', inputTokens: 1500, outputTokens: 8000 },
-    { canvasId: 'viz-chart-legal', inputTokens: 12000, outputTokens: 1500 },
+    { canvasId: 'viz-chart-10k', insightId: 'viz-insight-10k', inputTokens: 80000, outputTokens: 2000, taskVerb: "Summarizing NVIDIA\u2019s 10-K" },
+    { canvasId: 'viz-chart-dcf', insightId: 'viz-insight-dcf', inputTokens: 1500, outputTokens: 8000, taskVerb: "Building a DCF model" },
+    { canvasId: 'viz-chart-legal', insightId: 'viz-insight-legal', inputTokens: 12000, outputTokens: 1500, taskVerb: "Summarizing a legal contract" },
   ];
 
   const spreads = [];
@@ -865,20 +871,31 @@ function drawDollarCharts(models) {
       const costPerTask = (task.inputTokens / 1e6 * inPrice) + (task.outputTokens / 1e6 * outPrice);
       return {
         name: shortModel(p.model),
-        tasksPerDollar: costPerTask > 0 ? 1 / costPerTask : 0,
+        cost: costPerTask,
         csi: csiMap[p.model] || 0,
       };
-    }).filter(d => d.tasksPerDollar > 0)
-      .sort((a, b) => b.tasksPerDollar - a.tasksPerDollar);
+    }).filter(d => d.cost > 0)
+      .sort((a, b) => a.cost - b.cost); // cheapest at top
 
     if (!data.length) continue;
 
+    const cheapest = data[0];
+    const priciest = data[data.length - 1];
+
     if (data.length >= 2) {
-      spreads.push(data[0].tasksPerDollar / data[data.length - 1].tasksPerDollar);
+      spreads.push(priciest.cost / cheapest.cost);
+    }
+
+    // Per-task insight
+    const insightEl = document.getElementById(task.insightId);
+    if (insightEl && data.length >= 2) {
+      const spread = Math.round(priciest.cost / cheapest.cost);
+      insightEl.innerHTML = '<strong>' + task.taskVerb + ' costs ' + spread + '\u00d7 more on ' + priciest.name + ' (' + fmtTaskCost(priciest.cost) + ') than on ' + cheapest.name + ' (' + fmtTaskCost(cheapest.cost) + ').</strong>';
+      insightEl.style.display = '';
     }
 
     const labels = data.map(d => d.name);
-    const values = data.map(d => d.tasksPerDollar);
+    const values = data.map(d => d.cost);
     const colors = data.map(d => csiTierColor(d.csi) + 'cc');
 
     const chart = new Chart(canvas, {
@@ -901,7 +918,7 @@ function drawDollarCharts(models) {
           tooltip: {
             callbacks: {
               label: function(ctx) {
-                return Math.round(ctx.parsed.x).toLocaleString() + ' tasks for $1';
+                return fmtTaskCost(ctx.parsed.x) + ' per task';
               }
             }
           }
@@ -909,12 +926,12 @@ function drawDollarCharts(models) {
         scales: {
           x: {
             type: 'logarithmic',
-            title: { display: true, text: 'Tasks per $1 (log)', color: '#1a1a1a', font: { size: 13 } },
+            title: { display: true, text: 'Cost per task (USD, log scale)', color: '#1a1a1a', font: { size: 13 } },
             ticks: {
               color: '#1a1a1a',
               callback: function(val) {
-                if ([1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000].includes(val)) {
-                  return val.toLocaleString();
+                if ([0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5].includes(val)) {
+                  return '$' + val;
                 }
                 return '';
               }
@@ -926,7 +943,7 @@ function drawDollarCharts(models) {
             grid: { display: false },
           }
         },
-        layout: { padding: { right: 55 } },
+        layout: { padding: { right: 65 } },
         animation: {
           onComplete: function() {
             const ch = this;
@@ -937,8 +954,7 @@ function drawDollarCharts(models) {
             cx.textBaseline = 'middle';
             const meta = ch.getDatasetMeta(0);
             meta.data.forEach(function(bar, i) {
-              const val = Math.round(values[i]).toLocaleString();
-              cx.fillText(val, bar.x + 4, bar.y);
+              cx.fillText(fmtTaskCost(values[i]), bar.x + 4, bar.y);
             });
           }
         }
@@ -952,7 +968,7 @@ function drawDollarCharts(models) {
   const avgInsightEl = document.getElementById('viz-insight-avg');
   if (avgInsightEl && spreads.length) {
     const avgSpread = Math.round(spreads.reduce((a, b) => a + b, 0) / spreads.length);
-    avgInsightEl.innerHTML = '<strong>Across these three tasks, the cheapest model averages ' + avgSpread + '\u00d7 more output per dollar than the most expensive.</strong>';
+    avgInsightEl.innerHTML = '<strong>Across these three tasks, the most expensive model costs an average of ' + avgSpread + '\u00d7 more per task than the cheapest.</strong>';
     avgInsightEl.style.display = '';
   }
 
