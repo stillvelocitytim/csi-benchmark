@@ -86,6 +86,31 @@ MODEL_CONFIGS = {
         "provider": "openrouter",
         "display": "Cohere Command A",
     },
+    "claude-haiku": {
+        "model_id": "claude-haiku-4-5-20251001",
+        "provider": "anthropic",
+        "display": "Claude Haiku 4.5",
+    },
+    "grok": {
+        "model_id": "x-ai/grok-3",
+        "provider": "openrouter",
+        "display": "Grok 3",
+    },
+    "deepseek-r1": {
+        "model_id": "deepseek/deepseek-r1-0528",
+        "provider": "openrouter",
+        "display": "DeepSeek R1",
+    },
+    "cohere-rplus": {
+        "model_id": "cohere/command-r-plus-08-2024",
+        "provider": "openrouter",
+        "display": "Cohere Command R+",
+    },
+    "qwen": {
+        "model_id": "qwen/qwen-2.5-72b-instruct",
+        "provider": "openrouter",
+        "display": "Qwen 2.5 72B",
+    },
 }
 
 # ---------------------------------------------------------------------------

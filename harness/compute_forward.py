@@ -104,6 +104,10 @@ def _credibility_for(model: str, provider: str) -> float:
             return CREDIBILITY.get("openrouter_deepseek", 0.80)
         if "cohere" in model.lower():
             return CREDIBILITY.get("openrouter_cohere", 0.80)
+        if "grok" in model.lower() or "x-ai" in model.lower():
+            return 0.80
+        if "qwen" in model.lower():
+            return 0.80
         return 0.80  # default for other openrouter models
     return 0.70  # unknown provider
 

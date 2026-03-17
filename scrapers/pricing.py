@@ -71,6 +71,46 @@ PRICING = [
         "source_url": "https://openrouter.ai/models/cohere/command-a",
         "snapshot_date": "2026-03-17",
     },
+    {
+        "model": "claude-haiku-4-5-20251001",
+        "provider": "anthropic",
+        "input_price_per_million": 1.00,
+        "output_price_per_million": 5.00,
+        "source_url": "https://docs.anthropic.com/en/docs/about-claude/models",
+        "snapshot_date": "2026-03-17",
+    },
+    {
+        "model": "x-ai/grok-3",
+        "provider": "openrouter",
+        "input_price_per_million": 3.00,
+        "output_price_per_million": 15.00,
+        "source_url": "https://openrouter.ai/models/x-ai/grok-3",
+        "snapshot_date": "2026-03-17",
+    },
+    {
+        "model": "deepseek/deepseek-r1-0528",
+        "provider": "openrouter",
+        "input_price_per_million": 0.45,
+        "output_price_per_million": 2.15,
+        "source_url": "https://openrouter.ai/models/deepseek/deepseek-r1-0528",
+        "snapshot_date": "2026-03-17",
+    },
+    {
+        "model": "cohere/command-r-plus-08-2024",
+        "provider": "openrouter",
+        "input_price_per_million": 2.50,
+        "output_price_per_million": 10.00,
+        "source_url": "https://openrouter.ai/models/cohere/command-r-plus-08-2024",
+        "snapshot_date": "2026-03-17",
+    },
+    {
+        "model": "qwen/qwen-2.5-72b-instruct",
+        "provider": "openrouter",
+        "input_price_per_million": 0.12,
+        "output_price_per_million": 0.39,
+        "source_url": "https://openrouter.ai/models/qwen/qwen-2.5-72b-instruct",
+        "snapshot_date": "2026-03-17",
+    },
 ]
 
 
