@@ -51,6 +51,26 @@ MODEL_CONFIGS = {
         "provider": "openrouter",
         "display": "Llama 3.3 70B",
     },
+    "claude-opus": {
+        "model_id": "claude-opus-4-20250514",
+        "provider": "anthropic",
+        "display": "Claude Opus 4",
+    },
+    "gpt4o-mini": {
+        "model_id": "gpt-4o-mini",
+        "provider": "openai",
+        "display": "GPT-4o Mini",
+    },
+    "gemini-pro": {
+        "model_id": "gemini-2.5-pro",
+        "provider": "google",
+        "display": "Gemini 2.5 Pro",
+    },
+    "mistral": {
+        "model_id": "mistralai/mistral-large-2411",
+        "provider": "openrouter",
+        "display": "Mistral Large",
+    },
 }
 
 # ---------------------------------------------------------------------------

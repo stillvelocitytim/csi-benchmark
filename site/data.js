@@ -36,9 +36,14 @@ function fmtPct(n) {
 function shortModel(m) {
   const map = {
     'claude-sonnet-4-20250514': 'Claude Sonnet 4',
+    'claude-opus-4-20250514': 'Claude Opus 4',
     'gpt-4o': 'GPT-4o',
+    'gpt-4o-mini': 'GPT-4o Mini',
     'gemini-2.0-flash': 'Gemini 2.0 Flash',
+    'gemini-2.5-flash': 'Gemini 2.5 Flash',
+    'gemini-2.5-pro': 'Gemini 2.5 Pro',
     'meta-llama/llama-3.3-70b-instruct': 'Llama 3.3 70B',
+    'mistralai/mistral-large-2411': 'Mistral Large',
   };
   return map[m] || m;
 }
@@ -102,6 +107,19 @@ async function loadDashboard() {
           <td class="num">${fmt(m.cd, 2)}</td>
           <td class="num"><strong>${fmt(m.csi, 2)}</strong></td>
         </tr>`).join('');
+      // Populate callout spread
+      const callout = document.getElementById('callout-insight');
+      const spreadEl = document.getElementById('csi-spread');
+      if (callout && spreadEl && models.length >= 2) {
+        const csiValues = models.map(m => Number(m.csi));
+        const maxCSI = Math.max(...csiValues);
+        const minCSI = Math.min(...csiValues);
+        if (minCSI > 0) {
+          const spread = Math.round(maxCSI / minCSI);
+          spreadEl.textContent = spread + 'x';
+          callout.style.display = '';
+        }
+      }
     } else if (modelTable) {
       showFallback(modelTable.closest('.table-wrap') || modelTable, 'No per-model data available.');
     }

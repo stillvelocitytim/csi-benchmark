@@ -257,6 +257,27 @@ tbody tr:hover { background: #f8f9fb; }
 }
 .fallback p { margin: 0 auto; max-width: 400px; }
 
+/* — Callout / Insight box — */
+.callout-box {
+  background: var(--navy);
+  border-left: 3px solid var(--gold);
+  border-radius: 4px;
+  padding: 1.25rem 1.5rem;
+  margin: 0.5rem 0;
+}
+.callout-box p {
+  font-style: italic;
+  color: var(--slate-light);
+  font-size: 0.92rem;
+  line-height: 1.7;
+  margin: 0;
+  max-width: none;
+}
+.callout-box strong {
+  color: var(--gold);
+  font-style: normal;
+}
+
 /* — Footer — */
 footer {
   background: var(--navy);
