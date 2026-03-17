@@ -334,4 +334,9 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as exc:
+        log.error("Forward curve computation failed: %s", exc)
+        log.info("This is non-fatal — forward curve will be retried on next run.")
+        raise SystemExit(1)

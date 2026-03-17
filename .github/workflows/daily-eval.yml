@@ -41,4 +41,5 @@ jobs:
         run: python -m harness.compute_csi
 
       - name: Compute forward curve
+        continue-on-error: true
         run: python -m harness.compute_forward
