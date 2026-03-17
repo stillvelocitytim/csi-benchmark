@@ -148,6 +148,24 @@
     </p>
   </section>
 
+  <section id="cost-equalizer" style="display:none;">
+    <h2>What Does $1 Buy?</h2>
+    <p style="color:var(--slate-light);max-width:600px;margin:0 0 2rem;">
+      Real tasks, real pricing. How many times can each model perform these tasks for one dollar?
+    </p>
+    <h3 style="font-size:1rem;margin-bottom:0.75rem;">Summarize NVIDIA's 10-K</h3>
+    <div class="table-wrap" style="padding:1.5rem;">
+      <canvas id="chart-10k" height="360"></canvas>
+    </div>
+    <h3 style="font-size:1rem;margin-top:2rem;margin-bottom:0.75rem;">Build a DCF Model</h3>
+    <div class="table-wrap" style="padding:1.5rem;">
+      <canvas id="chart-dcf" height="360"></canvas>
+    </div>
+    <p style="font-family:var(--font-mono);font-size:0.78rem;color:var(--slate-light);opacity:0.6;margin-top:1rem;">
+      Based on published API pricing as of the most recent snapshot. Token estimates: 10-K summary assumes 80K input / 2K output tokens. DCF model assumes 1.5K input / 8K output tokens.
+    </p>
+  </section>
+
   <section style="text-align:center;padding:3rem 0;">
     <h2>Get Weekly CSI Updates</h2>
     <p style="color:var(--slate-light);max-width:480px;margin:0.5rem auto 1.5rem;">

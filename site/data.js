@@ -44,6 +44,14 @@ function shortModel(m) {
     'gemini-2.5-pro': 'Gemini 2.5 Pro',
     'meta-llama/llama-3.3-70b-instruct': 'Llama 3.3 70B',
     'mistralai/mistral-large-2411': 'Mistral Large',
+    'claude-haiku-4-5-20251001': 'Claude Haiku 4.5',
+    'nvidia/llama-3.3-nemotron-super-49b-v1.5': 'Nemotron Super 49B',
+    'deepseek/deepseek-v3.2': 'DeepSeek V3.2',
+    'deepseek/deepseek-r1-0528': 'DeepSeek R1',
+    'cohere/command-a': 'Cohere Command A',
+    'cohere/command-r-plus-08-2024': 'Cohere Command R+',
+    'x-ai/grok-3': 'Grok 3',
+    'qwen/qwen-2.5-72b-instruct': 'Qwen 2.5 72B',
   };
   return map[m] || m;
 }
@@ -557,6 +565,134 @@ function wireDownloadButtons() {
 }
 
 /* =========================================================================
+   CHART: What Does $1 Buy? (index.html)
+   ========================================================================= */
+
+async function loadCostEqualizer() {
+  const section = document.getElementById('cost-equalizer');
+  if (!section || typeof Chart === 'undefined') return;
+
+  try {
+    // Fetch latest pricing snapshot for each model (most recent snapshot_date)
+    const rows = await sbFetch('pricing', 'select=model,input_price_per_million,output_price_per_million&order=snapshot_date.desc');
+    if (!rows.length) { section.style.display = 'none'; return; }
+
+    // Deduplicate: keep only the first (most recent) row per model
+    const seen = {};
+    const pricing = [];
+    for (const r of rows) {
+      if (!seen[r.model]) {
+        seen[r.model] = true;
+        pricing.push(r);
+      }
+    }
+
+    const TASKS = [
+      { id: 'chart-10k', label: 'Summarize NVIDIA\u2019s 10-K', inputTokens: 80000, outputTokens: 2000 },
+      { id: 'chart-dcf', label: 'Build a DCF Model', inputTokens: 1500, outputTokens: 8000 },
+    ];
+
+    const gold = '#c9a227';
+
+    for (const task of TASKS) {
+      const canvas = document.getElementById(task.id);
+      if (!canvas) continue;
+
+      // Calculate tasks per dollar for each model
+      const data = pricing.map(p => {
+        const inPrice = Number(p.input_price_per_million);
+        const outPrice = Number(p.output_price_per_million);
+        const costPerTask = (task.inputTokens / 1e6 * inPrice) + (task.outputTokens / 1e6 * outPrice);
+        return {
+          name: shortModel(p.model),
+          tasksPerDollar: costPerTask > 0 ? 1 / costPerTask : 0,
+        };
+      }).filter(d => d.tasksPerDollar > 0)
+        .sort((a, b) => b.tasksPerDollar - a.tasksPerDollar);
+
+      if (!data.length) continue;
+
+      const maxVal = data[0].tasksPerDollar;
+      const labels = data.map(d => d.name);
+      const values = data.map(d => d.tasksPerDollar);
+      const colors = data.map((d, i) => {
+        const opacity = 0.3 + 0.7 * (1 - i / Math.max(data.length - 1, 1));
+        return `rgba(201, 162, 39, ${opacity.toFixed(2)})`;
+      });
+
+      new Chart(canvas, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            data: values,
+            backgroundColor: colors,
+            borderColor: gold,
+            borderWidth: 1,
+            borderRadius: 3,
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function(ctx) {
+                  return Math.round(ctx.parsed.x).toLocaleString() + ' tasks for $1';
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              type: 'logarithmic',
+              title: { display: true, text: 'Tasks per $1 (log scale)', color: '#8494a7', font: { size: 11 } },
+              ticks: {
+                color: '#8494a7',
+                callback: function(val) {
+                  if ([1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000].includes(val)) {
+                    return val.toLocaleString();
+                  }
+                  return '';
+                }
+              },
+              grid: { color: 'rgba(255,255,255,0.05)' },
+            },
+            y: {
+              ticks: { color: '#c9d1d9', font: { size: 11 } },
+              grid: { display: false },
+            }
+          },
+          layout: { padding: { right: 60 } },
+          animation: {
+            onComplete: function() {
+              const chart = this;
+              const ctx = chart.ctx;
+              ctx.font = '11px "IBM Plex Mono", monospace';
+              ctx.fillStyle = '#c9d1d9';
+              ctx.textAlign = 'left';
+              ctx.textBaseline = 'middle';
+              const meta = chart.getDatasetMeta(0);
+              meta.data.forEach(function(bar, i) {
+                const val = Math.round(values[i]).toLocaleString();
+                ctx.fillText(val, bar.x + 6, bar.y);
+              });
+            }
+          }
+        }
+      });
+    }
+
+    section.style.display = '';
+  } catch (err) {
+    console.error('Cost equalizer load error:', err);
+    section.style.display = 'none';
+  }
+}
+
+/* =========================================================================
    Boot
    ========================================================================= */
 
@@ -564,6 +700,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loadDashboard();
   loadCSIChart();
   loadForwardChart();
+  loadCostEqualizer();
   loadResearchSpread();
   loadDataPage();
   wireDownloadButtons();
