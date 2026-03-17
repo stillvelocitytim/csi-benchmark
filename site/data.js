@@ -155,7 +155,15 @@ async function loadCSIChart() {
     if (!history.length) return;
 
     const labels = history.map(r => r.run_date);
-    const values = history.map(r => Number(r.csi_aggregate));
+    const raw = history.map(r => Number(r.csi_aggregate));
+
+    // Use 7-day rolling average when we have enough data points
+    const values = raw.length >= 7 ? raw.map(function(_, i, arr) {
+      if (i < 6) return arr[i];
+      var sum = 0;
+      for (var j = i - 6; j <= i; j++) sum += arr[j];
+      return sum / 7;
+    }) : raw;
 
     new Chart(canvas, {
       type: 'line',
@@ -346,6 +354,15 @@ async function loadForwardChart() {
               font: { size: 12 },
               filter: function(item) {
                 return !item.text.startsWith('_');
+              },
+              generateLabels: function(chart) {
+                const defaults = Chart.defaults.plugins.legend.labels.generateLabels(chart);
+                return defaults.filter(l => !l.text.startsWith('_')).map(function(l) {
+                  if (l.text === 'Above-Trend' || l.text === 'Historical Trend' || l.text === 'Below-Trend') {
+                    l.fontColor = '#000000';
+                  }
+                  return l;
+                });
               }
             }
           },

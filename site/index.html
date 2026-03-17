@@ -33,9 +33,11 @@
 
 <header>
   <div class="container">
-    <a href="index.html" class="logo">Capability<span>-Seconds</span> Index</a>
+    <a href="index.html" class="logo">Capability<span>-Seconds</span>&trade; Index</a>
     <nav>
       <a href="index.html" class="active">Dashboard</a>
+      <a href="forward.html">Forward Curve</a>
+      <a href="research.html">Research</a>
       <a href="methodology.html">Methodology</a>
       <a href="data.html">Data</a>
       <a href="sources.html">Sources</a>
@@ -54,9 +56,12 @@
       A composite measure of AI model efficiency: how much capability
       is delivered per second of latency per dollar of cost.
     </div>
-    <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6406658" target="_blank" rel="noopener"
+    <div class="hero-sub" style="font-size:0.85rem;opacity:0.7;margin-top:0.5rem;">
+      Track whether AI is getting cheaper &mdash; or just getting bigger.
+    </div>
+    <!-- <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6406658" target="_blank" rel="noopener"
        style="color:#c9a227;font-family:var(--font-mono);font-size:0.85rem;text-decoration:none;opacity:0.85;border-bottom:1px solid rgba(201,162,39,0.3);"
-       onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.85'">Read the Paper &rarr;</a>
+       onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.85'">Read the Paper &rarr;</a> -->
   </div>
 </div>
 
@@ -122,25 +127,14 @@
       <canvas id="csi-chart" height="280"></canvas>
     </div>
     <p style="color:#8494a7;font-size:0.85rem;margin-top:0.75rem;">
-      Weekly measurements began March 2026.
-    </p>
-  </section>
-
-  <section>
-    <h2>CSI Forward Curve</h2>
-    <div class="table-wrap" style="padding:1.5rem;">
-      <canvas id="forward-chart" height="300"></canvas>
-    </div>
-    <p style="color:#8494a7;font-size:0.82rem;margin-top:0.75rem;line-height:1.5;">
-      Forward projections use structural scenario analysis. Statistical fitting begins at Week&nbsp;12.
-      Scenarios reflect different cost deflation rate assumptions applied to current model pricing.
+      Shows 7-day rolling average. Daily measurements began March 2026.
     </p>
   </section>
 
   <section class="prose">
     <h2>What is the CSI?</h2>
     <p>
-      The <strong>Capability-Seconds Index</strong> measures how efficiently frontier
+      The <strong>Capability-Seconds&trade; Index</strong> measures how efficiently frontier
       AI models convert compute time and money into useful output. It combines three
       dimensions&mdash;quality, speed, and cost&mdash;into a single number that tracks
       the practical value of AI inference over time.
@@ -151,11 +145,24 @@
     </p>
   </section>
 
+  <section style="text-align:center;padding:3rem 0;">
+    <h2>Get Weekly CSI Updates</h2>
+    <p style="color:var(--slate-light);max-width:480px;margin:0.5rem auto 1.5rem;">
+      One email per week with the latest index value, model movements, and efficiency trends.
+    </p>
+    <form id="subscribe-form" style="display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap;">
+      <input type="email" id="subscribe-email" placeholder="you@example.com" required
+        style="font-family:var(--font-mono);font-size:0.85rem;padding:0.6em 1em;border:1px solid #dde1e6;border-radius:4px;width:280px;">
+      <button type="submit" id="subscribe-btn" class="btn-download" style="opacity:1;">Subscribe</button>
+    </form>
+    <p id="subscribe-msg" style="display:none;color:var(--green);font-family:var(--font-mono);font-size:0.85rem;margin-top:1rem;"></p>
+  </section>
+
 </main>
 
 <footer>
   <div class="container">
-    Capability-Seconds Index &middot; Updated daily &middot;
+    Capability-Seconds&trade; Index &middot; Updated daily &middot;
     <a href="https://github.com/">Source on GitHub</a>
     <div style="color:#8494a7;font-size:0.75rem;margin-top:0.5rem;">Published by Nine Island Advisory LLC. For research purposes only. Not investment advice.</div>
   </div>
@@ -163,5 +170,45 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 <script src="data.js"></script>
+<script>
+document.getElementById('subscribe-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  var email = document.getElementById('subscribe-email').value;
+  var btn = document.getElementById('subscribe-btn');
+  var msg = document.getElementById('subscribe-msg');
+  btn.disabled = true;
+  btn.textContent = 'Sending\u2026';
+  try {
+    var resp = await fetch(SUPABASE_URL + '/rest/v1/subscribers', {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ email: email })
+    });
+    if (resp.ok) {
+      msg.style.display = '';
+      msg.style.color = 'var(--green)';
+      msg.textContent = "Thanks \u2014 you're subscribed!";
+      document.getElementById('subscribe-form').style.display = 'none';
+    } else if (resp.status === 409) {
+      msg.style.display = '';
+      msg.style.color = 'var(--gold)';
+      msg.textContent = "You're already subscribed!";
+    } else {
+      throw new Error(resp.status);
+    }
+  } catch (err) {
+    msg.style.display = '';
+    msg.style.color = 'var(--red)';
+    msg.textContent = 'Something went wrong. Please try again.';
+    btn.disabled = false;
+    btn.textContent = 'Subscribe';
+  }
+});
+</script>
 </body>
 </html>

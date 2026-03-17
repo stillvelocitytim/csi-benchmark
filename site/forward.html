@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forward Curve — CSI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <meta property="og:title" content="CSI Forward Curve">
+  <meta property="og:description" content="Projected CSI efficiency curve under different cost deflation scenarios.">
+  <meta property="og:image" content="https://www.csi-index.com/og-image.png">
+  <meta property="og:url" content="https://www.csi-index.com/forward.html">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="CSI Forward Curve">
+  <meta name="twitter:description" content="Projected CSI efficiency curve under different cost deflation scenarios.">
+  <meta name="twitter:image" content="https://www.csi-index.com/og-image.png">
+</head>
+<body>
+<script>
+(function(){
+  if(sessionStorage.getItem('csi_auth')) return;
+  var p = prompt('Enter password to continue:');
+  if(p !== 'csi2026'){
+    document.body.innerHTML = '<h1 style="color:white;text-align:center;margin-top:40vh">Access Denied</h1>';
+    throw new Error('auth');
+  }
+  sessionStorage.setItem('csi_auth','true');
+})();
+</script>
+
+<header>
+  <div class="container">
+    <a href="index.html" class="logo">Capability<span>-Seconds</span>&trade; Index</a>
+    <nav>
+      <a href="index.html">Dashboard</a>
+      <a href="forward.html" class="active">Forward Curve</a>
+      <a href="research.html">Research</a>
+      <a href="methodology.html">Methodology</a>
+      <a href="data.html">Data</a>
+      <a href="sources.html">Sources</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+
+  <section>
+    <h1>
+      CSI Forward Curve
+      <span style="display:inline-block;font-family:var(--font-mono);font-size:0.55rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#c9a227;border:1px solid #c9a227;border-radius:9999px;padding:0.15em 0.6em;margin-left:0.5em;vertical-align:middle;position:relative;top:-3px;">BETA</span>
+      <span style="display:inline-block;font-family:var(--font-mono);font-size:0.55rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--slate-light);border:1px solid var(--slate-light);border-radius:9999px;padding:0.15em 0.6em;margin-left:0.25em;vertical-align:middle;position:relative;top:-3px;">EXPERIMENTAL</span>
+    </h1>
+    <p style="max-width:64ch;color:var(--slate);line-height:1.7;">
+      These projections use structural scenario modeling, not statistical fitting. They reflect
+      different cost deflation rate assumptions applied to current model pricing. Projections
+      will transition to empirical fitting once 12+ weeks of measurement data are available.
+    </p>
+  </section>
+
+  <section>
+    <div class="table-wrap" style="padding:1.5rem;">
+      <canvas id="forward-chart" height="300"></canvas>
+    </div>
+    <p style="color:#8494a7;font-size:0.82rem;margin-top:0.75rem;line-height:1.5;">
+      Forward projections use structural scenario analysis. Statistical fitting begins at Week&nbsp;12.
+      Scenarios reflect different cost deflation rate assumptions applied to current model pricing.
+    </p>
+  </section>
+
+</main>
+
+<footer>
+  <div class="container">
+    Capability-Seconds&trade; Index &middot; Updated daily &middot;
+    <a href="https://github.com/">Source on GitHub</a>
+    <div style="color:#8494a7;font-size:0.75rem;margin-top:0.5rem;">Published by Nine Island Advisory LLC. For research purposes only. Not investment advice.</div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<script src="data.js"></script>
+</body>
+</html>
