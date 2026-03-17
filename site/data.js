@@ -379,7 +379,7 @@ async function loadForwardChart() {
               usePointStyle: true,
               pointStyle: 'line',
               padding: 20,
-              font: { size: 12 },
+              font: { size: 13 },
               filter: function(item) {
                 return !item.text.startsWith('_');
               },
@@ -405,11 +405,11 @@ async function loadForwardChart() {
         },
         scales: {
           x: {
-            ticks: { color: '#8494a7', font: { size: 12 } },
+            ticks: { color: '#8494a7', font: { size: 13 } },
             grid: { color: 'rgba(255,255,255,0.05)' },
           },
           y: {
-            title: { display: true, text: 'Projected CSI Aggregate', color: '#8494a7', font: { size: 12 } },
+            title: { display: true, text: 'Projected CSI Aggregate', color: '#8494a7', font: { size: 13 } },
             ticks: { color: '#8494a7' },
             grid: { color: 'rgba(255,255,255,0.05)' },
             beginAtZero: false,
@@ -648,7 +648,7 @@ async function loadCostEqualizer() {
           scales: {
             x: {
               type: 'logarithmic',
-              title: { display: true, text: 'Tasks per $1 (log scale)', color: '#8494a7', font: { size: 11 } },
+              title: { display: true, text: 'Tasks per $1 (log scale)', color: '#8494a7', font: { size: 13 } },
               ticks: {
                 color: '#8494a7',
                 callback: function(val) {
@@ -661,7 +661,7 @@ async function loadCostEqualizer() {
               grid: { color: 'rgba(255,255,255,0.05)' },
             },
             y: {
-              ticks: { color: '#c9d1d9', font: { size: 11 } },
+              ticks: { color: '#c9d1d9', font: { size: 13 } },
               grid: { display: false },
             }
           },
@@ -670,7 +670,7 @@ async function loadCostEqualizer() {
             onComplete: function() {
               const chart = this;
               const ctx = chart.ctx;
-              ctx.font = '11px "IBM Plex Mono", monospace';
+              ctx.font = '13px "IBM Plex Mono", monospace';
               ctx.fillStyle = '#c9d1d9';
               ctx.textAlign = 'left';
               ctx.textBaseline = 'middle';
@@ -825,7 +825,7 @@ function drawFrontier(models) {
       scales: {
         x: {
           type: 'logarithmic',
-          title: { display: true, text: 'Cost per task ($, log scale)', color: '#1a1a1a', font: { size: 12 } },
+          title: { display: true, text: 'Cost per task ($, log scale)', color: '#1a1a1a', font: { size: 13 } },
           ticks: {
             color: '#1a1a1a',
             callback: function(val) { return '$' + val; }
@@ -833,7 +833,7 @@ function drawFrontier(models) {
           grid: { color: 'rgba(0,0,0,0.06)' },
         },
         y: {
-          title: { display: true, text: 'Capability Score', color: '#1a1a1a', font: { size: 12 } },
+          title: { display: true, text: 'Capability Score', color: '#1a1a1a', font: { size: 13 } },
           ticks: { color: '#1a1a1a' },
           grid: { color: 'rgba(0,0,0,0.06)' },
           min: 0,
@@ -844,7 +844,7 @@ function drawFrontier(models) {
         onComplete: function() {
           const chart = this;
           const ctx = chart.ctx;
-          ctx.font = '10px "IBM Plex Mono", monospace';
+          ctx.font = '13px "IBM Plex Mono", monospace';
           ctx.fillStyle = '#1a1a1a';
           ctx.textAlign = 'center';
           const meta = chart.getDatasetMeta(0);
@@ -924,16 +924,16 @@ function drawTreemap(models) {
         .attr('text-anchor', 'middle')
         .attr('fill', '#fff')
         .attr('font-family', '"IBM Plex Mono", monospace')
-        .attr('font-size', w > 100 ? '11px' : '9px')
+        .attr('font-size', w > 100 ? '13px' : '11px')
         .text(d.data.name);
 
       g.append('text')
         .attr('x', (w) / 2)
-        .attr('y', (h) / 2 + 9)
+        .attr('y', (h) / 2 + 10)
         .attr('text-anchor', 'middle')
         .attr('fill', 'rgba(255,255,255,0.7)')
         .attr('font-family', '"IBM Plex Mono", monospace')
-        .attr('font-size', w > 100 ? '10px' : '8px')
+        .attr('font-size', w > 100 ? '12px' : '10px')
         .text('CSI ' + fmt(d.data.csi, 1));
     }
   });
@@ -1025,7 +1025,7 @@ function drawDollarCharts(models) {
         scales: {
           x: {
             type: 'logarithmic',
-            title: { display: true, text: 'Tasks per $1 (log scale)', color: '#1a1a1a', font: { size: 11 } },
+            title: { display: true, text: 'Tasks per $1 (log scale)', color: '#1a1a1a', font: { size: 13 } },
             ticks: {
               color: '#1a1a1a',
               callback: function(val) {
@@ -1038,7 +1038,7 @@ function drawDollarCharts(models) {
             grid: { color: 'rgba(0,0,0,0.06)' },
           },
           y: {
-            ticks: { color: '#1a1a1a', font: { size: 11 } },
+            ticks: { color: '#1a1a1a', font: { size: 13 } },
             grid: { display: false },
           }
         },
@@ -1047,7 +1047,7 @@ function drawDollarCharts(models) {
           onComplete: function() {
             const ch = this;
             const cx = ch.ctx;
-            cx.font = '11px "IBM Plex Mono", monospace';
+            cx.font = '13px "IBM Plex Mono", monospace';
             cx.fillStyle = '#1a1a1a';
             cx.textAlign = 'left';
             cx.textBaseline = 'middle';
