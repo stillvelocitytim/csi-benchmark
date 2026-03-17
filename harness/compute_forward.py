@@ -8,6 +8,7 @@ import logging
 import math
 import os
 from datetime import date
+from dateutil.relativedelta import relativedelta
 
 import httpx
 import numpy as np
@@ -339,6 +340,72 @@ def main():
 
     log.info("Done. %d model projections, %d aggregate points stored.",
              len(per_model_results), len(aggregate_results))
+
+    # 7. Write to prediction ledger (csi_forward_predictions)
+    _store_prediction_ledger(run_date, aggregate_results, len(models))
+
+
+def _store_prediction_ledger(run_date: str, aggregate_results: list, model_count: int):
+    """Store 12 aggregate predictions (3 scenarios × 4 horizons) for accuracy tracking."""
+    today = date.fromisoformat(run_date)
+
+    # Guard: check if predictions already exist for this date
+    try:
+        resp = httpx.get(
+            _sb_url("csi_forward_predictions"),
+            headers=_sb_headers(),
+            params={"select": "id", "prediction_date": f"eq.{run_date}", "limit": "1"},
+        )
+        resp.raise_for_status()
+        if resp.json():
+            log.info("Prediction ledger: rows already exist for %s — skipping.", run_date)
+            return
+    except Exception as exc:
+        log.warning("Prediction ledger: could not check for existing rows (%s) — attempting insert anyway.", exc)
+
+    # Fetch current spot CSI
+    spot_csi = 0.0
+    try:
+        resp = httpx.get(
+            _sb_url("csi_index"),
+            headers=_sb_headers(),
+            params={"select": "csi_aggregate", "order": "run_date.desc", "limit": "1"},
+        )
+        resp.raise_for_status()
+        rows = resp.json()
+        if rows:
+            spot_csi = float(rows[0]["csi_aggregate"])
+    except Exception as exc:
+        log.warning("Prediction ledger: could not fetch spot CSI: %s", exc)
+
+    horizon_labels = {3: "3mo", 6: "6mo", 12: "12mo", 24: "24mo"}
+    headers = {**_sb_headers(), "Prefer": "return=minimal"}
+    inserted = 0
+
+    for r in aggregate_results:
+        horizon = r["horizon_months"]
+        scenario = r["scenario"]
+        target = today + relativedelta(months=horizon)
+        defl_rate = COST_DEFLATION.get(scenario, 0.0)
+
+        payload = {
+            "prediction_date": run_date,
+            "target_date": str(target),
+            "horizon": horizon_labels.get(horizon, f"{horizon}mo"),
+            "scenario": scenario,
+            "predicted_csi": r["projected_csi"],
+            "deflation_rate_used": round(defl_rate, 4),
+            "model_count": model_count,
+            "spot_csi": round(spot_csi, 2),
+        }
+        try:
+            resp = httpx.post(_sb_url("csi_forward_predictions"), headers=headers, json=payload)
+            resp.raise_for_status()
+            inserted += 1
+        except Exception as exc:
+            log.error("Prediction ledger: failed to store %s/%s: %s", horizon, scenario, exc)
+
+    log.info("Prediction ledger: %d rows inserted for %s.", inserted, run_date)
 
 
 if __name__ == "__main__":
