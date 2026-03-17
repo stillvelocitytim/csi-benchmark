@@ -47,6 +47,30 @@ PRICING = [
         "source_url": "https://openrouter.ai/models/meta-llama/llama-3.3-70b-instruct",
         "snapshot_date": "2026-03-13",
     },
+    {
+        "model": "nvidia/llama-3.3-nemotron-super-49b-v1.5",
+        "provider": "openrouter",
+        "input_price_per_million": 0.10,
+        "output_price_per_million": 0.40,
+        "source_url": "https://openrouter.ai/models/nvidia/llama-3.3-nemotron-super-49b-v1.5",
+        "snapshot_date": "2026-03-17",
+    },
+    {
+        "model": "deepseek/deepseek-v3.2",
+        "provider": "openrouter",
+        "input_price_per_million": 0.26,
+        "output_price_per_million": 0.38,
+        "source_url": "https://openrouter.ai/models/deepseek/deepseek-v3.2",
+        "snapshot_date": "2026-03-17",
+    },
+    {
+        "model": "cohere/command-a",
+        "provider": "openrouter",
+        "input_price_per_million": 2.50,
+        "output_price_per_million": 10.00,
+        "source_url": "https://openrouter.ai/models/cohere/command-a",
+        "snapshot_date": "2026-03-17",
+    },
 ]
 
 

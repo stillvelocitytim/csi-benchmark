@@ -96,10 +96,14 @@ def _credibility_for(model: str, provider: str) -> float:
     if provider == "google":
         return CREDIBILITY["google"]
     if provider == "openrouter":
-        if "llama" in model.lower() or "meta" in model.lower():
+        if "llama" in model.lower() or "meta" in model.lower() or "nemotron" in model.lower():
             return CREDIBILITY["openrouter_meta"]
         if "mistral" in model.lower():
             return CREDIBILITY["openrouter_mistral"]
+        if "deepseek" in model.lower():
+            return CREDIBILITY.get("openrouter_deepseek", 0.80)
+        if "cohere" in model.lower():
+            return CREDIBILITY.get("openrouter_cohere", 0.80)
         return 0.80  # default for other openrouter models
     return 0.70  # unknown provider
 

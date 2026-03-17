@@ -71,6 +71,21 @@ MODEL_CONFIGS = {
         "provider": "openrouter",
         "display": "Mistral Large",
     },
+    "nemotron": {
+        "model_id": "nvidia/llama-3.3-nemotron-super-49b-v1.5",
+        "provider": "openrouter",
+        "display": "Nemotron Super 49B",
+    },
+    "deepseek": {
+        "model_id": "deepseek/deepseek-v3.2",
+        "provider": "openrouter",
+        "display": "DeepSeek V3.2",
+    },
+    "cohere": {
+        "model_id": "cohere/command-a",
+        "provider": "openrouter",
+        "display": "Cohere Command A",
+    },
 }
 
 # ---------------------------------------------------------------------------
