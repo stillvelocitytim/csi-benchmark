@@ -3,7 +3,9 @@
     "allow": [
       "Bash(gh secret:*)",
       "Bash(curl:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git push:*)",
+      "Bash(cd:*)"
     ]
   }
 }
