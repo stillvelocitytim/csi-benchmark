@@ -415,6 +415,38 @@ async function loadForwardChart() {
 }
 
 /* =========================================================================
+   PAGE: research.html (Dynamic efficiency spread)
+   ========================================================================= */
+
+async function loadResearchSpread() {
+  const spreadEl = document.getElementById('research-spread');
+  const detailEl = document.getElementById('research-spread-detail');
+  if (!spreadEl) return; // not on research page
+
+  try {
+    const agg = await sbFetch('csi_index', 'order=run_date.desc&limit=1');
+    if (!agg.length) return;
+
+    const models = await sbFetch('csi_by_model', `run_date=eq.${agg[0].run_date}&order=csi.desc`);
+    if (models.length < 2) return;
+
+    const csiVals = models.map(m => ({ name: shortModel(m.model), csi: Number(m.csi) }));
+    const best = csiVals.reduce((a, b) => a.csi > b.csi ? a : b);
+    const worst = csiVals.reduce((a, b) => a.csi < b.csi ? a : b);
+    if (worst.csi <= 0) return;
+
+    const spread = Math.round(best.csi / worst.csi);
+    spreadEl.textContent = spread + '\u00d7';
+    detailEl.textContent =
+      best.name + ' CSI: ' + fmt(best.csi, 0) + ' \u00f7 ' +
+      worst.name + ' CSI: ' + fmt(worst.csi, 2) + ' = ' + spread + '\u00d7';
+  } catch (err) {
+    console.error('Research spread load error:', err);
+    // fallback: keep static 271×
+  }
+}
+
+/* =========================================================================
    PAGE: data.html (Raw measurements)
    ========================================================================= */
 
@@ -532,6 +564,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loadDashboard();
   loadCSIChart();
   loadForwardChart();
+  loadResearchSpread();
   loadDataPage();
   wireDownloadButtons();
 });
