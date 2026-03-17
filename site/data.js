@@ -85,6 +85,11 @@ async function loadDashboard() {
     }
 
     const idx = agg[0];
+    // Populate "Last run" timestamp
+    const lastRunEl = document.getElementById('last-run');
+    if (lastRunEl && idx.run_date) {
+      lastRunEl.textContent = 'Last run: ' + idx.run_date;
+    }
     const csiVal = Number(idx.csi_aggregate);
     const intPart = Math.floor(csiVal);
     const decPart = csiVal.toFixed(2).split('.')[1];

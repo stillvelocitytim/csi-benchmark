@@ -334,11 +334,47 @@ footer a { color: var(--gold); text-decoration: none; }
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* — Hamburger toggle (hidden on desktop) — */
+.nav-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  flex-direction: column;
+  gap: 4px;
+}
+.nav-toggle span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--white);
+  border-radius: 1px;
+  transition: transform 0.2s, opacity 0.2s;
+}
+
 /* — Responsive — */
-@media (max-width: 640px) {
+@media (max-width: 768px) {
+  .nav-toggle { display: flex; }
+  .logo { font-size: 1rem; }
+  header .container { flex-wrap: wrap; }
+  nav {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    gap: 0;
+    padding-top: 1rem;
+  }
+  nav.open { display: flex; }
+  nav a {
+    padding: 0.65rem 0;
+    font-size: 0.85rem;
+    border-bottom: 1px solid var(--navy-mid);
+  }
+  nav a:last-child { border-bottom: none; }
+  nav a.active { border-bottom: 1px solid var(--navy-mid); padding-bottom: 0.65rem; }
+  nav a:last-child.active { border-bottom: none; }
   .hero-number { font-size: 3.5rem; }
-  nav { gap: 1rem; }
-  nav a { font-size: 0.75rem; }
   .stat-row { grid-template-columns: 1fr 1fr; }
   h1 { font-size: 1.75rem; }
 }
