@@ -87,8 +87,9 @@ async function loadDashboard() {
     heroDate.textContent = idx.run_date;
     if (statCS) statCS.textContent = fmt(idx.cs_aggregate, 4);
     if (statCD) statCD.textContent = fmt(idx.cd_aggregate, 2);
-    // Fetch per-model breakdown for latest date
+    // Fetch per-model breakdown for latest date, sorted by CSI descending
     const models = await sbFetch('csi_by_model', `run_date=eq.${idx.run_date}&order=csi.desc`);
+    models.sort((a, b) => Number(b.csi) - Number(a.csi));
     if (statModels) statModels.textContent = models.length;
     if (modelTable && models.length) {
       modelTable.innerHTML = models.map(m => `
@@ -120,6 +121,59 @@ async function loadDashboard() {
     console.error('Dashboard load error:', err);
     heroNum.textContent = '—';
     heroDate.textContent = 'Error loading data';
+  }
+}
+
+/* =========================================================================
+   CHART: CSI Over Time (index.html)
+   ========================================================================= */
+
+async function loadCSIChart() {
+  const canvas = document.getElementById('csi-chart');
+  if (!canvas || typeof Chart === 'undefined') return;
+
+  try {
+    const history = await sbFetch('csi_index', 'select=run_date,csi_aggregate&order=run_date.asc');
+    if (!history.length) return;
+
+    const labels = history.map(r => r.run_date);
+    const values = history.map(r => Number(r.csi_aggregate));
+
+    new Chart(canvas, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: 'CSI Aggregate',
+          data: values,
+          borderColor: '#6ee7b7',
+          backgroundColor: 'rgba(110,231,183,0.1)',
+          fill: true,
+          tension: 0.3,
+          pointRadius: values.length === 1 ? 6 : 3,
+          pointBackgroundColor: '#6ee7b7',
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+        },
+        scales: {
+          x: {
+            ticks: { color: '#8494a7' },
+            grid: { color: 'rgba(255,255,255,0.05)' },
+          },
+          y: {
+            ticks: { color: '#8494a7' },
+            grid: { color: 'rgba(255,255,255,0.05)' },
+            beginAtZero: false,
+          }
+        }
+      }
+    });
+  } catch (err) {
+    console.error('Chart load error:', err);
   }
 }
 
@@ -178,5 +232,6 @@ async function loadMeasurements(tbody, runDate) {
 
 document.addEventListener('DOMContentLoaded', () => {
   loadDashboard();
+  loadCSIChart();
   loadDataPage();
 });

@@ -40,6 +40,7 @@
     <div class="hero-number" id="hero-number"><span class="spinner"></span></div>
     <span id="hero-delta" class="badge badge-neutral" style="display:inline-block;min-width:1px;"></span>
     <div class="hero-date" id="hero-date">loading&hellip;</div>
+    <div class="hero-date" style="opacity:0.55;font-size:0.85rem;">Updated weekly</div>
     <div class="hero-sub">
       A composite measure of AI model efficiency: how much capability
       is delivered per second of latency per dollar of cost.
@@ -93,6 +94,16 @@
     </div>
   </section>
 
+  <section>
+    <h2>CSI Over Time</h2>
+    <div class="table-wrap" style="padding:1.5rem;">
+      <canvas id="csi-chart" height="280"></canvas>
+    </div>
+    <p style="color:#8494a7;font-size:0.85rem;margin-top:0.75rem;">
+      Weekly measurements began March 2026. Historical trend will populate automatically.
+    </p>
+  </section>
+
   <section class="prose">
     <h2>What is the CSI?</h2>
     <p>
@@ -116,6 +127,7 @@
   </div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 <script src="data.js"></script>
 </body>
 </html>
