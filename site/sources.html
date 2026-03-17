@@ -60,18 +60,18 @@
         </thead>
         <tbody>
           <tr>
+            <td class="model-name">Claude Opus 4</td>
+            <td>Anthropic</td>
+            <td>Native SDK</td>
+            <td class="num">$15.00</td>
+            <td class="num">$75.00</td>
+          </tr>
+          <tr>
             <td class="model-name">Claude Sonnet 4</td>
             <td>Anthropic</td>
             <td>Native SDK</td>
             <td class="num">$3.00</td>
             <td class="num">$15.00</td>
-          </tr>
-          <tr>
-            <td class="model-name">GPT-4o</td>
-            <td>OpenAI</td>
-            <td>Native SDK</td>
-            <td class="num">$2.50</td>
-            <td class="num">$10.00</td>
           </tr>
           <tr>
             <td class="model-name">Gemini 2.5 Flash</td>
@@ -81,11 +81,39 @@
             <td class="num">$0.60</td>
           </tr>
           <tr>
+            <td class="model-name">Gemini 2.5 Pro</td>
+            <td>Google</td>
+            <td>Native SDK</td>
+            <td class="num">$1.25</td>
+            <td class="num">$10.00</td>
+          </tr>
+          <tr>
             <td class="model-name">Llama 3.3 70B Instruct</td>
             <td>Meta via OpenRouter</td>
             <td>OpenAI-compatible</td>
             <td class="num">$0.39</td>
             <td class="num">$0.39</td>
+          </tr>
+          <tr>
+            <td class="model-name">Mistral Large</td>
+            <td>Mistral via OpenRouter</td>
+            <td>OpenAI-compatible</td>
+            <td class="num">$2.00</td>
+            <td class="num">$6.00</td>
+          </tr>
+          <tr>
+            <td class="model-name">GPT-4o</td>
+            <td>OpenAI</td>
+            <td>Native SDK</td>
+            <td class="num">$2.50</td>
+            <td class="num">$10.00</td>
+          </tr>
+          <tr>
+            <td class="model-name">GPT-4o Mini</td>
+            <td>OpenAI</td>
+            <td>Native SDK</td>
+            <td class="num">$0.15</td>
+            <td class="num">$0.60</td>
           </tr>
         </tbody>
       </table>
@@ -99,10 +127,10 @@
   <section class="prose">
     <h2>Pricing Sources</h2>
     <ul>
-      <li><strong>Anthropic</strong> &mdash; Claude model pricing from official documentation</li>
-      <li><strong>OpenAI</strong> &mdash; GPT-4o pricing from the API pricing page</li>
-      <li><strong>Google</strong> &mdash; Gemini pricing from Google AI developer pricing</li>
-      <li><strong>OpenRouter</strong> &mdash; Llama 3.3 70B pricing from the OpenRouter model page</li>
+      <li><strong>Anthropic</strong> &mdash; Claude Opus 4 and Sonnet 4 pricing from official documentation</li>
+      <li><strong>Google</strong> &mdash; Gemini 2.5 Flash and 2.5 Pro pricing from Google AI developer pricing</li>
+      <li><strong>OpenAI</strong> &mdash; GPT-4o and GPT-4o Mini pricing from the API pricing page</li>
+      <li><strong>OpenRouter</strong> &mdash; Llama 3.3 70B and Mistral Large pricing from OpenRouter model pages</li>
     </ul>
   </section>
 
@@ -122,7 +150,7 @@
       <li>Latency measurements include network round-trip time and may vary by geography and time of day.</li>
       <li>Scoring functions use keyword and pattern matching, not semantic evaluation. Edge cases in model responses may be scored imperfectly.</li>
       <li>The task set (12 tasks) is intentionally small for v1. It tests breadth, not depth, within each domain.</li>
-      <li>OpenRouter pricing and latency for Llama include the intermediary&rsquo;s margin and routing overhead.</li>
+      <li>OpenRouter pricing and latency for Llama and Mistral include the intermediary&rsquo;s margin and routing overhead.</li>
       <li>Token counts are as reported by each provider&rsquo;s API and may use different tokenization schemes.</li>
     </ul>
   </section>
