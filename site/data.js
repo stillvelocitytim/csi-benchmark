@@ -811,7 +811,7 @@ function drawFrontier(models) {
   const data = models.map(m => ({
     x: Number(m.avg_cost),
     y: Number(m.avg_score),
-    r: Math.max(Math.sqrt(Number(m.csi)) * 1.8, 5),
+    r: Math.max(Math.sqrt(Number(m.csi)) * 1.2, 4),
     csi: Number(m.csi),
     name: shortModel(m.model),
     latency: Number(m.avg_latency),
@@ -850,7 +850,9 @@ function drawFrontier(models) {
     },
     options: {
       responsive: true,
-      layout: { padding: { top: 40, right: 40, bottom: 40, left: 40 } },
+      maintainAspectRatio: true,
+      aspectRatio: 2.2,
+      layout: { padding: { top: 30, right: 30, bottom: 10, left: 10 } },
       plugins: {
         legend: { display: false },
         tooltip: {
@@ -890,7 +892,7 @@ function drawFrontier(models) {
         onComplete: function() {
           const chart = this;
           const ctx = chart.ctx;
-          ctx.font = '13px "IBM Plex Mono", monospace';
+          ctx.font = '11px "IBM Plex Mono", monospace';
           ctx.fillStyle = cssVar('--text-primary');
           ctx.textAlign = 'center';
           const meta = chart.getDatasetMeta(0);
@@ -898,11 +900,11 @@ function drawFrontier(models) {
           const placed = [];
           meta.data.forEach(function(point, i) {
             const d = data[i];
-            var labelY = point.y - d.r - 10;
+            var labelY = point.y - d.r - 8;
             // Check for overlap with already placed labels
             for (var j = 0; j < placed.length; j++) {
-              if (Math.abs(point.x - placed[j].x) < 60 && Math.abs(labelY - placed[j].y) < 14) {
-                labelY = placed[j].y - 15;
+              if (Math.abs(point.x - placed[j].x) < 55 && Math.abs(labelY - placed[j].y) < 12) {
+                labelY = placed[j].y - 13;
               }
             }
             ctx.fillText(d.name, point.x, labelY);

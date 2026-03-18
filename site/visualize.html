@@ -63,30 +63,18 @@
     </div>
   </section>
 
-  <!-- SECTION 1: Efficiency Frontier -->
-  <section id="viz-frontier" style="display:none;">
-    <h2>The efficiency frontier</h2>
-    <p style="color:var(--text-secondary);font-size:0.92rem;max-width:740px;margin:0 0 1.5rem;line-height:1.65;">
-      The efficiency frontier maps every model by what it costs per task (x-axis) against how well it performs (y-axis). Bubble size represents overall CSI&mdash;the composite efficiency score. Models in the top-left corner deliver the highest capability at the lowest cost. The striking pattern: most frontier models score within a narrow capability band (0.90&ndash;1.00), but their costs span three orders of magnitude. The market isn&rsquo;t differentiated by quality&mdash;it&rsquo;s differentiated by price. This is the central insight of the Capability-Seconds Index: intelligence is becoming a commodity, and cost is the primary axis of competition.
-    </p>
-    <div style="display:flex;gap:1.5rem;flex-wrap:wrap;margin-bottom:1rem;" id="frontier-legend"></div>
-    <div class="table-wrap" style="padding:1.5rem;">
-      <canvas id="frontier-chart" height="550"></canvas>
-    </div>
-  </section>
-
-  <!-- SECTION 2: Treemap -->
+  <!-- SECTION 1: Treemap -->
   <section id="viz-treemap" style="display:none;">
     <h2>Where your dollar goes</h2>
     <p style="color:var(--text-secondary);font-size:0.92rem;max-width:740px;margin:0 0 1.5rem;line-height:1.65;">
       Each rectangle represents one AI model, sized proportionally to its CSI score. The visual makes the efficiency gap visceral&mdash;no chart literacy required. The largest rectangles deliver the most useful intelligence per dollar. The smallest slivers are the premium models where you&rsquo;re paying for brand, safety infrastructure, or frontier capability that hasn&rsquo;t yet been commoditized. When the cheapest model&rsquo;s rectangle is 300&times; larger than the most expensive, you&rsquo;re looking at a market in the early stages of radical deflation.
     </p>
-    <div class="table-wrap" style="padding:1.5rem;">
+    <div class="table-wrap" style="padding:1.5rem;background:#FFFFFF;">
       <div id="treemap-container" style="width:100%;height:480px;position:relative;"></div>
     </div>
   </section>
 
-  <!-- SECTION 3: What does one task cost? -->
+  <!-- SECTION 2: What does one task cost? -->
   <section id="viz-dollar" style="display:none;">
     <h2>What does one task cost?</h2>
     <p style="color:var(--text-secondary);font-size:0.92rem;max-width:740px;margin:0 0 2rem;line-height:1.65;">
@@ -95,21 +83,21 @@
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem;">
       <div>
         <h3 style="font-size:0.95rem;margin-bottom:0.75rem;">Summarize NVIDIA&rsquo;s 10-K<br><span style="font-weight:400;font-size:0.82rem;color:var(--text-tertiary);">80,000 tokens in, 2,000 out</span></h3>
-        <div class="table-wrap" style="padding:1rem;">
+        <div class="table-wrap" style="padding:1rem;background:#FFFFFF;">
           <canvas id="viz-chart-10k" height="400"></canvas>
         </div>
         <p id="viz-insight-10k" style="display:none;font-size:0.85rem;color:var(--text-primary);margin-top:0.75rem;"></p>
       </div>
       <div>
         <h3 style="font-size:0.95rem;margin-bottom:0.75rem;">Build a DCF model<br><span style="font-weight:400;font-size:0.82rem;color:var(--text-tertiary);">1,500 tokens in, 8,000 out</span></h3>
-        <div class="table-wrap" style="padding:1rem;">
+        <div class="table-wrap" style="padding:1rem;background:#FFFFFF;">
           <canvas id="viz-chart-dcf" height="400"></canvas>
         </div>
         <p id="viz-insight-dcf" style="display:none;font-size:0.85rem;color:var(--text-primary);margin-top:0.75rem;"></p>
       </div>
       <div>
         <h3 style="font-size:0.95rem;margin-bottom:0.75rem;">Summarize a 20-page legal contract<br><span style="font-weight:400;font-size:0.82rem;color:var(--text-tertiary);">12,000 tokens in, 1,500 out</span></h3>
-        <div class="table-wrap" style="padding:1rem;">
+        <div class="table-wrap" style="padding:1rem;background:#FFFFFF;">
           <canvas id="viz-chart-legal" height="400"></canvas>
         </div>
         <p id="viz-insight-legal" style="display:none;font-size:0.85rem;color:var(--text-primary);margin-top:0.75rem;"></p>
@@ -121,13 +109,25 @@
     </p>
   </section>
 
+  <!-- SECTION 3: Efficiency Frontier -->
+  <section id="viz-frontier" style="display:none;">
+    <h2>The efficiency frontier</h2>
+    <p style="color:var(--text-secondary);font-size:0.92rem;max-width:740px;margin:0 0 1.5rem;line-height:1.65;">
+      The efficiency frontier maps every model by what it costs per task (x-axis) against how well it performs (y-axis). Bubble size represents overall CSI&mdash;the composite efficiency score. Models in the top-left corner deliver the highest capability at the lowest cost. The striking pattern: most frontier models score within a narrow capability band (0.90&ndash;1.00), but their costs span three orders of magnitude. The market isn&rsquo;t differentiated by quality&mdash;it&rsquo;s differentiated by price. This is the central insight of the Capability-Seconds Index: intelligence is becoming a commodity, and cost is the primary axis of competition.
+    </p>
+    <div style="display:flex;gap:1.5rem;flex-wrap:wrap;margin-bottom:1rem;" id="frontier-legend"></div>
+    <div class="table-wrap" style="padding:1.5rem;background:#FFFFFF;">
+      <canvas id="frontier-chart" height="400"></canvas>
+    </div>
+  </section>
+
   <!-- SECTION 4: CSI Over Time -->
   <section>
     <h2>CSI over time</h2>
     <p style="color:var(--text-secondary);font-size:0.92rem;max-width:740px;margin:0 0 1.5rem;line-height:1.65;">
       The aggregate Capability-Seconds Index tracked daily. With only a few days of data, the line is sparse&mdash;as measurements accumulate, this chart will reveal the deflation trajectory of AI inference economics. Once 7+ data points exist, the published index switches from raw daily values to a 7-day rolling average.
     </p>
-    <div class="table-wrap" style="padding:1.5rem;">
+    <div class="table-wrap" style="padding:1.5rem;background:#FFFFFF;">
       <canvas id="csi-chart" height="280"></canvas>
     </div>
   </section>
