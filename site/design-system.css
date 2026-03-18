@@ -114,10 +114,10 @@ body {
 }
 .data-table th {
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--text-tertiary);
+  color: #374151;
   text-align: left;
   padding: var(--space-sm) var(--space-md);
   border-bottom: 2px solid var(--accent-gold);
@@ -136,10 +136,11 @@ body {
   text-align: right;
   font-family: var(--font-mono);
   font-weight: 500;
+  color: #374151;
 }
 .data-table .csi-value {
   color: var(--accent-gold);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .sort-arrow {

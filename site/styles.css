@@ -182,9 +182,9 @@ th {
   letter-spacing: 0.1em;
   padding: 0.85rem 1rem;
   text-align: left;
-  font-weight: 600;
+  font-weight: 700;
   white-space: nowrap;
-  color: var(--text-tertiary);
+  color: #374151;
 }
 th.num, td.num { text-align: right; }
 td {
@@ -204,13 +204,14 @@ tbody tr:hover { background: var(--bg-secondary); }
 
 /* — Formula / Code blocks — */
 .formula-block {
-  background: var(--bg-secondary);
-  color: var(--text-primary);
-  border: 1px solid var(--border);
+  background: #EEF2F7;
+  color: #1A1A2E;
+  border: 1px solid #D1D9E6;
   border-radius: 6px;
   padding: 1.5rem 2rem;
   font-family: var(--font-mono);
   font-size: 0.9rem;
+  font-weight: 500;
   line-height: 2;
   margin: 1.5rem 0;
   overflow-x: auto;
@@ -265,9 +266,8 @@ tbody tr:hover { background: var(--bg-secondary); }
 
 /* — Callout / Insight box — */
 .callout-box {
-  background: var(--bg-secondary);
-  border-left: 3px solid var(--accent-gold);
-  border: 1px solid var(--border);
+  background: #EEF2F7;
+  border: 1px solid #D1D9E6;
   border-left: 3px solid var(--accent-gold);
   border-radius: 4px;
   padding: 1.25rem 1.5rem;
@@ -275,8 +275,9 @@ tbody tr:hover { background: var(--bg-secondary); }
 }
 .callout-box p {
   font-style: italic;
-  color: var(--text-secondary);
+  color: #374151;
   font-size: 0.92rem;
+  font-weight: 500;
   line-height: 1.7;
   margin: 0;
   max-width: none;

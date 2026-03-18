@@ -93,7 +93,7 @@ function renderModelTable(models) {
   if (!tbody) return;
   tbody.innerHTML = models.map((m, i) => `
     <tr>
-      <td style="font-weight:500;color:var(--text-primary);">${shortModel(m.model)}</td>
+      <td style="font-weight:600;color:#1A1A2E;">${shortModel(m.model)}</td>
       <td class="num">${fmt(m.avg_score, 3)}</td>
       <td class="num">${fmt(m.avg_latency, 2)}s</td>
       <td class="num">${fmtCost(m.avg_cost)}</td>
