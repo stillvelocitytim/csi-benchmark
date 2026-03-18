@@ -154,8 +154,11 @@ body {
   padding: var(--space-sm) var(--space-md);
   border-bottom: 1px solid var(--border-light);
 }
-.data-table tr:hover {
+.data-table tbody tr:nth-child(even) {
   background: var(--bg-secondary);
+}
+.data-table tbody tr:hover {
+  background: var(--bg-tertiary);
 }
 .data-table .num {
   text-align: right;
@@ -165,6 +168,11 @@ body {
 .data-table .csi-value {
   color: var(--accent-gold);
   font-weight: 600;
+}
+
+.sort-arrow {
+  font-size: 10px;
+  color: var(--accent-gold);
 }
 
 /* Badges */

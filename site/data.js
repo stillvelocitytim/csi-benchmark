@@ -11,6 +11,11 @@ const HEADERS = {
   'Authorization': `Bearer ${SUPABASE_KEY}`,
 };
 
+/* — CSS variable helper for Chart.js — */
+function cssVar(name) {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+
 /* — Generic fetch helper — */
 async function sbFetch(table, params = '') {
   const url = `${SUPABASE_URL}/rest/v1/${table}?${params}`;
@@ -80,6 +85,71 @@ function showFallback(el, msg) {
 }
 
 /* =========================================================================
+   TABLE: Sortable model breakdown (Dashboard)
+   ========================================================================= */
+
+function renderModelTable(models) {
+  const tbody = document.getElementById('model-table-body');
+  if (!tbody) return;
+  tbody.innerHTML = models.map((m, i) => `
+    <tr>
+      <td style="font-weight:500;color:var(--text-primary);">${shortModel(m.model)}</td>
+      <td class="num">${fmt(m.avg_score, 3)}</td>
+      <td class="num">${fmt(m.avg_latency, 2)}s</td>
+      <td class="num">${fmtCost(m.avg_cost)}</td>
+      <td class="num">${fmt(m.cs, 4)}</td>
+      <td class="num">${fmt(m.cd, 2)}</td>
+      <td class="num csi-value">${fmt(m.csi, 2)}</td>
+    </tr>`).join('');
+}
+
+function initTableSort() {
+  const table = document.getElementById('model-table');
+  if (!table) return;
+  const headers = table.querySelectorAll('th[data-sort]');
+  // Set initial arrow on CSI column
+  updateSortArrows(table, 'csi', false);
+
+  headers.forEach(function(th) {
+    th.addEventListener('click', function() {
+      const col = th.getAttribute('data-sort');
+      if (window._dashboardSortCol === col) {
+        window._dashboardSortAsc = !window._dashboardSortAsc;
+      } else {
+        window._dashboardSortCol = col;
+        window._dashboardSortAsc = false; // default desc for new column
+      }
+      var sorted = window._dashboardModels.slice().sort(function(a, b) {
+        var va, vb;
+        if (col === 'model') {
+          va = shortModel(a.model).toLowerCase();
+          vb = shortModel(b.model).toLowerCase();
+          return window._dashboardSortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+        }
+        va = Number(a[col]) || 0;
+        vb = Number(b[col]) || 0;
+        return window._dashboardSortAsc ? va - vb : vb - va;
+      });
+      renderModelTable(sorted);
+      updateSortArrows(table, col, window._dashboardSortAsc);
+    });
+  });
+}
+
+function updateSortArrows(table, activeCol, asc) {
+  table.querySelectorAll('th[data-sort]').forEach(function(th) {
+    var arrow = th.querySelector('.sort-arrow');
+    if (!arrow) return;
+    if (th.getAttribute('data-sort') === activeCol) {
+      arrow.textContent = asc ? ' \u25B2' : ' \u25BC';
+      arrow.style.color = 'var(--accent-gold)';
+    } else {
+      arrow.textContent = '';
+    }
+  });
+}
+
+/* =========================================================================
    PAGE: index.html (Dashboard)
    ========================================================================= */
 
@@ -113,9 +183,7 @@ async function loadDashboard() {
       lastRunEl.textContent = 'Last run: ' + idx.run_date;
     }
     const csiVal = Number(idx.csi_aggregate);
-    const intPart = Math.floor(csiVal);
-    const decPart = csiVal.toFixed(2).split('.')[1];
-    heroNum.innerHTML = `${intPart}<span class="decimal">.${decPart}</span>`;
+    heroNum.textContent = csiVal.toFixed(2);
     heroDate.textContent = idx.run_date;
     if (statCS) statCS.textContent = fmt(idx.cs_aggregate, 4);
     if (statCD) statCD.textContent = fmt(idx.cd_aggregate, 2);
@@ -123,17 +191,14 @@ async function loadDashboard() {
     const models = await sbFetch('csi_by_model', `run_date=eq.${idx.run_date}&order=csi.desc`);
     models.sort((a, b) => Number(b.csi) - Number(a.csi));
     if (statModels) statModels.textContent = models.length;
+    // Store models for sorting
+    window._dashboardModels = models;
+    window._dashboardSortCol = 'csi';
+    window._dashboardSortAsc = false;
+
     if (modelTable && models.length) {
-      modelTable.innerHTML = models.map(m => `
-        <tr>
-          <td class="model-name">${shortModel(m.model)}</td>
-          <td class="num">${fmt(m.avg_score, 3)}</td>
-          <td class="num">${fmt(m.avg_latency, 2)}s</td>
-          <td class="num">${fmtCost(m.avg_cost)}</td>
-          <td class="num">${fmt(m.cs, 4)}</td>
-          <td class="num">${fmt(m.cd, 2)}</td>
-          <td class="num"><strong>${fmt(m.csi, 2)}</strong></td>
-        </tr>`).join('');
+      renderModelTable(models);
+      initTableSort();
       // Populate callout spread
       const callout = document.getElementById('callout-insight');
       const spreadEl = document.getElementById('csi-spread');
@@ -155,8 +220,8 @@ async function loadDashboard() {
         const worst = csiVals.reduce((a, b) => a.csi < b.csi ? a : b);
         if (worst.csi > 0) {
           const ratio = Math.round(best.csi / worst.csi);
-          effSpread.querySelector('span').textContent =
-            ratio + '\u00d7 efficiency spread \u2014 ' +
+          effSpread.querySelector('span').innerHTML =
+            '<span style="color:var(--accent-gold);font-family:var(--font-mono);font-weight:600;">' + ratio + '\u00d7</span> efficiency spread \u2014 ' +
             best.name + ' (' + fmt(best.csi, 0) + ') to ' +
             worst.name + ' (' + fmt(worst.csi, 2) + ')';
           effSpread.style.display = '';
@@ -173,8 +238,8 @@ async function loadDashboard() {
       const prevCSI = Number(prev[0].csi_aggregate);
       if (prevCSI > 0) {
         const delta = (csiVal - prevCSI) / prevCSI;
-        deltaBadge.className = `badge ${delta >= 0 ? 'badge-up' : 'badge-down'}`;
-        deltaBadge.textContent = fmtPct(delta) + ' vs prev';
+        deltaBadge.className = `badge ${delta >= 0 ? 'badge-green' : 'badge-red'}`;
+        deltaBadge.textContent = (delta >= 0 ? '\u25B2 ' : '\u25BC ') + fmtPct(delta) + ' vs prev';
       }
     }
   } catch (err) {
@@ -229,11 +294,11 @@ async function loadCSIChart() {
         },
         scales: {
           x: {
-            ticks: { color: '#1a1a1a' },
+            ticks: { color: cssVar('--text-primary') },
             grid: { color: 'rgba(0,0,0,0.06)' },
           },
           y: {
-            ticks: { color: '#1a1a1a' },
+            ticks: { color: cssVar('--text-primary') },
             grid: { color: 'rgba(0,0,0,0.06)' },
             beginAtZero: false,
           }
@@ -320,11 +385,11 @@ async function loadDashboardCost() {
           indexAxis: 'y', responsive: true,
           plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(ctx) { return fmtTaskCost(ctx.parsed.x) + ' per task'; } } } },
           scales: {
-            x: { type: 'logarithmic', title: { display: true, text: 'Cost per task (USD, log scale)', color: '#1a1a1a', font: { size: 13 } }, ticks: { color: '#1a1a1a', callback: function(val) { if ([0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5].includes(val)) return '$' + val; return ''; } }, grid: { color: 'rgba(0,0,0,0.06)' } },
-            y: { ticks: { color: '#1a1a1a', font: { size: 12 } }, grid: { display: false } }
+            x: { type: 'logarithmic', title: { display: true, text: 'Cost per task (USD, log scale)', color: cssVar('--text-primary'), font: { size: 13 } }, ticks: { color: cssVar('--text-primary'), callback: function(val) { if ([0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5].includes(val)) return '$' + val; return ''; } }, grid: { color: 'rgba(0,0,0,0.06)' } },
+            y: { ticks: { color: cssVar('--text-primary'), font: { size: 12 } }, grid: { display: false } }
           },
           layout: { padding: { right: 65 } },
-          animation: { onComplete: function() { const ch = this; const cx = ch.ctx; cx.font = '12px "IBM Plex Mono", monospace'; cx.fillStyle = '#1a1a1a'; cx.textAlign = 'left'; cx.textBaseline = 'middle'; const meta = ch.getDatasetMeta(0); meta.data.forEach(function(bar, i) { cx.fillText(fmtTaskCost(values[i]), bar.x + 4, bar.y); }); } }
+          animation: { onComplete: function() { const ch = this; const cx = ch.ctx; cx.font = '12px "IBM Plex Mono", monospace'; cx.fillStyle = cssVar('--text-primary'); cx.textAlign = 'left'; cx.textBaseline = 'middle'; const meta = ch.getDatasetMeta(0); meta.data.forEach(function(bar, i) { cx.fillText(fmtTaskCost(values[i]), bar.x + 4, bar.y); }); } }
         }
       });
       _dashCostCharts.push(chart);
@@ -487,7 +552,7 @@ async function loadForwardChart() {
             display: true,
             position: 'top',
             labels: {
-              color: '#c9d1d9',
+              color: cssVar('--text-secondary'),
               usePointStyle: true,
               pointStyle: 'line',
               padding: 20,
@@ -499,7 +564,7 @@ async function loadForwardChart() {
                 const defaults = Chart.defaults.plugins.legend.labels.generateLabels(chart);
                 return defaults.filter(l => !l.text.startsWith('_')).map(function(l) {
                   if (l.text === 'Above-Trend' || l.text === 'Historical Trend' || l.text === 'Below-Trend') {
-                    l.fontColor = '#000000';
+                    l.fontColor = cssVar('--text-primary');
                   }
                   return l;
                 });
@@ -517,12 +582,12 @@ async function loadForwardChart() {
         },
         scales: {
           x: {
-            ticks: { color: '#8494a7', font: { size: 13 } },
+            ticks: { color: cssVar('--text-tertiary'), font: { size: 13 } },
             grid: { color: 'rgba(255,255,255,0.05)' },
           },
           y: {
-            title: { display: true, text: 'Projected CSI Aggregate', color: '#8494a7', font: { size: 13 } },
-            ticks: { color: '#8494a7' },
+            title: { display: true, text: 'Projected CSI Aggregate', color: cssVar('--text-tertiary'), font: { size: 13 } },
+            ticks: { color: cssVar('--text-tertiary') },
             grid: { color: 'rgba(255,255,255,0.05)' },
             beginAtZero: false,
           }
@@ -600,7 +665,7 @@ async function loadDataPage() {
 async function loadMeasurements(tbody, runDate) {
   const rows = await sbFetch('measurements', `run_date=eq.${runDate}&select=model,task_id,domain,score,latency_seconds,prompt_tokens,completion_tokens,cost_dollars&order=model,task_id`);
   if (!rows.length) {
-    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#8494a7;">No measurements for this date.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--text-tertiary);">No measurements for this date.</td></tr>';
     return;
   }
   tbody.innerHTML = rows.map(r => `
@@ -806,16 +871,16 @@ function drawFrontier(models) {
       scales: {
         x: {
           type: 'logarithmic',
-          title: { display: true, text: 'Cost per task ($, log scale)', color: '#1a1a1a', font: { size: 13 } },
+          title: { display: true, text: 'Cost per task ($, log scale)', color: cssVar('--text-primary'), font: { size: 13 } },
           ticks: {
-            color: '#1a1a1a',
+            color: cssVar('--text-primary'),
             callback: function(val) { return '$' + val; }
           },
           grid: { color: 'rgba(0,0,0,0.06)' },
         },
         y: {
-          title: { display: true, text: 'Capability Score', color: '#1a1a1a', font: { size: 13 } },
-          ticks: { color: '#1a1a1a' },
+          title: { display: true, text: 'Capability Score', color: cssVar('--text-primary'), font: { size: 13 } },
+          ticks: { color: cssVar('--text-primary') },
           grid: { color: 'rgba(0,0,0,0.06)' },
           min: yMin,
           max: yMax,
@@ -826,7 +891,7 @@ function drawFrontier(models) {
           const chart = this;
           const ctx = chart.ctx;
           ctx.font = '13px "IBM Plex Mono", monospace';
-          ctx.fillStyle = '#1a1a1a';
+          ctx.fillStyle = cssVar('--text-primary');
           ctx.textAlign = 'center';
           const meta = chart.getDatasetMeta(0);
           // Collect label positions to avoid overlaps
@@ -1024,9 +1089,9 @@ function drawDollarCharts(models) {
         scales: {
           x: {
             type: 'logarithmic',
-            title: { display: true, text: 'Cost per task (USD, log scale)', color: '#1a1a1a', font: { size: 13 } },
+            title: { display: true, text: 'Cost per task (USD, log scale)', color: cssVar('--text-primary'), font: { size: 13 } },
             ticks: {
-              color: '#1a1a1a',
+              color: cssVar('--text-primary'),
               callback: function(val) {
                 if ([0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5].includes(val)) {
                   return '$' + val;
@@ -1037,7 +1102,7 @@ function drawDollarCharts(models) {
             grid: { color: 'rgba(0,0,0,0.06)' },
           },
           y: {
-            ticks: { color: '#1a1a1a', font: { size: 12 } },
+            ticks: { color: cssVar('--text-primary'), font: { size: 12 } },
             grid: { display: false },
           }
         },
@@ -1047,7 +1112,7 @@ function drawDollarCharts(models) {
             const ch = this;
             const cx = ch.ctx;
             cx.font = '12px "IBM Plex Mono", monospace';
-            cx.fillStyle = '#1a1a1a';
+            cx.fillStyle = cssVar('--text-primary');
             cx.textAlign = 'left';
             cx.textBaseline = 'middle';
             const meta = ch.getDatasetMeta(0);
