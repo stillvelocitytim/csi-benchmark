@@ -1,10 +1,11 @@
 /* ==========================================================================
    CSI — Capability-Seconds Index
-   Design tokens: navy #0a1628, white #ffffff, gold #c9a227, slate #3a4a5c
-   Typography: Playfair Display (headlines), IBM Plex Mono (data), system sans (body)
+   Page-specific layout and structure styles.
+   Foundation (colors, typography, spacing, components) lives in design-system.css.
    ========================================================================== */
 
 :root {
+  /* Legacy color tokens — used by page-specific styles below */
   --navy: #0a1628;
   --navy-light: #132038;
   --navy-mid: #1c2d4a;
@@ -24,18 +25,9 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { font-size: 17px; scroll-behavior: smooth; }
-
-body {
-  font-family: var(--font-body);
-  background: var(--off-white);
-  color: var(--navy);
-  line-height: 1.65;
-  -webkit-font-smoothing: antialiased;
-}
+html { scroll-behavior: smooth; }
 
 /* — Layout — */
-.container { max-width: var(--max-w); margin: 0 auto; padding: 0 1.5rem; }
 
 /* — Header / Nav — */
 header {
@@ -116,13 +108,7 @@ nav a.active { border-bottom: 2px solid var(--gold); padding-bottom: 2px; }
   gap: 1.25rem;
   margin: 2rem 0;
 }
-.stat-card {
-  background: var(--white);
-  border: 1px solid #dde1e6;
-  border-radius: 6px;
-  padding: 1.5rem;
-  text-align: center;
-}
+/* stat-card base styles now in design-system.css */
 .stat-card .label {
   font-family: var(--font-mono);
   font-size: 0.78rem;
@@ -307,17 +293,7 @@ footer {
 }
 footer a { color: var(--gold); text-decoration: none; }
 
-/* — Badge — */
-.badge {
-  display: inline-block;
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  padding: 0.2em 0.55em;
-  border-radius: 3px;
-  font-weight: 600;
-}
+/* — Badge — badge base styles now in design-system.css */
 .badge-up { background: #e6f5ee; color: var(--green); }
 .badge-down { background: #fce8e8; color: var(--red); }
 .badge-neutral { background: #ebedf0; color: var(--slate); }
@@ -374,7 +350,6 @@ footer a { color: var(--gold); text-decoration: none; }
   nav a:last-child { border-bottom: none; }
   nav a.active { border-bottom: 1px solid var(--navy-mid); padding-bottom: 0.65rem; }
   nav a:last-child.active { border-bottom: none; }
-  .hero-number { font-size: 3.5rem; }
   .stat-row { grid-template-columns: 1fr 1fr; }
   h1 { font-size: 1.75rem; }
 }
