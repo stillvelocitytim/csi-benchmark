@@ -52,10 +52,10 @@
     <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;">
       <div>
         <h1>Visualize the intelligence market</h1>
-        <p style="color:var(--slate-light);">Interactive charts built from live CSI data. Updated with every evaluation run.</p>
+        <p style="color:var(--text-tertiary);">Interactive charts built from live CSI data. Updated with every evaluation run.</p>
       </div>
       <div>
-        <label for="viz-date-select" style="font-family:var(--font-mono);font-size:0.78rem;color:var(--slate-light);display:block;margin-bottom:0.25rem;">Run date</label>
+        <label for="viz-date-select" style="font-family:var(--font-mono);font-size:0.78rem;color:var(--text-tertiary);display:block;margin-bottom:0.25rem;">Run date</label>
         <select id="viz-date-select" style="font-family:var(--font-mono);font-size:0.85rem;padding:0.4em 0.8em;border:1px solid #dde1e6;border-radius:4px;background:var(--bg-card);color:var(--text);">
           <option>Loading&hellip;</option>
         </select>
@@ -66,7 +66,7 @@
   <!-- SECTION 1: Efficiency Frontier -->
   <section id="viz-frontier" style="display:none;">
     <h2>The efficiency frontier</h2>
-    <p style="color:var(--slate);font-size:0.92rem;max-width:740px;margin:0 0 1.5rem;line-height:1.65;">
+    <p style="color:var(--text-secondary);font-size:0.92rem;max-width:740px;margin:0 0 1.5rem;line-height:1.65;">
       The efficiency frontier maps every model by what it costs per task (x-axis) against how well it performs (y-axis). Bubble size represents overall CSI&mdash;the composite efficiency score. Models in the top-left corner deliver the highest capability at the lowest cost. The striking pattern: most frontier models score within a narrow capability band (0.90&ndash;1.00), but their costs span three orders of magnitude. The market isn&rsquo;t differentiated by quality&mdash;it&rsquo;s differentiated by price. This is the central insight of the Capability-Seconds Index: intelligence is becoming a commodity, and cost is the primary axis of competition.
     </p>
     <div style="display:flex;gap:1.5rem;flex-wrap:wrap;margin-bottom:1rem;" id="frontier-legend"></div>
@@ -78,7 +78,7 @@
   <!-- SECTION 2: Treemap -->
   <section id="viz-treemap" style="display:none;">
     <h2>Where your dollar goes</h2>
-    <p style="color:var(--slate);font-size:0.92rem;max-width:740px;margin:0 0 1.5rem;line-height:1.65;">
+    <p style="color:var(--text-secondary);font-size:0.92rem;max-width:740px;margin:0 0 1.5rem;line-height:1.65;">
       Each rectangle represents one AI model, sized proportionally to its CSI score. The visual makes the efficiency gap visceral&mdash;no chart literacy required. The largest rectangles deliver the most useful intelligence per dollar. The smallest slivers are the premium models where you&rsquo;re paying for brand, safety infrastructure, or frontier capability that hasn&rsquo;t yet been commoditized. When the cheapest model&rsquo;s rectangle is 300&times; larger than the most expensive, you&rsquo;re looking at a market in the early stages of radical deflation.
     </p>
     <div class="table-wrap" style="padding:1.5rem;">
@@ -89,34 +89,34 @@
   <!-- SECTION 3: What does one task cost? -->
   <section id="viz-dollar" style="display:none;">
     <h2>What does one task cost?</h2>
-    <p style="color:var(--slate);font-size:0.92rem;max-width:740px;margin:0 0 2rem;line-height:1.65;">
+    <p style="color:var(--text-secondary);font-size:0.92rem;max-width:740px;margin:0 0 2rem;line-height:1.65;">
       We priced three real-world tasks across all 16 frontier models using published API pricing. The same task that costs a fraction of a penny on one model costs over a dollar on another.
     </p>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem;">
       <div>
-        <h3 style="font-size:0.95rem;margin-bottom:0.75rem;">Summarize NVIDIA&rsquo;s 10-K<br><span style="font-weight:400;font-size:0.82rem;color:var(--slate-light);">80,000 tokens in, 2,000 out</span></h3>
+        <h3 style="font-size:0.95rem;margin-bottom:0.75rem;">Summarize NVIDIA&rsquo;s 10-K<br><span style="font-weight:400;font-size:0.82rem;color:var(--text-tertiary);">80,000 tokens in, 2,000 out</span></h3>
         <div class="table-wrap" style="padding:1rem;">
           <canvas id="viz-chart-10k" height="400"></canvas>
         </div>
-        <p id="viz-insight-10k" style="display:none;font-size:0.85rem;color:var(--navy);margin-top:0.75rem;"></p>
+        <p id="viz-insight-10k" style="display:none;font-size:0.85rem;color:var(--text-primary);margin-top:0.75rem;"></p>
       </div>
       <div>
-        <h3 style="font-size:0.95rem;margin-bottom:0.75rem;">Build a DCF model<br><span style="font-weight:400;font-size:0.82rem;color:var(--slate-light);">1,500 tokens in, 8,000 out</span></h3>
+        <h3 style="font-size:0.95rem;margin-bottom:0.75rem;">Build a DCF model<br><span style="font-weight:400;font-size:0.82rem;color:var(--text-tertiary);">1,500 tokens in, 8,000 out</span></h3>
         <div class="table-wrap" style="padding:1rem;">
           <canvas id="viz-chart-dcf" height="400"></canvas>
         </div>
-        <p id="viz-insight-dcf" style="display:none;font-size:0.85rem;color:var(--navy);margin-top:0.75rem;"></p>
+        <p id="viz-insight-dcf" style="display:none;font-size:0.85rem;color:var(--text-primary);margin-top:0.75rem;"></p>
       </div>
       <div>
-        <h3 style="font-size:0.95rem;margin-bottom:0.75rem;">Summarize a 20-page legal contract<br><span style="font-weight:400;font-size:0.82rem;color:var(--slate-light);">12,000 tokens in, 1,500 out</span></h3>
+        <h3 style="font-size:0.95rem;margin-bottom:0.75rem;">Summarize a 20-page legal contract<br><span style="font-weight:400;font-size:0.82rem;color:var(--text-tertiary);">12,000 tokens in, 1,500 out</span></h3>
         <div class="table-wrap" style="padding:1rem;">
           <canvas id="viz-chart-legal" height="400"></canvas>
         </div>
-        <p id="viz-insight-legal" style="display:none;font-size:0.85rem;color:var(--navy);margin-top:0.75rem;"></p>
+        <p id="viz-insight-legal" style="display:none;font-size:0.85rem;color:var(--text-primary);margin-top:0.75rem;"></p>
       </div>
     </div>
-    <p id="viz-insight-avg" style="display:none;font-size:0.92rem;color:var(--navy);margin-top:1.25rem;"></p>
-    <p style="font-family:var(--font-mono);font-size:0.78rem;color:var(--slate-light);opacity:0.6;margin-top:1rem;">
+    <p id="viz-insight-avg" style="display:none;font-size:0.92rem;color:var(--text-primary);margin-top:1.25rem;"></p>
+    <p style="font-family:var(--font-mono);font-size:0.78rem;color:var(--text-tertiary);opacity:0.6;margin-top:1rem;">
       Pricing as of most recent snapshot in database.
     </p>
   </section>
@@ -124,7 +124,7 @@
   <!-- SECTION 4: CSI Over Time -->
   <section>
     <h2>CSI over time</h2>
-    <p style="color:var(--slate);font-size:0.92rem;max-width:740px;margin:0 0 1.5rem;line-height:1.65;">
+    <p style="color:var(--text-secondary);font-size:0.92rem;max-width:740px;margin:0 0 1.5rem;line-height:1.65;">
       The aggregate Capability-Seconds Index tracked daily. With only a few days of data, the line is sparse&mdash;as measurements accumulate, this chart will reveal the deflation trajectory of AI inference economics. Once 7+ data points exist, the published index switches from raw daily values to a 7-day rolling average.
     </p>
     <div class="table-wrap" style="padding:1.5rem;">
@@ -138,7 +138,7 @@
   <div class="container">
     Capability-Seconds&trade; Index &middot; Updated daily &middot;
     <a href="https://github.com/stillvelocitytim/csi-benchmark">Source on GitHub</a>
-    <div style="color:#8494a7;font-size:0.75rem;margin-top:0.5rem;">Published by Nine Island Advisory LLC. For research purposes only. Not investment advice.</div>
+    <div style="color:var(--text-tertiary);font-size:0.75rem;margin-top:0.5rem;">Published by Nine Island Advisory LLC. For research purposes only. Not investment advice.</div>
   </div>
 </footer>
 

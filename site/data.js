@@ -768,7 +768,7 @@ function drawFrontier(models) {
       { color: '#A32D2D', label: 'CSI < 5' },
     ];
     legendEl.innerHTML = tiers.map(t =>
-      `<span style="display:inline-flex;align-items:center;gap:0.4rem;font-size:0.82rem;color:#1a1a1a;">` +
+      `<span style="display:inline-flex;align-items:center;gap:0.4rem;font-size:0.82rem;color:var(--text-primary);">` +
       `<span style="width:12px;height:12px;border-radius:50%;background:${t.color};display:inline-block;"></span>${t.label}</span>`
     ).join('');
   }

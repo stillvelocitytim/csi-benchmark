@@ -114,46 +114,46 @@ nav a.active { border-bottom: 2px solid var(--gold); padding-bottom: 2px; }
   font-size: 0.78rem;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: var(--slate-light);
+  color: var(--text-tertiary);
   margin-bottom: 0.5rem;
 }
 .stat-card .value {
   font-family: var(--font-display);
   font-size: 2.25rem;
   font-weight: 700;
-  color: var(--navy);
+  color: var(--text-primary);
 }
 .stat-card .unit {
   font-family: var(--font-mono);
   font-size: 0.78rem;
-  color: var(--slate);
+  color: var(--text-secondary);
   margin-top: 0.25rem;
 }
 
 /* — Section — */
 section { padding: 3rem 0; }
-section + section { border-top: 1px solid #dde1e6; }
+section + section { border-top: 1px solid var(--border); }
 
 h1 {
   font-family: var(--font-display);
   font-size: 2.25rem;
   font-weight: 700;
   margin-bottom: 1.5rem;
-  color: var(--navy);
+  color: var(--text-primary);
 }
 h2 {
   font-family: var(--font-display);
   font-size: 1.5rem;
   font-weight: 700;
   margin-bottom: 1rem;
-  color: var(--navy);
+  color: var(--text-primary);
 }
 h3 {
   font-family: var(--font-display);
   font-size: 1.15rem;
   font-weight: 700;
   margin-bottom: 0.75rem;
-  color: var(--navy-mid);
+  color: var(--text-primary);
 }
 
 p { margin-bottom: 1rem; max-width: 68ch; }
@@ -188,17 +188,17 @@ th {
 th.num, td.num { text-align: right; }
 td {
   padding: 0.75rem 1rem;
-  border-bottom: 1px solid #ebedf0;
+  border-bottom: 1px solid var(--border-light);
   font-family: var(--font-mono);
   font-size: 0.85rem;
 }
 tbody tr:last-child td { border-bottom: none; }
-tbody tr:hover { background: #f8f9fb; }
+tbody tr:hover { background: var(--bg-secondary); }
 
 .model-name {
   font-family: var(--font-body);
   font-weight: 600;
-  color: var(--navy);
+  color: var(--text-primary);
 }
 
 /* — Formula / Code blocks — */
@@ -223,18 +223,18 @@ tbody tr:hover { background: #f8f9fb; }
 .prose code {
   font-family: var(--font-mono);
   font-size: 0.85em;
-  background: #ebedf0;
+  background: var(--bg-tertiary);
   padding: 0.15em 0.4em;
   border-radius: 3px;
 }
 .prose a { color: var(--gold-dim); text-decoration: underline; }
-.prose a:hover { color: var(--navy); }
+.prose a:hover { color: var(--text-primary); }
 
 /* — Fallback / empty state — */
 .fallback {
   text-align: center;
   padding: 4rem 2rem;
-  color: var(--slate-light);
+  color: var(--text-tertiary);
 }
 .fallback-icon {
   font-size: 2.5rem;
@@ -296,7 +296,7 @@ footer a { color: var(--gold); text-decoration: none; }
 /* — Badge — badge base styles now in design-system.css */
 .badge-up { background: #e6f5ee; color: var(--green); }
 .badge-down { background: #fce8e8; color: var(--red); }
-.badge-neutral { background: #ebedf0; color: var(--slate); }
+.badge-neutral { background: #ebedf0; color: var(--text-secondary); }
 
 /* — Loading spinner — */
 .spinner {
