@@ -64,7 +64,7 @@
       <label for="date-select" style="font-family:var(--font-mono);font-size:0.8rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-tertiary);margin-right:0.5rem;">
         Run date:
       </label>
-      <select id="date-select" style="font-family:var(--font-mono);font-size:0.85rem;padding:0.4em 0.75em;border:1px solid #dde1e6;border-radius:4px;background:var(--white);">
+      <select id="date-select" style="font-family:var(--font-mono);font-size:0.85rem;padding:0.4em 0.75em;border:1px solid var(--border);border-radius:4px;background:var(--bg-primary);">
         <option>loading&hellip;</option>
       </select>
     </div>
@@ -98,7 +98,7 @@
       Power Query. Use <strong>Data &gt; Get Data &gt; From Web</strong> and
       enter the endpoint URL below. Data refreshes automatically.
     </p>
-    <div class="code-block" style="background:var(--navy);color:var(--gold);font-family:var(--font-mono);font-size:0.78rem;padding:1rem 1.25rem;border-radius:6px;overflow-x:auto;margin:1rem 0;word-break:break-all;user-select:all;">https://aclclaazduenkpmdsgsj.supabase.co/rest/v1/csi_by_model?select=*&amp;apikey=sb_publishable_wWJYyf3s9iOgoii7QT3udw_lCXnqrUZ</div>
+    <div class="code-block" style="background:var(--bg-secondary);color:var(--text-primary);border:1px solid var(--border);font-family:var(--font-mono);font-size:0.78rem;padding:1rem 1.25rem;border-radius:6px;overflow-x:auto;margin:1rem 0;word-break:break-all;user-select:all;">https://aclclaazduenkpmdsgsj.supabase.co/rest/v1/csi_by_model?select=*&amp;apikey=sb_publishable_wWJYyf3s9iOgoii7QT3udw_lCXnqrUZ</div>
     <p style="color:var(--text-tertiary);font-size:0.85rem;">
       Returns JSON. Power Query will auto-parse columns. For CSV format, add
       <code>&amp;format=csv</code> to the URL.

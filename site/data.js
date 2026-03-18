@@ -583,12 +583,12 @@ async function loadForwardChart() {
         scales: {
           x: {
             ticks: { color: cssVar('--text-tertiary'), font: { size: 13 } },
-            grid: { color: 'rgba(255,255,255,0.05)' },
+            grid: { color: 'rgba(0,0,0,0.06)' },
           },
           y: {
             title: { display: true, text: 'Projected CSI Aggregate', color: cssVar('--text-tertiary'), font: { size: 13 } },
             ticks: { color: cssVar('--text-tertiary') },
-            grid: { color: 'rgba(255,255,255,0.05)' },
+            grid: { color: 'rgba(0,0,0,0.06)' },
             beginAtZero: false,
           }
         }
@@ -965,7 +965,7 @@ function drawTreemap(models) {
     .attr('fill', d => csiTierColor(d.data.csi))
     .attr('fill-opacity', 0.85)
     .attr('rx', 3)
-    .attr('stroke', '#0d1117')
+    .attr('stroke', '#FFFFFF')
     .attr('stroke-width', 1);
 
   // Labels — only show if rectangle is large enough

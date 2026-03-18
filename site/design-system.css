@@ -44,35 +44,7 @@
   --font-mono: "JetBrains Mono", "SF Mono", "Fira Code", monospace;
 }
 
-[data-theme="dark"] {
-  --bg-primary: #0F1117;
-  --bg-secondary: #1A1D27;
-  --bg-tertiary: #252833;
-  --text-primary: #F0F0F5;
-  --text-secondary: #9CA3AF;
-  --text-tertiary: #6B7280;
-  --accent-gold: #D4B866;
-  --accent-gold-light: #D4B86630;
-  --accent-blue: #60A5FA;
-  --border: #2D3140;
-  --border-light: #1F2230;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg-primary: #0F1117;
-    --bg-secondary: #1A1D27;
-    --bg-tertiary: #252833;
-    --text-primary: #F0F0F5;
-    --text-secondary: #9CA3AF;
-    --text-tertiary: #6B7280;
-    --accent-gold: #D4B866;
-    --accent-gold-light: #D4B86630;
-    --accent-blue: #60A5FA;
-    --border: #2D3140;
-    --border-light: #1F2230;
-  }
-}
+/* Dark mode disabled — light mode only for now */
 
 /* ==========================================================================
    Base element styles
@@ -85,7 +57,7 @@ body {
   font-size: 16px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
-  transition: background-color 0.3s, color 0.3s;
+  /* no transition needed — light mode only */
 }
 
 .container {

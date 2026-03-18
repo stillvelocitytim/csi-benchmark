@@ -164,7 +164,7 @@ p + p { margin-top: 0; }
   overflow-x: auto;
   margin: 1.5rem 0;
   border-radius: 6px;
-  border: 1px solid #dde1e6;
+  border: 1px solid var(--border);
 }
 table {
   width: 100%;
@@ -172,8 +172,8 @@ table {
   font-size: 0.88rem;
 }
 thead {
-  background: var(--navy);
-  color: var(--white);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
 }
 th {
   font-family: var(--font-mono);
@@ -184,6 +184,7 @@ th {
   text-align: left;
   font-weight: 600;
   white-space: nowrap;
+  color: var(--text-tertiary);
 }
 th.num, td.num { text-align: right; }
 td {
@@ -203,8 +204,9 @@ tbody tr:hover { background: var(--bg-secondary); }
 
 /* — Formula / Code blocks — */
 .formula-block {
-  background: var(--navy);
-  color: var(--white);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
   border-radius: 6px;
   padding: 1.5rem 2rem;
   font-family: var(--font-mono);
@@ -213,11 +215,11 @@ tbody tr:hover { background: var(--bg-secondary); }
   margin: 1.5rem 0;
   overflow-x: auto;
 }
-.formula-block .var { color: var(--gold); }
-.formula-block .comment { color: var(--slate-light); }
+.formula-block .var { color: var(--accent-gold); font-weight: 600; }
+.formula-block .comment { color: var(--text-tertiary); }
 
 /* — Prose content — */
-.prose { max-width: 72ch; }
+.prose { max-width: 720px; line-height: 1.6; }
 .prose ul, .prose ol { margin: 0.75rem 0 1.25rem 1.5rem; }
 .prose li { margin-bottom: 0.4rem; }
 .prose code {
@@ -263,22 +265,24 @@ tbody tr:hover { background: var(--bg-secondary); }
 
 /* — Callout / Insight box — */
 .callout-box {
-  background: var(--navy);
-  border-left: 3px solid var(--gold);
+  background: var(--bg-secondary);
+  border-left: 3px solid var(--accent-gold);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent-gold);
   border-radius: 4px;
   padding: 1.25rem 1.5rem;
   margin: 0.5rem 0;
 }
 .callout-box p {
   font-style: italic;
-  color: var(--slate-light);
+  color: var(--text-secondary);
   font-size: 0.92rem;
   line-height: 1.7;
   margin: 0;
   max-width: none;
 }
 .callout-box strong {
-  color: var(--gold);
+  color: var(--accent-gold);
   font-style: normal;
 }
 

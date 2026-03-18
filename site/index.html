@@ -176,7 +176,7 @@
     </p>
     <form id="subscribe-form" style="display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap;">
       <input type="email" id="subscribe-email" placeholder="you@example.com" required
-        style="font-family:var(--font-mono);font-size:0.85rem;padding:0.6em 1em;border:1px solid #dde1e6;border-radius:4px;width:280px;">
+        style="font-family:var(--font-mono);font-size:0.85rem;padding:0.6em 1em;border:1px solid var(--border);border-radius:4px;width:280px;">
       <button type="submit" id="subscribe-btn" class="btn-download" style="opacity:1;">Subscribe</button>
     </form>
     <p style="font-family:var(--font-mono);font-size:0.78rem;color:var(--text-tertiary);opacity:0.6;margin-top:0.35rem;">Stored securely. No spam. Unsubscribe anytime.</p>
@@ -221,7 +221,7 @@ document.getElementById('subscribe-form').addEventListener('submit', async funct
       document.getElementById('subscribe-form').style.display = 'none';
     } else if (resp.status === 409) {
       msg.style.display = '';
-      msg.style.color = 'var(--gold)';
+      msg.style.color = 'var(--accent-gold)';
       msg.textContent = "You're already subscribed!";
     } else {
       throw new Error(resp.status);
