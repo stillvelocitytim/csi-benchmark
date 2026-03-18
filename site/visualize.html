@@ -15,17 +15,18 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Instrument+Serif&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="design-system.css">
   <link rel="stylesheet" href="styles.css">
   <meta property="og:title" content="Capability-Seconds Index (CSI)">
   <meta property="og:description" content="Measuring AI productive capability per second per dollar. 16 models, 271x efficiency spread. Updated daily.">
-  <meta property="og:image" content="https://www.csi-index.com/og-image.png">
-  <meta property="og:url" content="https://www.csi-index.com">
+  <meta property="og:image" content="https://capabilitysecondsindex.com/og-image.png">
+  <meta property="og:url" content="https://capabilitysecondsindex.com">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Capability-Seconds Index (CSI)">
   <meta name="twitter:description" content="Measuring AI productive capability per second per dollar. 16 models, 271x efficiency spread.">
-  <meta name="twitter:image" content="https://www.csi-index.com/og-image.png">
+  <meta name="twitter:image" content="https://capabilitysecondsindex.com/og-image.png">
 </head>
 <body>
 
@@ -74,7 +75,29 @@
     </div>
   </section>
 
-  <!-- SECTION 2: What does one task cost? -->
+  <!-- SECTION 2: Distribution Charts -->
+  <section id="viz-distribution" style="display:none;">
+    <h2>CSI distribution</h2>
+    <p style="color:var(--text-secondary);font-size:0.92rem;max-width:740px;margin:0 0 1.5rem;line-height:1.65;">
+      How are frontier models distributed across the efficiency spectrum? These histograms show the clustering pattern &mdash; most models bunch in the middle, with a few extreme outliers at both ends. The gold line marks the median.
+    </p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+      <div>
+        <h3 style="font-size:0.95rem;margin-bottom:0.75rem;">CSI score distribution</h3>
+        <div class="table-wrap" style="padding:1rem;background:#FFFFFF;">
+          <canvas id="viz-dist-csi" height="280"></canvas>
+        </div>
+      </div>
+      <div>
+        <h3 style="font-size:0.95rem;margin-bottom:0.75rem;">Cost per task distribution</h3>
+        <div class="table-wrap" style="padding:1rem;background:#FFFFFF;">
+          <canvas id="viz-dist-cost" height="280"></canvas>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: What does one task cost? -->
   <section id="viz-dollar" style="display:none;">
     <h2>What does one task cost?</h2>
     <p style="color:var(--text-secondary);font-size:0.92rem;max-width:740px;margin:0 0 2rem;line-height:1.65;">
@@ -136,9 +159,14 @@
 
 <footer>
   <div class="container">
-    Capability-Seconds&trade; Index &middot; Updated daily &middot;
-    <a href="https://github.com/stillvelocitytim/csi-benchmark">Source on GitHub</a>
-    <div style="color:var(--text-tertiary);font-size:0.75rem;margin-top:0.5rem;">Published by Nine Island Advisory LLC. For research purposes only. Not investment advice.</div>
+    <div class="footer-left">
+      <div class="footer-brand">Capability-Seconds&trade; Index</div>
+      <div>Published by Nine Island Advisory LLC</div>
+    </div>
+    <div class="footer-right">
+      <div><a href="https://github.com/stillvelocitytim/csi-benchmark">Source on GitHub</a></div>
+      <div>For research purposes only. Not investment advice.</div>
+    </div>
   </div>
 </footer>
 

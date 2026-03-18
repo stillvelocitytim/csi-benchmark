@@ -736,7 +736,7 @@ function wireDownloadButtons() {
       alert('Forward curve data not available yet.');
     } finally {
       btnForward.disabled = false;
-      btnForward.textContent = 'Download Forward Curve (CSV)';
+      btnForward.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg> Download forward curve (CSV)';
     }
   });
 }
@@ -793,6 +793,7 @@ async function drawVisualizations(runDate) {
 
     drawFrontier(models);
     drawTreemap(models);
+    drawDistributions(models);
     drawDollarCharts(models);
   } catch (err) {
     console.error('Draw visualizations error:', err);
@@ -1135,6 +1136,116 @@ function drawDollarCharts(models) {
     const avgSpread = Math.round(spreads.reduce((a, b) => a + b, 0) / spreads.length);
     avgInsightEl.innerHTML = '<strong>Across these three tasks, the most expensive model costs an average of ' + avgSpread + '\u00d7 more per task than the cheapest.</strong>';
     avgInsightEl.style.display = '';
+  }
+
+  section.style.display = '';
+}
+
+/* =========================================================================
+   CHART: Distribution histograms (visualize.html)
+   ========================================================================= */
+
+let _distCharts = [];
+
+function drawDistributions(models) {
+  var section = document.getElementById('viz-distribution');
+  if (!section || typeof Chart === 'undefined') return;
+
+  for (var c of _distCharts) c.destroy();
+  _distCharts = [];
+
+  // --- CSI Distribution ---
+  var csiCanvas = document.getElementById('viz-dist-csi');
+  if (csiCanvas) {
+    var csiValues = models.map(function(m) { return Number(m.csi); }).sort(function(a, b) { return a - b; });
+    var logVals = csiValues.map(function(v) { return Math.log10(Math.max(v, 0.1)); });
+    var logMin = Math.floor(Math.min.apply(null, logVals));
+    var logMax = Math.ceil(Math.max.apply(null, logVals));
+    var binCount = 8;
+    var binWidth = (logMax - logMin) / binCount;
+    var bins = [];
+    for (var i = 0; i < binCount; i++) {
+      bins.push({ lo: Math.pow(10, logMin + i * binWidth), hi: Math.pow(10, logMin + (i + 1) * binWidth), count: 0 });
+    }
+    for (var j = 0; j < csiValues.length; j++) {
+      var v = csiValues[j];
+      for (var k = 0; k < bins.length; k++) {
+        if (v >= bins[k].lo && (v < bins[k].hi || k === bins.length - 1)) { bins[k].count++; break; }
+      }
+    }
+    var medianCSI = csiValues[Math.floor(csiValues.length / 2)];
+    var labels = bins.map(function(b) { return b.lo < 10 ? b.lo.toFixed(1) + '-' + b.hi.toFixed(1) : Math.round(b.lo) + '-' + Math.round(b.hi); });
+    var counts = bins.map(function(b) { return b.count; });
+    var colors = bins.map(function(_, idx) {
+      var t = idx / (bins.length - 1);
+      var r = Math.round(59 + t * (29 - 59));
+      var g = Math.round(130 + t * (158 - 130));
+      var b = Math.round(246 + t * (117 - 246));
+      return 'rgb(' + r + ',' + g + ',' + b + ')';
+    });
+
+    var chart1 = new Chart(csiCanvas, {
+      type: 'bar',
+      data: { labels: labels, datasets: [{ data: counts, backgroundColor: colors, borderRadius: 3 }] },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          annotation: undefined
+        },
+        scales: {
+          x: { title: { display: true, text: 'CSI range (log scale)', color: '#1A1A2E', font: { size: 12 } }, ticks: { color: '#1A1A2E', font: { size: 10 } }, grid: { display: false } },
+          y: { title: { display: true, text: 'Models', color: '#1A1A2E', font: { size: 12 } }, ticks: { color: '#1A1A2E', stepSize: 1 }, grid: { color: 'rgba(0,0,0,0.06)' }, beginAtZero: true }
+        }
+      }
+    });
+    _distCharts.push(chart1);
+  }
+
+  // --- Cost Distribution ---
+  var costCanvas = document.getElementById('viz-dist-cost');
+  if (costCanvas && _vizPricing) {
+    var costs = _vizPricing.map(function(p) {
+      return (80000 / 1e6 * Number(p.input_price_per_million)) + (2000 / 1e6 * Number(p.output_price_per_million));
+    }).filter(function(c) { return c > 0; }).sort(function(a, b) { return a - b; });
+
+    var costLogVals = costs.map(function(c) { return Math.log10(c); });
+    var cLogMin = Math.floor(Math.min.apply(null, costLogVals));
+    var cLogMax = Math.ceil(Math.max.apply(null, costLogVals));
+    var cBinCount = 8;
+    var cBinWidth = (cLogMax - cLogMin) / cBinCount;
+    var cBins = [];
+    for (var ci = 0; ci < cBinCount; ci++) {
+      cBins.push({ lo: Math.pow(10, cLogMin + ci * cBinWidth), hi: Math.pow(10, cLogMin + (ci + 1) * cBinWidth), count: 0 });
+    }
+    for (var cj = 0; cj < costs.length; cj++) {
+      for (var ck = 0; ck < cBins.length; ck++) {
+        if (costs[cj] >= cBins[ck].lo && (costs[cj] < cBins[ck].hi || ck === cBins.length - 1)) { cBins[ck].count++; break; }
+      }
+    }
+    var cLabels = cBins.map(function(b) { return '$' + (b.lo < 0.01 ? b.lo.toFixed(3) : b.lo < 1 ? b.lo.toFixed(2) : b.lo.toFixed(0)); });
+    var cCounts = cBins.map(function(b) { return b.count; });
+    var cColors = cBins.map(function(_, idx) {
+      var t = idx / (cBins.length - 1);
+      var r = Math.round(29 + t * (239 - 29));
+      var g = Math.round(158 + t * (68 - 158));
+      var b = Math.round(117 + t * (68 - 117));
+      return 'rgb(' + r + ',' + g + ',' + b + ')';
+    });
+
+    var chart2 = new Chart(costCanvas, {
+      type: 'bar',
+      data: { labels: cLabels, datasets: [{ data: cCounts, backgroundColor: cColors, borderRadius: 3 }] },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { title: { display: true, text: 'Cost per task (10-K summarization)', color: '#1A1A2E', font: { size: 12 } }, ticks: { color: '#1A1A2E', font: { size: 10 } }, grid: { display: false } },
+          y: { title: { display: true, text: 'Models', color: '#1A1A2E', font: { size: 12 } }, ticks: { color: '#1A1A2E', stepSize: 1 }, grid: { color: 'rgba(0,0,0,0.06)' }, beginAtZero: true }
+        }
+      }
+    });
+    _distCharts.push(chart2);
   }
 
   section.style.display = '';

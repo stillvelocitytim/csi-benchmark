@@ -1,0 +1,42 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(vercel:*)",
+      "Bash(npx vercel:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(gh run:*)",
+      "Bash(gh workflow:*)",
+      "Bash(grep -r \"MODEL\\\\|PRICE\\\\|OPENROUTER\" /c/Users/timot/csi-benchmark --include=*.py --include=*.json)",
+      "WebFetch(domain:openrouter.ai)",
+      "Bash(python -m scrapers.pricing)",
+      "Bash(set -a)",
+      "Bash(source .env)",
+      "Bash(set +a)",
+      "Bash(python -m harness.run_eval --model nemotron --task R1 --no-store)",
+      "Bash(python -m harness.run_eval --model deepseek --task R1 --no-store)",
+      "Bash(python -m harness.run_eval --model cohere --task R1 --no-store)",
+      "Bash(curl -s --max-time 120 \"https://openrouter.ai/api/v1/chat/completions\" -H \"Authorization: Bearer $OPENROUTER_API_KEY\" -H \"Content-Type: application/json\" -d '{\"\"\"\"model\"\"\"\":\"\"\"\"cohere/command-a\"\"\"\",\"\"\"\"max_tokens\"\"\"\":256,\"\"\"\"messages\"\"\"\":[{\"\"\"\"role\"\"\"\":\"\"\"\"user\"\"\"\",\"\"\"\"content\"\"\"\":\"\"\"\"A farmer has 17 sheep. All but 9 run away. How many sheep does the farmer have left? Answer with just the number.\"\"\"\"}]}')",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(d.get\\(''''choices'''',[{}]\\)[0].get\\(''''message'''',{}\\).get\\(''''content'''',''''NO CONTENT''''\\)\\); print\\(''''tokens:'''', d.get\\(''''usage'''',{}\\)\\)\")",
+      "Bash(python3 -c \":*)",
+      "Bash(python -c \":*)",
+      "Bash(curl -s \"https://openrouter.ai/api/v1/models\" -H \"Authorization: Bearer $OPENROUTER_API_KEY\")",
+      "WebFetch(domain:docs.anthropic.com)",
+      "WebFetch(domain:platform.openai.com)",
+      "Bash(python -m harness.run_eval --model claude-haiku --task R1 --no-store)",
+      "Bash(python -m harness.run_eval --model grok --task R1 --no-store)",
+      "Bash(python -m harness.run_eval --model deepseek-r1 --task R1 --no-store)",
+      "Bash(python -m harness.run_eval --model cohere-rplus --task R1 --no-store)",
+      "Bash(python -m harness.run_eval --model qwen --task R1 --no-store)",
+      "Bash(echo \"URL: $SUPABASE_URL\")",
+      "Bash(python -c \"import os; print\\(os.environ.get\\(''SUPABASE_URL'',''NOT SET''\\)[:60]\\)\")",
+      "Bash(npx supabase:*)",
+      "Bash(env)",
+      "Bash(pip install:*)",
+      "Bash(python -m harness.compute_forward)",
+      "Bash(python -c \":)",
+      "WebFetch(domain:capabilitysecondsindex.com)"
+    ]
+  }
+}
