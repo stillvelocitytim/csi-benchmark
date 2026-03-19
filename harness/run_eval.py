@@ -231,7 +231,7 @@ CALLERS = {
 # Main evaluation loop
 # ---------------------------------------------------------------------------
 
-def run_single(task: dict, model_key: str, dry_run: bool = False) -> dict | None:
+def run_single(task: dict, model_key: str, dry_run: bool = False, run_date: date | None = None) -> dict | None:
     """Run one task against one model. Returns measurement dict or None on failure."""
     from harness.scoring import score_task
 
@@ -276,7 +276,7 @@ def run_single(task: dict, model_key: str, dry_run: bool = False) -> dict | None
     )
 
     row = {
-        "run_date": str(date.today()),
+        "run_date": str(run_date or date.today()),
         "model": model_id,
         "provider": provider,
         "task_id": task_id,
@@ -297,7 +297,20 @@ def main():
     parser.add_argument("--task", type=str, help="Run only this task ID (e.g. R1, C2)")
     parser.add_argument("--dry-run", action="store_true", help="Preview without making API calls")
     parser.add_argument("--no-store", action="store_true", help="Skip writing results to Supabase")
+    parser.add_argument("--date", type=str, default=None,
+                        help="Override run_date (YYYY-MM-DD) for backfills. Default: today")
     args = parser.parse_args()
+
+    # Resolve run date
+    if args.date:
+        from datetime import datetime
+        try:
+            run_date = datetime.strptime(args.date, "%Y-%m-%d").date()
+        except ValueError:
+            log.error("Invalid date format: %s (expected YYYY-MM-DD)", args.date)
+            sys.exit(1)
+    else:
+        run_date = date.today()
 
     # Load tasks
     with open(TASKS_PATH) as f:
@@ -323,7 +336,7 @@ def main():
     for model_key in model_keys:
         for task in tasks:
             try:
-                row = run_single(task, model_key, dry_run=args.dry_run)
+                row = run_single(task, model_key, dry_run=args.dry_run, run_date=run_date)
             except Exception as exc:
                 log.error("Unhandled error for %s / %s: %s", model_key, task["task_id"], exc)
                 continue
