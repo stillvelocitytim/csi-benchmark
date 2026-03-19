@@ -44,6 +44,7 @@ header .container {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  width: 100%;
 }
 .logo {
   font-family: var(--font-heading);
@@ -53,7 +54,7 @@ header .container {
   letter-spacing: 0.02em;
   white-space: nowrap;
   flex-shrink: 0;
-  margin-right: 2.5rem;
+  margin-right: 3rem;
 }
 .logo span { color: var(--gold); }
 nav { display: flex; gap: 1.75rem; align-items: center; flex-shrink: 0; }
