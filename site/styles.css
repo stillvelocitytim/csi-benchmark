@@ -51,9 +51,12 @@ header .container {
   color: var(--white);
   text-decoration: none;
   letter-spacing: 0.02em;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-right: 2.5rem;
 }
 .logo span { color: var(--gold); }
-nav { display: flex; gap: 1.75rem; align-items: center; }
+nav { display: flex; gap: 1.75rem; align-items: center; flex-shrink: 0; }
 nav a {
   color: #94A3B8;
   text-decoration: none;
