@@ -16,6 +16,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Instrument+Serif&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="favicon.ico" sizes="32x32">
+  <link rel="apple-touch-icon" href="favicon.svg">
   <link rel="stylesheet" href="design-system.css">
   <link rel="stylesheet" href="styles.css">
   <meta property="og:title" content="Capability-Seconds Index (CSI)">
@@ -39,6 +41,7 @@
     <nav>
       <a href="index.html">Dashboard</a>
       <a href="research.html">Research</a>
+      <a href="paper.html">Paper</a>
       <a href="methodology.html" class="active">Methodology</a>
       <a href="data.html">Data</a>
       <a href="visualize.html">Visualize</a>
@@ -187,6 +190,7 @@
   <section class="prose">
     <h2>Changelog</h2>
     <ul>
+      <li><strong>v1.1.1 (March 19, 2026):</strong> No data collected for March 18 due to pipeline authentication failure (missing API key in CI environment). Issue resolved same day. No backfill attempted — CSI reports only data collected during live evaluation windows.</li>
       <li><strong>v1.1 (March 17, 2026):</strong> Expanded model universe to 16 models. Added Claude Haiku 4.5, Grok 3, DeepSeek V3.2, DeepSeek R1, Cohere Command A, Cohere Command R+, Nemotron Super 49B, and Qwen 2.5 72B.</li>
       <li><strong>v1.0 (March 16, 2026):</strong> Initial release. 8 models, 12 tasks, 3 scoring domains. Median-based aggregate. Daily evaluation cadence.</li>
     </ul>
