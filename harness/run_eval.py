@@ -194,9 +194,9 @@ def call_openai(prompt: str, model_id: str):
 
 
 def call_google(prompt: str, model_id: str):
-    from google import genai
-    client = genai.Client()
-    resp = client.models.generate_content(model=model_id, contents=prompt)
+    import google.generativeai as genai
+    model = genai.GenerativeModel(model_id)
+    resp = model.generate_content(prompt)
     text = resp.text
     pt = getattr(resp.usage_metadata, "prompt_token_count", 0) or 0
     ct = getattr(resp.usage_metadata, "candidates_token_count", 0) or 0
@@ -256,7 +256,11 @@ def run_single(task: dict, model_key: str, dry_run: bool = False) -> dict | None
         log.error("API error for %s / %s: %s", model_key, task_id, exc)
         return None
 
-    score = score_task(text, task)
+    try:
+        score = score_task(text, task)
+    except Exception as exc:
+        log.error("Scoring error for %s / %s: %s", model_key, task_id, exc)
+        return None
 
     # Pricing
     try:
@@ -318,7 +322,11 @@ def main():
     results = []
     for model_key in model_keys:
         for task in tasks:
-            row = run_single(task, model_key, dry_run=args.dry_run)
+            try:
+                row = run_single(task, model_key, dry_run=args.dry_run)
+            except Exception as exc:
+                log.error("Unhandled error for %s / %s: %s", model_key, task["task_id"], exc)
+                continue
             if row is not None:
                 results.append(row)
                 # Store to Supabase
