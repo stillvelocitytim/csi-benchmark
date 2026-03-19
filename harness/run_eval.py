@@ -256,6 +256,10 @@ def run_single(task: dict, model_key: str, dry_run: bool = False, run_date: date
         log.error("API error for %s / %s: %s", model_key, task_id, exc)
         return None
 
+    if not text:
+        log.warning("Empty response from %s / %s", model_key, task_id)
+        return None
+
     try:
         score = score_task(text, task)
     except Exception as exc:
