@@ -54,7 +54,7 @@ header .container {
   letter-spacing: 0.02em;
   white-space: nowrap;
   flex-shrink: 0;
-  margin-right: 3rem;
+  margin-right: auto;
 }
 .logo span { color: var(--gold); }
 nav { display: flex; gap: 1.75rem; align-items: center; flex-shrink: 0; }
