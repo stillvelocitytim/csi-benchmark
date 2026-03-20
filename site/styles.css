@@ -45,6 +45,7 @@ header .container {
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  max-width: none;
 }
 .logo {
   font-family: var(--font-heading);
