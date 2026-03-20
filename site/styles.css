@@ -44,7 +44,6 @@ header {
 header .container {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   width: 100%;
   max-width: none;
   padding: 0 2rem;
@@ -55,10 +54,10 @@ header .container {
   letter-spacing: 0.02em;
   white-space: nowrap;
   flex-shrink: 0;
-  margin-right: 3rem;
+  margin-right: auto;
 }
 .logo span { color: var(--gold); }
-nav { display: flex; gap: 1.75rem; align-items: center; flex-shrink: 0; }
+nav { display: flex; gap: 1.75rem; align-items: center; flex-shrink: 0; margin-left: auto; }
 nav a {
   color: #94A3B8;
   text-decoration: none;
