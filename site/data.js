@@ -206,7 +206,7 @@ async function loadDashboard() {
         const csiValues = models.map(m => Number(m.csi));
         const maxCSI = Math.max(...csiValues);
         const minCSI = Math.min(...csiValues);
-        const pointSpread = (maxCSI - minCSI).toFixed(1);
+        const pointSpread = (maxCSI - minCSI).toFixed(2);
         spreadEl.textContent = pointSpread + '-point';
         callout.style.display = '';
       }
@@ -216,11 +216,11 @@ async function loadDashboard() {
         const csiVals = models.map(m => ({ name: shortModel(m.model), csi: Number(m.csi) }));
         const best = csiVals.reduce((a, b) => a.csi > b.csi ? a : b);
         const worst = csiVals.reduce((a, b) => a.csi < b.csi ? a : b);
-        const pointSpread = (best.csi - worst.csi).toFixed(1);
+        const pointSpread = (best.csi - worst.csi).toFixed(2);
         effSpread.querySelector('span').innerHTML =
           '<span style="color:var(--accent-gold);font-family:var(--font-mono);font-weight:600;">' + pointSpread + '-point</span> efficiency spread \u2014 ' +
-          best.name + ' (' + fmt(best.csi, 1) + ') to ' +
-          worst.name + ' (' + fmt(worst.csi, 1) + ')';
+          best.name + ' (' + fmt(best.csi, 2) + ') to ' +
+          worst.name + ' (' + fmt(worst.csi, 2) + ')';
         effSpread.style.display = '';
       }
     } else if (modelTable) {
@@ -617,11 +617,11 @@ async function loadResearchSpread() {
     const worst = csiVals.reduce((a, b) => a.csi < b.csi ? a : b);
     if (worst.csi <= 0) return;
 
-    const pointSpread = (best.csi - worst.csi).toFixed(1);
+    const pointSpread = (best.csi - worst.csi).toFixed(2);
     spreadEl.textContent = pointSpread + '-point';
     detailEl.textContent =
-      best.name + ' CSI: ' + fmt(best.csi, 1) + ' \u2212 ' +
-      worst.name + ' CSI: ' + fmt(worst.csi, 1) + ' = ' + pointSpread + ' points';
+      best.name + ' CSI: ' + fmt(best.csi, 2) + ' \u2212 ' +
+      worst.name + ' CSI: ' + fmt(worst.csi, 2) + ' = ' + pointSpread + ' points';
   } catch (err) {
     console.error('Research spread load error:', err);
     // fallback: keep static value
