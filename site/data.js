@@ -889,7 +889,10 @@ function drawFrontier(models) {
         },
         y: {
           title: { display: true, text: 'Capability Score', color: cssVar('--text-primary'), font: { size: 13 } },
-          ticks: { color: cssVar('--text-primary') },
+          ticks: {
+            color: cssVar('--text-primary'),
+            callback: function(val) { return val <= 1 ? val : ''; }
+          },
           grid: { color: 'rgba(0,0,0,0.06)' },
           min: yMin,
           max: yMax,
