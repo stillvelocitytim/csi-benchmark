@@ -825,10 +825,10 @@ function drawFrontier(models) {
     color: csiTierColor(Number(m.csi)),
   }));
 
-  // Auto-calculate y-axis range from data
+  // Auto-calculate y-axis range from data, with padding for bubble radius
   const scores = data.map(d => d.y);
-  const yMin = Math.max(0, Math.min(...scores) - 0.05);
-  const yMax = Math.min(1, Math.max(...scores) + 0.05);
+  const yMin = Math.max(0, Math.min(...scores) - 0.08);
+  const yMax = Math.max(...scores) + 0.08;
 
   // Build legend
   const legendEl = document.getElementById('frontier-legend');
@@ -859,7 +859,7 @@ function drawFrontier(models) {
       responsive: true,
       maintainAspectRatio: true,
       aspectRatio: 2.2,
-      layout: { padding: { top: 30, right: 30, bottom: 10, left: 10 } },
+      layout: { padding: { top: 40, right: 30, bottom: 10, left: 10 } },
       plugins: {
         legend: { display: false },
         tooltip: {
