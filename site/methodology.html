@@ -58,7 +58,7 @@
 
   <section class="prose">
     <h1>Methodology</h1>
-    <div style="font-family:var(--font-mono);font-size:13px;color:var(--text-tertiary);margin-bottom:1.5rem;">Methodology v2.0 &mdash; March 2026</div>
+    <div style="font-family:var(--font-mono);font-size:13px;color:var(--text-tertiary);margin-bottom:1.5rem;">Methodology v2.1 &mdash; March 2026</div>
     <p>
       The CSI combines three independent dimensions of AI model performance
       into a single efficiency metric. Each dimension is measured empirically
@@ -73,9 +73,10 @@
 
     <h3>1. Capability (Score)</h3>
     <p>
-      Each model is evaluated on 12 standardized tasks spanning three domains:
-      <strong>reasoning</strong> (4 tasks), <strong>coding</strong> (4 tasks),
-      and <strong>applied knowledge</strong> (4 tasks). Every task is scored
+      Each model is evaluated on 30 standardized tasks spanning five domains:
+      <strong>reasoning</strong> (8 tasks), <strong>coding</strong> (8 tasks),
+      <strong>applied knowledge</strong> (8 tasks), <strong>analysis</strong> (4 tasks),
+      and <strong>instruction following</strong> (2 tasks). Every task is scored
       on a 0&ndash;1 scale using deterministic, reproducible scoring functions
       applied identically across all models.
     </p>
@@ -127,35 +128,61 @@
   <section class="prose">
     <h2>Task Set</h2>
 
-    <h3>Reasoning (R1&ndash;R4)</h3>
+    <h3>Reasoning (R1&ndash;R8)</h3>
     <ul>
       <li><strong>R1:</strong> Sheep riddle &mdash; exact-match scoring</li>
       <li><strong>R2:</strong> Number sequence &mdash; exact-match scoring</li>
       <li><strong>R3:</strong> Widget production &mdash; exact-match scoring</li>
-      <li><strong>R4:</strong> Fermi estimation &mdash; graded rubric (structured reasoning with reasonable assumptions)</li>
+      <li><strong>R4:</strong> Fermi estimation &mdash; graded rubric</li>
+      <li><strong>R5:</strong> Logic puzzle (houses) &mdash; exact-match scoring</li>
+      <li><strong>R6:</strong> Bat and ball &mdash; exact-match scoring</li>
+      <li><strong>R7:</strong> Water jug problem &mdash; graded rubric</li>
+      <li><strong>R8:</strong> Hotel paradox &mdash; graded rubric</li>
     </ul>
 
-    <h3>Coding (C1&ndash;C4)</h3>
+    <h3>Coding (C1&ndash;C8)</h3>
     <ul>
       <li><strong>C1:</strong> Palindrome function &mdash; code correctness checks</li>
       <li><strong>C2:</strong> Merge sorted lists &mdash; algorithm correctness checks</li>
       <li><strong>C3:</strong> SQL query &mdash; syntax and logic element checks</li>
       <li><strong>C4:</strong> Debug factorial &mdash; bug identification checks</li>
+      <li><strong>C5:</strong> Merge intervals &mdash; graded rubric</li>
+      <li><strong>C6:</strong> Rate limiter class &mdash; graded rubric</li>
+      <li><strong>C7:</strong> Expression evaluator &mdash; graded rubric</li>
+      <li><strong>C8:</strong> Transform pipeline &mdash; graded rubric</li>
     </ul>
 
-    <h3>Applied (A1&ndash;A4)</h3>
+    <h3>Applied (A1&ndash;A8)</h3>
     <ul>
       <li><strong>A1:</strong> Net income calculation &mdash; exact-match scoring</li>
-      <li><strong>A2:</strong> Medical diagnosis &mdash; graded rubric (diagnosis + test)</li>
-      <li><strong>A3:</strong> Merger vs. acquisition &mdash; graded rubric (3 key distinctions)</li>
+      <li><strong>A2:</strong> Medical diagnosis &mdash; graded rubric</li>
+      <li><strong>A3:</strong> Merger vs. acquisition &mdash; graded rubric</li>
       <li><strong>A4:</strong> JSON extraction &mdash; per-field accuracy scoring</li>
+      <li><strong>A5:</strong> DTC e-commerce analysis &mdash; graded rubric</li>
+      <li><strong>A6:</strong> Clinical differential diagnosis &mdash; graded rubric</li>
+      <li><strong>A7:</strong> CRE property comparison &mdash; graded rubric</li>
+      <li><strong>A8:</strong> SaaS M&amp;A advisory &mdash; graded rubric</li>
+    </ul>
+
+    <h3>Analysis (AN1&ndash;AN4)</h3>
+    <ul>
+      <li><strong>AN1:</strong> Financial statement analysis &mdash; graded rubric</li>
+      <li><strong>AN2:</strong> SaaS metrics interpretation &mdash; graded rubric</li>
+      <li><strong>AN3:</strong> Multi-method valuation &mdash; graded rubric</li>
+      <li><strong>AN4:</strong> Contrarian argument &mdash; graded rubric</li>
+    </ul>
+
+    <h3>Instruction Following (IF1&ndash;IF2)</h3>
+    <ul>
+      <li><strong>IF1:</strong> Structured table generation &mdash; graded rubric</li>
+      <li><strong>IF2:</strong> Constrained product description &mdash; graded rubric</li>
     </ul>
     <p>
-      The v1 task set (12 tasks) is designed for breadth across reasoning, coding,
-      and applied domains &mdash; not depth within any single domain. Capability scores
+      The task set (30 tasks) is designed for breadth across reasoning, coding,
+      applied, analysis, and instruction-following domains. Capability scores
       serve as a quality floor ensuring that only models producing substantively correct
-      outputs receive high marks. The primary signal in CSI v1 is cost deflation across
-      providers. Task set expansion and semantic scoring are planned for future versions.
+      outputs receive high marks. The primary signal in CSI is cost deflation across
+      providers.
     </p>
   </section>
 
