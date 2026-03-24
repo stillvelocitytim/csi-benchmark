@@ -104,11 +104,11 @@
     <p>For each model <em>m</em>, we compute three ratios:</p>
 
     <div class="formula-block">
-      <span class="comment">-- Capability per Second</span><br>
-      <span class="var">CS(m)</span> = ln(avg_score / avg_latency)<br><br>
-      <span class="comment">-- Capability per Dollar</span><br>
-      <span class="var">CD(m)</span> = ln(avg_score / avg_cost)<br><br>
-      <span class="comment">-- Capability-Seconds Index (per model)</span><br>
+      <span class="comment">-- Capability per Second (raw ratio)</span><br>
+      <span class="var">CS(m)</span> = avg_score / avg_latency<br><br>
+      <span class="comment">-- Capability per Dollar (raw ratio)</span><br>
+      <span class="var">CD(m)</span> = avg_score / avg_cost<br><br>
+      <span class="comment">-- Capability-Seconds Index (log-compressed composite)</span><br>
       <span class="var">CSI(m)</span> = ln(avg_score / (avg_latency &times; avg_cost))
     </div>
 
@@ -196,6 +196,7 @@
   <section class="prose">
     <h2>Changelog</h2>
     <ul>
+      <li><strong>v2.1 (March 23, 2026):</strong> CS and CD reverted to raw ratios (score/latency, score/cost) per the formal framework in the paper (Appendix A). Only the composite CSI retains the natural log transform for index compression. Rankings unchanged.</li>
       <li><strong>v2.0 (March 23, 2026):</strong> CSI values now expressed on natural log scale. CSI = ln(Score / (Latency &times; Cost)). Compresses index range from ~180&times; to ~6 points. Movements are now interpretable: +0.69 points = 2&times; improvement. Rankings unchanged. Historical values convert via ln(old_value).</li>
       <li><strong>v1.1.1 (March 19, 2026):</strong> No data collected for March 18 due to pipeline authentication failure (missing API key in CI environment). Issue resolved same day. No backfill attempted — CSI reports only data collected during live evaluation windows.</li>
       <li><strong>v1.1 (March 17, 2026):</strong> Expanded model universe to 16 models. Added Claude Haiku 4.5, Grok 3, DeepSeek V3.2, DeepSeek R1, Cohere Command A, Cohere Command R+, Nemotron Super 49B, and Qwen 2.5 72B.</li>

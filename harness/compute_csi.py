@@ -81,8 +81,8 @@ def main():
         cd_raw = avg_score / avg_cost if avg_cost > 0 else 0
         csi_raw = avg_score / (avg_latency * avg_cost) if (avg_latency > 0 and avg_cost > 0) else 0
 
-        cs = math.log(cs_raw) if cs_raw > 0 else 0
-        cd = math.log(cd_raw) if cd_raw > 0 else 0
+        cs = cs_raw
+        cd = cd_raw
         csi = math.log(csi_raw) if csi_raw > 0 else 0
 
         entry = {
