@@ -817,7 +817,7 @@ function drawFrontier(models) {
   const data = models.map(m => ({
     x: Number(m.avg_cost),
     y: Number(m.avg_score),
-    r: Math.max(Number(m.csi) * 3, 4),
+    r: Math.max(Number(m.csi) * 6, 6),
     csi: Number(m.csi),
     name: shortModel(m.model),
     latency: Number(m.avg_latency),
@@ -833,10 +833,10 @@ function drawFrontier(models) {
   const legendEl = document.getElementById('frontier-legend');
   if (legendEl) {
     const tiers = [
-      { color: '#1D9E75', label: 'CSI 400+' },
-      { color: '#378ADD', label: 'CSI 40\u2013400' },
-      { color: '#BA7517', label: 'CSI 5\u201340' },
-      { color: '#A32D2D', label: 'CSI < 5' },
+      { color: '#1D9E75', label: 'CSI 6+' },
+      { color: '#378ADD', label: 'CSI 4\u20136' },
+      { color: '#BA7517', label: 'CSI 2\u20134' },
+      { color: '#A32D2D', label: 'CSI < 2' },
     ];
     legendEl.innerHTML = tiers.map(t =>
       `<span style="display:inline-flex;align-items:center;gap:0.4rem;font-size:0.82rem;color:var(--text-primary);">` +
