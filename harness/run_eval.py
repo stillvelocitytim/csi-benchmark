@@ -236,7 +236,10 @@ CALLERS = {
 
 def run_single(task: dict, model_key: str, dry_run: bool = False, run_date: date | None = None) -> dict | None:
     """Run one task against one model. Returns measurement dict or None on failure."""
-    from harness.scoring import score_task
+    try:
+        from harness.scoring import score_task
+    except ImportError:
+        from scoring import score_task
 
     cfg = MODEL_CONFIGS[model_key]
     model_id = cfg["model_id"]
@@ -312,7 +315,10 @@ def main():
 
     # Configure LLM judge
     if args.no_llm_judge:
-        from harness import scoring
+        try:
+            from harness import scoring
+        except ImportError:
+            import scoring
         scoring.USE_LLM_JUDGE = False
         log.info("LLM-as-judge scoring DISABLED — using regex fallback")
 
