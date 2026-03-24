@@ -24,6 +24,9 @@ async function sbFetch(table, params = '') {
   return resp.json();
 }
 
+/* — Log-scale normalizer: values > 10 are on the old linear scale — */
+function normCSI(v) { return v > 10 ? Math.log(v) : v; }
+
 /* — Formatting helpers — */
 function fmt(n, decimals = 2) {
   if (n == null || isNaN(n)) return '—';
@@ -182,7 +185,7 @@ async function loadDashboard() {
     if (lastRunEl && idx.run_date) {
       lastRunEl.textContent = 'Last run: ' + idx.run_date;
     }
-    const csiVal = Number(idx.csi_aggregate);
+    const csiVal = normCSI(Number(idx.csi_aggregate));
     heroNum.textContent = csiVal.toFixed(2);
     heroDate.textContent = idx.run_date;
     if (statCS) statCS.textContent = fmt(idx.cs_aggregate, 4);
@@ -236,7 +239,7 @@ async function loadDashboard() {
     const prev = await sbFetch('csi_index', 'order=run_date.desc&limit=1&offset=1');
     const deltaBadge = document.getElementById('hero-delta');
     if (deltaBadge && prev.length) {
-      const prevCSI = Number(prev[0].csi_aggregate);
+      const prevCSI = normCSI(Number(prev[0].csi_aggregate));
       if (prevCSI > 0) {
         const delta = csiVal - prevCSI;
         deltaBadge.className = `badge ${delta >= 0 ? 'badge-green' : 'badge-red'}`;
@@ -264,7 +267,7 @@ async function loadCSIChart() {
     if (!history.length) return;
 
     const labels = history.map(r => r.run_date);
-    const raw = history.map(r => Number(r.csi_aggregate));
+    const raw = history.map(r => normCSI(Number(r.csi_aggregate)));
 
     // Use 7-day rolling average when we have enough data points
     const values = raw.length >= 7 ? raw.map(function(_, i, arr) {
@@ -421,7 +424,7 @@ async function loadForwardChart() {
   try {
     // Fetch current CSI aggregate (the "Now" point)
     const aggRows = await sbFetch('csi_index', 'select=csi_aggregate&order=run_date.desc&limit=1');
-    const currentCSI = aggRows.length ? Number(aggRows[0].csi_aggregate) : null;
+    const currentCSI = aggRows.length ? normCSI(Number(aggRows[0].csi_aggregate)) : null;
 
     // Fetch latest run_date from forward curve, then fetch that date's rows
     const dateRows = await sbFetch('csi_forward_curve', 'select=run_date&order=run_date.desc&limit=1');
