@@ -177,7 +177,7 @@ def call_anthropic(prompt: str, model_id: str):
     client = anthropic.Anthropic()
     msg = client.messages.create(
         model=model_id,
-        max_tokens=2048,
+        max_tokens=4096,
         messages=[{"role": "user", "content": prompt}],
     )
     text = msg.content[0].text
@@ -189,7 +189,7 @@ def call_openai(prompt: str, model_id: str):
     client = openai.OpenAI()
     resp = client.chat.completions.create(
         model=model_id,
-        max_tokens=2048,
+        max_tokens=4096,
         messages=[{"role": "user", "content": prompt}],
     )
     text = resp.choices[0].message.content
@@ -214,7 +214,7 @@ def call_openrouter(prompt: str, model_id: str):
     )
     resp = client.chat.completions.create(
         model=model_id,
-        max_tokens=2048,
+        max_tokens=4096,
         messages=[{"role": "user", "content": prompt}],
     )
     text = resp.choices[0].message.content
