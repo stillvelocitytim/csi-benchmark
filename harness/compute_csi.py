@@ -6,6 +6,7 @@ then writes results to csi_by_model and csi_index tables.
 
 import argparse
 import logging
+import math
 import os
 import statistics
 from collections import defaultdict
@@ -76,9 +77,13 @@ def main():
         avg_latency = statistics.mean(lats)
         avg_cost = statistics.mean(costs)
 
-        cs = avg_score / avg_latency if avg_latency > 0 else 0
-        cd = avg_score / avg_cost if avg_cost > 0 else 0
-        csi = avg_score / (avg_latency * avg_cost) if (avg_latency > 0 and avg_cost > 0) else 0
+        cs_raw = avg_score / avg_latency if avg_latency > 0 else 0
+        cd_raw = avg_score / avg_cost if avg_cost > 0 else 0
+        csi_raw = avg_score / (avg_latency * avg_cost) if (avg_latency > 0 and avg_cost > 0) else 0
+
+        cs = math.log(cs_raw) if cs_raw > 0 else 0
+        cd = math.log(cd_raw) if cd_raw > 0 else 0
+        csi = math.log(csi_raw) if csi_raw > 0 else 0
 
         entry = {
             "run_date": run_date,
@@ -132,7 +137,7 @@ def main():
             "csi_aggregate": round(statistics.median(csi_vals), 4),
             "cs_aggregate": round(statistics.median(cs_vals), 4),
             "cd_aggregate": round(statistics.median(cd_vals), 4),
-            "methodology_version": "v1",
+            "methodology_version": "v2",
         }
 
         print(f"\nAGGREGATE INDEX:")

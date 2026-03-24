@@ -61,11 +61,11 @@ function shortModel(m) {
   return map[m] || m;
 }
 
-/* — Tier color by CSI — */
+/* — Tier color by CSI (log scale: ~1–8 range) — */
 function csiTierColor(csi) {
-  if (csi >= 400) return '#1D9E75';
-  if (csi >= 40) return '#378ADD';
-  if (csi >= 5) return '#BA7517';
+  if (csi >= 6) return '#1D9E75';
+  if (csi >= 4) return '#378ADD';
+  if (csi >= 2) return '#BA7517';
   return '#A32D2D';
 }
 
@@ -206,11 +206,9 @@ async function loadDashboard() {
         const csiValues = models.map(m => Number(m.csi));
         const maxCSI = Math.max(...csiValues);
         const minCSI = Math.min(...csiValues);
-        if (minCSI > 0) {
-          const spread = Math.round(maxCSI / minCSI);
-          spreadEl.textContent = spread + 'x';
-          callout.style.display = '';
-        }
+        const pointSpread = (maxCSI - minCSI).toFixed(1);
+        spreadEl.textContent = pointSpread + '-point';
+        callout.style.display = '';
       }
       // Populate efficiency spread line
       const effSpread = document.getElementById('efficiency-spread');
@@ -218,14 +216,12 @@ async function loadDashboard() {
         const csiVals = models.map(m => ({ name: shortModel(m.model), csi: Number(m.csi) }));
         const best = csiVals.reduce((a, b) => a.csi > b.csi ? a : b);
         const worst = csiVals.reduce((a, b) => a.csi < b.csi ? a : b);
-        if (worst.csi > 0) {
-          const ratio = Math.round(best.csi / worst.csi);
-          effSpread.querySelector('span').innerHTML =
-            '<span style="color:var(--accent-gold);font-family:var(--font-mono);font-weight:600;">' + ratio + '\u00d7</span> efficiency spread \u2014 ' +
-            best.name + ' (' + fmt(best.csi, 0) + ') to ' +
-            worst.name + ' (' + fmt(worst.csi, 2) + ')';
-          effSpread.style.display = '';
-        }
+        const pointSpread = (best.csi - worst.csi).toFixed(1);
+        effSpread.querySelector('span').innerHTML =
+          '<span style="color:var(--accent-gold);font-family:var(--font-mono);font-weight:600;">' + pointSpread + '-point</span> efficiency spread \u2014 ' +
+          best.name + ' (' + fmt(best.csi, 1) + ') to ' +
+          worst.name + ' (' + fmt(worst.csi, 1) + ')';
+        effSpread.style.display = '';
       }
     } else if (modelTable) {
       showFallback(modelTable.closest('.table-wrap') || modelTable, 'No per-model data available.');
@@ -237,9 +233,10 @@ async function loadDashboard() {
     if (deltaBadge && prev.length) {
       const prevCSI = Number(prev[0].csi_aggregate);
       if (prevCSI > 0) {
-        const delta = (csiVal - prevCSI) / prevCSI;
+        const delta = csiVal - prevCSI;
         deltaBadge.className = `badge ${delta >= 0 ? 'badge-green' : 'badge-red'}`;
-        deltaBadge.textContent = (delta >= 0 ? '\u25B2 ' : '\u25BC ') + fmtPct(delta) + ' vs prev';
+        const sign = delta >= 0 ? '+' : '';
+        deltaBadge.textContent = (delta >= 0 ? '\u25B2 ' : '\u25BC ') + sign + delta.toFixed(2) + ' pts vs prev';
       }
     }
   } catch (err) {
@@ -620,14 +617,14 @@ async function loadResearchSpread() {
     const worst = csiVals.reduce((a, b) => a.csi < b.csi ? a : b);
     if (worst.csi <= 0) return;
 
-    const spread = Math.round(best.csi / worst.csi);
-    spreadEl.textContent = spread + '\u00d7';
+    const pointSpread = (best.csi - worst.csi).toFixed(1);
+    spreadEl.textContent = pointSpread + '-point';
     detailEl.textContent =
-      best.name + ' CSI: ' + fmt(best.csi, 0) + ' \u00f7 ' +
-      worst.name + ' CSI: ' + fmt(worst.csi, 2) + ' = ' + spread + '\u00d7';
+      best.name + ' CSI: ' + fmt(best.csi, 1) + ' \u2212 ' +
+      worst.name + ' CSI: ' + fmt(worst.csi, 1) + ' = ' + pointSpread + ' points';
   } catch (err) {
     console.error('Research spread load error:', err);
-    // fallback: keep static 271×
+    // fallback: keep static value
   }
 }
 
@@ -812,7 +809,7 @@ function drawFrontier(models) {
   const data = models.map(m => ({
     x: Number(m.avg_cost),
     y: Number(m.avg_score),
-    r: Math.max(Math.sqrt(Number(m.csi)) * 1.2, 4),
+    r: Math.max(Number(m.csi) * 3, 4),
     csi: Number(m.csi),
     name: shortModel(m.model),
     latency: Number(m.avg_latency),
@@ -1158,14 +1155,14 @@ function drawDistributions(models) {
   var csiCanvas = document.getElementById('viz-dist-csi');
   if (csiCanvas) {
     var csiValues = models.map(function(m) { return Number(m.csi); }).sort(function(a, b) { return a - b; });
-    var logVals = csiValues.map(function(v) { return Math.log10(Math.max(v, 0.1)); });
-    var logMin = Math.floor(Math.min.apply(null, logVals));
-    var logMax = Math.ceil(Math.max.apply(null, logVals));
+    var valMin = Math.floor(Math.min.apply(null, csiValues));
+    var valMax = Math.ceil(Math.max.apply(null, csiValues));
     var binCount = 8;
-    var binWidth = (logMax - logMin) / binCount;
+    var binWidth = (valMax - valMin) / binCount;
+    if (binWidth === 0) binWidth = 1;
     var bins = [];
     for (var i = 0; i < binCount; i++) {
-      bins.push({ lo: Math.pow(10, logMin + i * binWidth), hi: Math.pow(10, logMin + (i + 1) * binWidth), count: 0 });
+      bins.push({ lo: valMin + i * binWidth, hi: valMin + (i + 1) * binWidth, count: 0 });
     }
     for (var j = 0; j < csiValues.length; j++) {
       var v = csiValues[j];
@@ -1174,7 +1171,7 @@ function drawDistributions(models) {
       }
     }
     var medianCSI = csiValues[Math.floor(csiValues.length / 2)];
-    var labels = bins.map(function(b) { return b.lo < 10 ? b.lo.toFixed(1) + '-' + b.hi.toFixed(1) : Math.round(b.lo) + '-' + Math.round(b.hi); });
+    var labels = bins.map(function(b) { return b.lo.toFixed(1) + '-' + b.hi.toFixed(1); });
     var counts = bins.map(function(b) { return b.count; });
     var colors = bins.map(function(_, idx) {
       var t = idx / (bins.length - 1);

@@ -218,6 +218,8 @@ def main():
                 c_proj = project_cost(cost_now, t_years, scenario, cred, is_flash)
 
                 csi_samples = monte_carlo_csi(s_proj, l_proj, c_proj, rng)
+                # Log-transform CSI samples (v2: natural log scale)
+                csi_samples = np.log(csi_samples)
                 median_csi = float(np.median(csi_samples))
                 p10 = float(np.percentile(csi_samples, 10))
                 p90 = float(np.percentile(csi_samples, 90))
@@ -249,6 +251,7 @@ def main():
                 if r["horizon_months"] == horizon and r["scenario"] == scenario
             ]
             # For each MC iteration, take the median across models
+            # Note: _samples are already log-transformed
             all_samples = np.stack([r["_samples"] for r in subset])  # (n_models, N_SIM)
             agg_samples = np.median(all_samples, axis=0)  # (N_SIM,)
 

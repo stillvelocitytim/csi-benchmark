@@ -21,13 +21,13 @@
   <link rel="stylesheet" href="design-system.css">
   <link rel="stylesheet" href="styles.css">
   <meta property="og:title" content="Capability-Seconds Index (CSI)">
-  <meta property="og:description" content="Measuring AI productive capability per second per dollar. 16 models, 271x efficiency spread. Updated daily.">
+  <meta property="og:description" content="Measuring AI productive capability per second per dollar. 16 models, 6-point efficiency spread. Updated daily.">
   <meta property="og:image" content="https://capabilitysecondsindex.com/og-image.png">
   <meta property="og:url" content="https://capabilitysecondsindex.com">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Capability-Seconds Index (CSI)">
-  <meta name="twitter:description" content="Measuring AI productive capability per second per dollar. 16 models, 271x efficiency spread.">
+  <meta name="twitter:description" content="Measuring AI productive capability per second per dollar. 16 models, 6-point efficiency spread.">
   <meta name="twitter:image" content="https://capabilitysecondsindex.com/og-image.png">
 </head>
 <body>
@@ -55,7 +55,7 @@
 
   <section class="prose">
     <h1>Methodology</h1>
-    <div style="font-family:var(--font-mono);font-size:13px;color:var(--text-tertiary);margin-bottom:1.5rem;">Methodology v1.0 &mdash; March 2026</div>
+    <div style="font-family:var(--font-mono);font-size:13px;color:var(--text-tertiary);margin-bottom:1.5rem;">Methodology v2.0 &mdash; March 2026</div>
     <p>
       The CSI combines three independent dimensions of AI model performance
       into a single efficiency metric. Each dimension is measured empirically
@@ -100,11 +100,11 @@
 
     <div class="formula-block">
       <span class="comment">-- Capability per Second</span><br>
-      <span class="var">CS(m)</span> = avg_score / avg_latency<br><br>
+      <span class="var">CS(m)</span> = ln(avg_score / avg_latency)<br><br>
       <span class="comment">-- Capability per Dollar</span><br>
-      <span class="var">CD(m)</span> = avg_score / avg_cost<br><br>
+      <span class="var">CD(m)</span> = ln(avg_score / avg_cost)<br><br>
       <span class="comment">-- Capability-Seconds Index (per model)</span><br>
-      <span class="var">CSI(m)</span> = avg_score / (avg_latency &times; avg_cost)
+      <span class="var">CSI(m)</span> = ln(avg_score / (avg_latency &times; avg_cost))
     </div>
 
     <p>The aggregate index is the <strong>median</strong> across all tracked models:</p>
@@ -191,6 +191,7 @@
   <section class="prose">
     <h2>Changelog</h2>
     <ul>
+      <li><strong>v2.0 (March 23, 2026):</strong> CSI values now expressed on natural log scale. CSI = ln(Score / (Latency &times; Cost)). Compresses index range from ~180&times; to ~6 points. Movements are now interpretable: +0.69 points = 2&times; improvement. Rankings unchanged. Historical values convert via ln(old_value).</li>
       <li><strong>v1.1.1 (March 19, 2026):</strong> No data collected for March 18 due to pipeline authentication failure (missing API key in CI environment). Issue resolved same day. No backfill attempted — CSI reports only data collected during live evaluation windows.</li>
       <li><strong>v1.1 (March 17, 2026):</strong> Expanded model universe to 16 models. Added Claude Haiku 4.5, Grok 3, DeepSeek V3.2, DeepSeek R1, Cohere Command A, Cohere Command R+, Nemotron Super 49B, and Qwen 2.5 72B.</li>
       <li><strong>v1.0 (March 16, 2026):</strong> Initial release. 8 models, 12 tasks, 3 scoring domains. Median-based aggregate. Daily evaluation cadence.</li>
