@@ -719,9 +719,15 @@ function wireDownloadButtons() {
   const btnForward = document.getElementById('btn-forward-csv');
   if (!btnSpot) return;
 
-  // Load spot data and enable button
+  // Load spot data, normalize historical values, and enable button
   sbFetch('csi_by_model', 'order=run_date.desc,csi.desc').then(data => {
-    _spotData = data;
+    _spotData = data.map(row => {
+      var r = Object.assign({}, row);
+      r.cs = denormCS(Number(r.cs));
+      r.cd = denormCS(Number(r.cd));
+      r.csi = normCSI(Number(r.csi));
+      return r;
+    });
     if (data.length) btnSpot.disabled = false;
   }).catch(() => {});
 
@@ -736,7 +742,14 @@ function wireDownloadButtons() {
       btnForward.disabled = true;
       btnForward.textContent = 'Fetching\u2026';
       const forward = await sbFetch('csi_forward_curve', 'order=run_date.desc');
-      downloadCSV(forward, 'csi_forward_curve_' + new Date().toISOString().slice(0, 10) + '.csv');
+      const normalized = forward.map(row => {
+        var r = Object.assign({}, row);
+        if (r.projected_csi != null) r.projected_csi = normCSI(Number(r.projected_csi));
+        if (r.confidence_lower != null) r.confidence_lower = normCSI(Number(r.confidence_lower));
+        if (r.confidence_upper != null) r.confidence_upper = normCSI(Number(r.confidence_upper));
+        return r;
+      });
+      downloadCSV(normalized, 'csi_forward_curve_' + new Date().toISOString().slice(0, 10) + '.csv');
     } catch (err) {
       console.error('Forward curve fetch error:', err);
       alert('Forward curve data not available yet.');
