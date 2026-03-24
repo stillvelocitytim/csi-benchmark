@@ -199,7 +199,10 @@ def call_openai(prompt: str, model_id: str):
 def call_google(prompt: str, model_id: str):
     import google.generativeai as genai
     model = genai.GenerativeModel(model_id)
-    resp = model.generate_content(prompt)
+    resp = model.generate_content(
+        prompt,
+        generation_config=genai.types.GenerationConfig(max_output_tokens=4096),
+    )
     text = resp.text
     pt = getattr(resp.usage_metadata, "prompt_token_count", 0) or 0
     ct = getattr(resp.usage_metadata, "candidates_token_count", 0) or 0
