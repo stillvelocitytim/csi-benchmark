@@ -13,7 +13,10 @@ import time
 from datetime import date, timezone
 from pathlib import Path
 
+from dotenv import load_dotenv
 from tabulate import tabulate
+
+load_dotenv()
 
 # ---------------------------------------------------------------------------
 # Logging
@@ -174,7 +177,7 @@ def call_anthropic(prompt: str, model_id: str):
     client = anthropic.Anthropic()
     msg = client.messages.create(
         model=model_id,
-        max_tokens=1024,
+        max_tokens=2048,
         messages=[{"role": "user", "content": prompt}],
     )
     text = msg.content[0].text
@@ -186,7 +189,7 @@ def call_openai(prompt: str, model_id: str):
     client = openai.OpenAI()
     resp = client.chat.completions.create(
         model=model_id,
-        max_tokens=1024,
+        max_tokens=2048,
         messages=[{"role": "user", "content": prompt}],
     )
     text = resp.choices[0].message.content
@@ -211,7 +214,7 @@ def call_openrouter(prompt: str, model_id: str):
     )
     resp = client.chat.completions.create(
         model=model_id,
-        max_tokens=1024,
+        max_tokens=2048,
         messages=[{"role": "user", "content": prompt}],
     )
     text = resp.choices[0].message.content
@@ -303,7 +306,15 @@ def main():
     parser.add_argument("--no-store", action="store_true", help="Skip writing results to Supabase")
     parser.add_argument("--date", type=str, default=None,
                         help="Override run_date (YYYY-MM-DD) for backfills. Default: today")
+    parser.add_argument("--no-llm-judge", action="store_true",
+                        help="Disable LLM-as-judge scoring; use regex fallback for graded/code tasks")
     args = parser.parse_args()
+
+    # Configure LLM judge
+    if args.no_llm_judge:
+        from harness import scoring
+        scoring.USE_LLM_JUDGE = False
+        log.info("LLM-as-judge scoring DISABLED — using regex fallback")
 
     # Resolve run date
     if args.date:

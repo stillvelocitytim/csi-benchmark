@@ -97,5 +97,147 @@
       "icd_code": "E11.9",
       "physician": "Sarah Chen"
     }
+  },
+  {
+    "task_id": "R5",
+    "domain": "reasoning",
+    "prompt": "There are 5 houses in a row, each a different color. The green house is immediately to the left of the white house. The blue house is between the red house and the yellow house. The red house is not at either end. What color is the middle house?",
+    "scoring_type": "exact_match",
+    "expected": "blue"
+  },
+  {
+    "task_id": "R6",
+    "domain": "reasoning",
+    "prompt": "A bat and ball cost $1.10 together. The bat costs $1.00 more than the ball. How much does the ball cost? Show your work and explain why the intuitive answer of $0.10 is wrong.",
+    "scoring_type": "exact_match",
+    "expected": "0.05"
+  },
+  {
+    "task_id": "R7",
+    "domain": "reasoning",
+    "prompt": "If you have a 3-gallon jug and a 5-gallon jug, how do you measure exactly 4 gallons? List each step.",
+    "scoring_type": "graded",
+    "expected": null,
+    "grading_criteria": ["fill|pour", "3-gallon|3 gallon|three gallon", "5-gallon|5 gallon|five gallon", "4 gallon|exactly 4"]
+  },
+  {
+    "task_id": "R8",
+    "domain": "reasoning",
+    "prompt": "Three people check into a $30 hotel room, each paying $10. The manager realizes the room is $25 and gives $5 to the bellboy to return. The bellboy keeps $2 and returns $1 to each person. Now each person paid $9 (total $27), the bellboy has $2, that's $29. Where's the missing dollar? Explain the error in the reasoning.",
+    "scoring_type": "graded",
+    "expected": null,
+    "grading_criteria": ["accounting error|mixing|conflat|wrong to add|shouldn't add|incorrect to add", "$25|twenty-five|room cost", "$2|bellboy|tip|kept"]
+  },
+  {
+    "task_id": "C5",
+    "domain": "coding",
+    "prompt": "Write a Python function called merge_intervals that takes a list of intervals as tuples (start, end) and merges all overlapping intervals. Handle: empty list, single interval, adjacent intervals [1,3]+[3,5], fully contained intervals [1,10]+[3,5], unsorted input. Include 6 test cases.",
+    "scoring_type": "graded",
+    "expected": null,
+    "grading_criteria": ["def merge_intervals", "sort", "overlap|merge|compar", "append|result|merged", "test|assert|example", "empty|single|adjacent|contain|unsorted"]
+  },
+  {
+    "task_id": "C6",
+    "domain": "coding",
+    "prompt": "Implement a Python class called RateLimiter using a sliding window algorithm. __init__(self, max_requests, window_seconds), allow(self) -> bool, reset(self). Must be O(1) amortized. Include 3 test scenarios: basic limiting, window sliding, burst+wait. Standard library only.",
+    "scoring_type": "graded",
+    "expected": null,
+    "grading_criteria": ["class RateLimiter", "def allow", "def reset", "time|window|sliding", "max_requests|limit|capacity", "test|assert|example|scenario"]
+  },
+  {
+    "task_id": "C7",
+    "domain": "coding",
+    "prompt": "Write a Python function evaluate_expression that takes a nested list expression [operator, operand1, operand2] and evaluates it recursively. Operators: +, -, *, /, max, min, avg. Handle division by zero (return None), unknown operator (ValueError), invalid structure (TypeError). Include 8 test cases.",
+    "scoring_type": "graded",
+    "expected": null,
+    "grading_criteria": ["def evaluate_expression", "recursiv|isinstance|list", "division by zero|ZeroDivision|None", "ValueError|unknown op", "TypeError|invalid", "max|min|avg", "test|assert|example"]
+  },
+  {
+    "task_id": "C8",
+    "domain": "coding",
+    "prompt": "Write a Python function transform_pipeline that takes a list of dicts and a list of transformation steps. Step types: filter (field/op/value), map (field/func where func is 'upper' or 'double'), sort (field/order), limit (count), add_field (field/source/func where func is 'tax_bracket': <=50K is 22%, <=100K is 24%, >100K is 32%). Test with 5 records, apply: filter age>29, add tax, double salary, sort salary desc, limit 2.",
+    "scoring_type": "graded",
+    "expected": null,
+    "grading_criteria": ["def transform_pipeline", "filter", "sort", "limit", "tax_bracket|tax|22%|24%|32%", "double|upper|map", "test|assert|example|record"]
+  },
+  {
+    "task_id": "A5",
+    "domain": "applied",
+    "prompt": "A DTC e-commerce brand: Revenue $12M (+40% YoY), gross margin 65%, CAC $45 (was $30), LTV $180 (flat), marketing $4M (was $2M), repeat rate 25% (was 35%). CEO wants Series B at 8-10x revenue. Write a 200-word investment memo with bull case, bear case, and recommendation. Use specific numbers.",
+    "scoring_type": "graded",
+    "expected": null,
+    "grading_criteria": ["bull|upside|positive", "bear|downside|risk|concern", "CAC|acquisition cost|$45|$30", "LTV|lifetime value|$180", "repeat|retention|churn", "recommendation|verdict|conclusion"]
+  },
+  {
+    "task_id": "A6",
+    "domain": "applied",
+    "prompt": "A 55-year-old male: 2 weeks progressive fatigue, 8lb weight loss in 1 month, night sweats. CBC: WBC 45,000 (normal 4,500-11,000), 80% lymphocytes. Peripheral smear: smudge cells. a) Most likely diagnosis b) Confirmatory test and expected result c) Prognosis and first-line treatment d) One differential and how to rule it out. Be specific.",
+    "scoring_type": "graded",
+    "expected": null,
+    "grading_criteria": ["CLL|chronic lymphocytic leukemia", "flow cytometry|immunophenotyp", "ibrutinib|venetoclax|FCR|chemoimmun|treatment", "differential|mantle cell|lymphoma|ALL|rule out"]
+  },
+  {
+    "task_id": "A7",
+    "domain": "applied",
+    "prompt": "Compare two CRE properties. Property A: Office, $5M purchase, NOI $400K growing 2%/yr, exit cap 7.5%, 65% LTV at 5.5% 25yr amortization (IO first 2 years), 2% closing costs, $50K annual capex. Property B: Multifamily, $4.2M, NOI $310K growing 3.5%/yr, exit cap 6.0%, 75% LTV at 5.0% 30yr amortization, 1.5% closing, $35K capex. Calculate for each: cash-on-cash Year 1, equity multiple at exit Year 5, approximate IRR. Which do you recommend? Show all work.",
+    "scoring_type": "graded",
+    "expected": null,
+    "grading_criteria": ["cash-on-cash|cash on cash|CoC", "equity multiple|MOIC|multiple on invested", "IRR|internal rate", "NOI|net operating", "debt service|mortgage|amortiz", "recommend|prefer|conclusion"]
+  },
+  {
+    "task_id": "A8",
+    "domain": "applied",
+    "prompt": "You advise the CEO of a $200M revenue vertical SaaS company (healthcare, 80% recurring, 30% growth, -5% EBITDA, $50M cash, 18-month runway). Three PE firms offer majority investment at $600M pre/$800M post. CEO could also reach profitability in 12 months by cutting R&D from $60M to $35M. In exactly 4 paragraphs (3-5 sentences each): 1) Frame the decision 2) Argue FOR PE money 3) Argue AGAINST 4) Your recommendation with conditions. Use specific numbers.",
+    "scoring_type": "graded",
+    "expected": null,
+    "grading_criteria": ["$200M|200 million|revenue", "$600M|$800M|valuation|pre-money|post-money", "R&D|research|$60M|$35M", "profitab|runway|cash|burn", "PE|private equity|investor", "recommend|condition|conclusion"]
+  },
+  {
+    "task_id": "AN1",
+    "domain": "analysis",
+    "prompt": "Given: Revenue $50M, COGS $20M, SG&A $15M (includes $3M SBC), D&A $4M (split: $1.5M in COGS, $2.5M in SG&A), Interest $2M, Other income $500K, Tax 25%, Capex $6M, Change in NWC +$1.5M. Calculate: Gross Profit, EBITDA, Adjusted EBITDA (add back SBC), EBIT, Net Income, Unlevered FCF, and Rule of 40 (assuming 20% growth). Show each step.",
+    "scoring_type": "graded",
+    "expected": null,
+    "grading_criteria": ["gross profit|$30M|30,000|30000", "EBITDA|$19M|19,000|19000", "adjusted EBITDA|$22M|22,000|22000", "EBIT|$15M|15,000|15000", "net income|$10.125|10,125|10125", "unlevered FCF|free cash flow", "rule of 40"]
+  },
+  {
+    "task_id": "AN2",
+    "domain": "analysis",
+    "prompt": "Quarterly SaaS data: Q1: ARR $40M, NRR 115%, GM 72%, S&M 45%, G&A 15%, R&D 25%. Q2: ARR $44M, NRR 118%, GM 71%, S&M 48%, G&A 14%, R&D 24%. Q3: ARR $46M, NRR 112%, GM 69%, S&M 52%, G&A 14%, R&D 26%. Q4: ARR $47M, NRR 108%, GM 68%, S&M 55%, G&A 15%, R&D 27%. a) Implied quarterly churn trend from NRR b) Burn rate trajectory c) Estimate next Q1 ARR and operating margin d) #1 board concern. Be specific with numbers.",
+    "scoring_type": "graded",
+    "expected": null,
+    "grading_criteria": ["churn|retention|NRR declin", "burn rate|operating loss|negative margin", "next Q1|Q1 forecast|$48|$49|$47|ARR estimate", "S&M|sales|marketing|efficiency|CAC", "board concern|flag|risk|worry"]
+  },
+  {
+    "task_id": "AN3",
+    "domain": "analysis",
+    "prompt": "Value this company 3 ways and reconcile: B2B SaaS cybersecurity, ARR $80M growing 35%, gross margin 78%, FCF margin 8%, NDR 125%, TAM $30B, public comps 12-18x ARR (median 15x), private transactions 18-25x ARR, $20M cash no debt. Methods: 1) Public comps 2) DCF (state all assumptions) 3) Precedent transactions. Give range, point estimate, and which method you weight most.",
+    "scoring_type": "graded",
+    "expected": null,
+    "grading_criteria": ["public comp|trading comp|12x|15x|18x", "DCF|discounted cash flow|WACC|terminal", "precedent|transaction|18x|25x", "range|point estimate|valuation", "$80M|ARR|revenue", "weight|prefer|reconcil"]
+  },
+  {
+    "task_id": "AN4",
+    "domain": "analysis",
+    "prompt": "Write a rigorous 300-word contrarian argument for why AI inference costs may NOT continue declining at 10x/year. Must: cite 3+ specific technical/economic mechanisms, reference historical analogies from other deflation curves, steelman the consensus before arguing against it, be specific not generic.",
+    "scoring_type": "graded",
+    "expected": null,
+    "grading_criteria": ["steelman|consensus|bulls argue|proponents", "energy|power|datacenter|electricity", "chip|semiconductor|GPU|hardware|supply", "Moore|historical|analogy|precedent", "specific|mechanism|reason"]
+  },
+  {
+    "task_id": "IF1",
+    "domain": "instruction_following",
+    "prompt": "Generate a comparison table with EXACTLY 5 rows and 4 columns comparing AWS, Azure, GCP, Oracle Cloud, IBM Cloud across: compute pricing, global regions, AI/ML services, enterprise adoption. Rules: each cell EXACTLY 2-4 words, no cell starts with Yes/No/Good/Best, valid markdown table, one-sentence summary below the table (max 15 words).",
+    "scoring_type": "graded",
+    "expected": null,
+    "grading_criteria": ["AWS|Amazon", "Azure|Microsoft", "GCP|Google", "Oracle", "IBM", "|---|", "summary|sentence"]
+  },
+  {
+    "task_id": "IF2",
+    "domain": "instruction_following",
+    "prompt": "Write a product description for a new smartphone. Rules: exactly 4 sentences, first sentence must be a question, include the price $899 exactly once, do not use the words 'innovative' or 'revolutionary' or 'cutting-edge' or 'state-of-the-art', last word of the entire description must be a number. Follow all 5 rules precisely.",
+    "scoring_type": "graded",
+    "expected": null,
+    "grading_criteria": ["\\?", "$899", "sentence|description"]
   }
 ]
