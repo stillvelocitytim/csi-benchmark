@@ -218,9 +218,13 @@ async function loadDashboard() {
         const worst = csiVals.reduce((a, b) => a.csi < b.csi ? a : b);
         const pointSpread = (best.csi - worst.csi).toFixed(2);
         effSpread.querySelector('span').innerHTML =
-          '<span style="color:var(--accent-gold);font-family:var(--font-mono);font-weight:600;">' + pointSpread + '-point</span> efficiency spread \u2014 ' +
-          best.name + ' (' + fmt(best.csi, 2) + ') to ' +
-          worst.name + ' (' + fmt(worst.csi, 2) + ')';
+          '<span style="color:var(--accent-gold);font-family:var(--font-mono);font-weight:600;">' + pointSpread + '-point</span> efficiency spread across today\u2019s frontier AI models';
+        var effDetail = document.getElementById('efficiency-spread-detail');
+        if (effDetail) {
+          effDetail.textContent =
+            best.name + ' CSI: ' + fmt(best.csi, 2) + ' \u2212 ' +
+            worst.name + ' CSI: ' + fmt(worst.csi, 2) + ' = ' + pointSpread + ' points';
+        }
         effSpread.style.display = '';
       }
     } else if (modelTable) {
