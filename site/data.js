@@ -217,8 +217,9 @@ async function loadDashboard() {
         const best = csiVals.reduce((a, b) => a.csi > b.csi ? a : b);
         const worst = csiVals.reduce((a, b) => a.csi < b.csi ? a : b);
         const pointSpread = (best.csi - worst.csi).toFixed(2);
+        const ratio = (best.csi / worst.csi).toFixed(2);
         effSpread.querySelector('span').innerHTML =
-          '<span style="color:var(--accent-gold);font-family:var(--font-mono);font-weight:600;">' + pointSpread + '-point</span> efficiency spread across today\u2019s frontier AI models';
+          '<span style="color:var(--accent-gold);font-family:var(--font-mono);font-weight:600;">' + pointSpread + '-point</span> (<span style="color:var(--accent-gold);font-family:var(--font-mono);font-weight:600;">' + ratio + '\u00d7</span>) efficiency spread across today\u2019s frontier AI models';
         var effDetail = document.getElementById('efficiency-spread-detail');
         if (effDetail) {
           effDetail.textContent =
