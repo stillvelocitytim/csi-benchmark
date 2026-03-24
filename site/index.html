@@ -33,23 +33,26 @@
 <body>
 
 <header>
-  <div class="container">
-    <button class="nav-toggle" aria-label="Toggle navigation" onclick="document.querySelector('nav').classList.toggle('open')">
-      <span></span><span></span><span></span>
-    </button>
-    <nav>
-      <a href="index.html" class="active">Dashboard</a>
-      <a href="research.html">Research</a>
-      <a href="paper.html">Paper</a>
-      <a href="methodology.html">Methodology</a>
-      <a href="data.html">Data</a>
-      <a href="visualize.html">Visualize</a>
-      <a href="sources.html">Sources</a>
-    </nav>
+  <div class="masthead">
+    <a href="index.html" class="logo">Capability<span>-Seconds</span>&trade; Index</a>
+  </div>
+  <div class="nav-bar">
+    <div class="container">
+      <button class="nav-toggle" aria-label="Toggle navigation" onclick="document.querySelector('nav').classList.toggle('open')">
+        <span></span><span></span><span></span>
+      </button>
+      <nav>
+        <a href="index.html" class="active">Dashboard</a>
+        <a href="research.html">Research</a>
+        <a href="paper.html">Paper</a>
+        <a href="methodology.html">Methodology</a>
+        <a href="data.html">Data</a>
+        <a href="visualize.html">Visualize</a>
+        <a href="sources.html">Sources</a>
+      </nav>
+    </div>
   </div>
 </header>
-
-<div class="site-title"><a href="index.html" class="logo">Capability<span>-Seconds</span>&trade; Index</a></div>
 
 <div class="hero" style="padding:2.5rem 0 2rem;">
   <div class="container">
@@ -57,6 +60,7 @@
     <div class="hero-number" id="hero-number" style="font-family:var(--font-mono);font-size:72px;font-weight:700;color:var(--accent-gold);letter-spacing:-0.03em;line-height:1;margin-bottom:0.35rem;"><span class="skeleton" style="display:inline-block;width:180px;height:72px;vertical-align:middle;"></span></div>
     <span id="hero-delta" class="badge badge-neutral" style="display:inline-block;min-width:1px;"></span>
     <div id="hero-date" style="font-family:var(--font-mono);font-size:14px;color:var(--text-secondary);margin-top:0.35rem;">loading&hellip;</div>
+    <div style="font-size:13px;color:var(--text-secondary);font-family:var(--font-mono);margin-top:0.35rem;">How to read: +0.69 points = 2&times; improvement in efficiency</div>
     <div style="font-size:13px;color:var(--text-tertiary);font-family:var(--font-mono);margin-top:0.25rem;">Updated daily</div>
     <div id="last-run" style="font-family:var(--font-mono);font-size:13px;color:var(--text-tertiary);margin-top:0.15rem;"></div>
     <div class="hero-sub" style="margin-top:0.75rem;">
@@ -71,14 +75,14 @@
   <section>
     <div class="stat-row" style="gap:12px;">
       <div class="stat-card">
-        <div class="stat-label">Capability / Second</div>
-        <div class="stat-value" id="stat-cs"><span class="spinner"></span></div>
-        <div class="stat-sub">score &divide; latency</div>
-      </div>
-      <div class="stat-card">
         <div class="stat-label">Capability / Dollar</div>
         <div class="stat-value" id="stat-cd"><span class="spinner"></span></div>
         <div class="stat-sub">score &divide; cost</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Capability / Second</div>
+        <div class="stat-value" id="stat-cs"><span class="spinner"></span></div>
+        <div class="stat-sub">score &divide; latency</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">Models Tracked</div>

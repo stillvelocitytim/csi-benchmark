@@ -33,49 +33,50 @@ html { scroll-behavior: smooth; }
 header {
   background: var(--navy);
   border-bottom: 3px solid var(--gold);
-  height: 56px;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   position: sticky;
   top: 0;
   z-index: 100;
-  padding-left: 0.5rem;
 }
-header .container {
+.masthead {
+  padding: 0.9rem 2rem 0.7rem;
+  text-align: left;
+}
+.nav-bar {
+  border-top: 1px solid rgba(201,162,39,0.3);
+}
+.nav-bar .container {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: flex-start;
   width: 100%;
   max-width: none;
   margin: 0;
   padding: 0 2rem;
 }
-.site-title {
-  background: var(--navy);
-  padding: 0.75rem 2rem;
-  text-align: left;
-}
 .logo {
   font-family: var(--font-heading);
-  font-size: 20px;
+  font-size: 22px;
   color: var(--white);
   text-decoration: none;
   letter-spacing: 0.02em;
   white-space: nowrap;
 }
 .logo span { color: var(--gold); }
-nav { display: flex; gap: 1.75rem; align-items: center; flex-shrink: 0; margin-left: auto; }
+nav { display: flex; gap: 1.75rem; align-items: center; flex-shrink: 0; }
 nav a {
   color: #94A3B8;
   text-decoration: none;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   transition: color 0.2s;
+  padding: 0.6rem 0;
 }
 nav a:hover, nav a.active { color: var(--white); }
-nav a.active { border-bottom: 2px solid var(--accent-gold); padding-bottom: 2px; }
+nav a.active { border-bottom: 2px solid var(--accent-gold); padding-bottom: calc(0.6rem - 2px); }
 
 /* — Hero Index — */
 .hero {
@@ -386,14 +387,14 @@ footer a:hover { text-decoration: underline; }
 @media (max-width: 768px) {
   .nav-toggle { display: flex; }
   .logo { font-size: 1rem; }
-  header { height: auto; padding: 0.75rem 0; }
-  header .container { flex-wrap: wrap; }
+  .masthead { padding: 0.6rem 1rem 0.4rem; }
+  .nav-bar .container { flex-wrap: wrap; padding: 0 1rem; }
   nav {
     display: none;
     flex-direction: column;
     width: 100%;
     gap: 0;
-    padding-top: 0.75rem;
+    padding-top: 0;
     transition: max-height 0.3s ease;
   }
   nav.open { display: flex; }
