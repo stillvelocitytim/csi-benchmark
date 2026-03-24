@@ -245,9 +245,10 @@ async function loadDashboard() {
       const prevCSI = normCSI(Number(prev[0].csi_aggregate));
       if (prevCSI > 0) {
         const delta = csiVal - prevCSI;
+        const pctChange = ((csiVal - prevCSI) / Math.abs(prevCSI)) * 100;
         deltaBadge.className = `badge ${delta >= 0 ? 'badge-green' : 'badge-red'}`;
-        const sign = delta >= 0 ? '+' : '';
-        deltaBadge.textContent = (delta >= 0 ? '\u25B2 ' : '\u25BC ') + sign + delta.toFixed(2) + ' pts vs prev';
+        const sign = pctChange >= 0 ? '+' : '';
+        deltaBadge.textContent = (delta >= 0 ? '\u25B2 ' : '\u25BC ') + sign + pctChange.toFixed(1) + '% vs prev';
       }
     }
   } catch (err) {
