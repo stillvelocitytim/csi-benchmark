@@ -27,6 +27,9 @@ async function sbFetch(table, params = '') {
 /* — Log-scale normalizer: values > 10 are on the old linear scale — */
 function normCSI(v) { return v > 10 ? Math.log(v) : v; }
 
+/* — CS/CD denormalizer: negative values are old log-scale, convert back to raw ratio — */
+function denormCS(v) { return v < 0 ? Math.exp(v) : v; }
+
 /* — Formatting helpers — */
 function fmt(n, decimals = 2) {
   if (n == null || isNaN(n)) return '—';
@@ -100,8 +103,8 @@ function renderModelTable(models) {
       <td class="num">${fmt(m.avg_score, 3)}</td>
       <td class="num">${fmt(m.avg_latency, 2)}s</td>
       <td class="num">${fmtCost(m.avg_cost)}</td>
-      <td class="num">${fmt(m.cs, 4)}</td>
-      <td class="num">${fmt(m.cd, 2)}</td>
+      <td class="num">${fmt(denormCS(Number(m.cs)), 4)}</td>
+      <td class="num">${fmt(denormCS(Number(m.cd)), 2)}</td>
       <td class="num csi-value">${fmt(m.csi, 2)}</td>
     </tr>`).join('');
 }
@@ -188,8 +191,8 @@ async function loadDashboard() {
     const csiVal = normCSI(Number(idx.csi_aggregate));
     heroNum.textContent = csiVal.toFixed(2);
     heroDate.textContent = idx.run_date;
-    if (statCS) statCS.textContent = fmt(idx.cs_aggregate, 4);
-    if (statCD) statCD.textContent = fmt(idx.cd_aggregate, 2);
+    if (statCS) statCS.textContent = fmt(denormCS(Number(idx.cs_aggregate)), 4);
+    if (statCD) statCD.textContent = fmt(denormCS(Number(idx.cd_aggregate)), 2);
     // Fetch per-model breakdown for latest date, sorted by CSI descending
     const models = await sbFetch('csi_by_model', `run_date=eq.${idx.run_date}&order=csi.desc`);
     models.sort((a, b) => Number(b.csi) - Number(a.csi));
