@@ -612,9 +612,8 @@ async function loadForwardChart() {
    ========================================================================= */
 
 async function loadResearchSpread() {
-  const spreadEl = document.getElementById('research-spread');
   const detailEl = document.getElementById('research-spread-detail');
-  if (!spreadEl) return; // not on research page
+  if (!detailEl) return; // not on research page
 
   try {
     const agg = await sbFetch('csi_index', 'order=run_date.desc&limit=1');
@@ -629,7 +628,6 @@ async function loadResearchSpread() {
     if (worst.csi <= 0) return;
 
     const pointSpread = (best.csi - worst.csi).toFixed(2);
-    spreadEl.textContent = pointSpread + '-point';
     detailEl.textContent =
       best.name + ' CSI: ' + fmt(best.csi, 2) + ' \u2212 ' +
       worst.name + ' CSI: ' + fmt(worst.csi, 2) + ' = ' + pointSpread + ' points';
