@@ -270,7 +270,12 @@ async function loadCSIChart() {
     const history = await sbFetch('csi_index', 'select=run_date,csi_aggregate&order=run_date.asc');
     if (!history.length) return;
 
-    const labels = history.map(r => r.run_date);
+    const labels = history.map(r => {
+      const d = new Date(r.run_date + 'T00:00:00');
+      return String(d.getMonth() + 1).padStart(2, '0') + '-' +
+             String(d.getDate()).padStart(2, '0') + '-' +
+             String(d.getFullYear()).slice(-2);
+    });
     const raw = history.map(r => normCSI(Number(r.csi_aggregate)));
 
     // Use 7-day rolling average when we have enough data points
@@ -281,25 +286,48 @@ async function loadCSIChart() {
       return sum / 7;
     }) : raw;
 
+    // 7-day trailing average (dotted line) — null until we have 7 points
+    const trailing7 = raw.map(function(_, i, arr) {
+      if (i < 6) return null;
+      var sum = 0;
+      for (var j = i - 6; j <= i; j++) sum += arr[j];
+      return sum / 7;
+    });
+
+    const datasets = [{
+      label: 'CSI Aggregate',
+      data: raw,
+      borderColor: '#2a9d6e',
+      backgroundColor: 'rgba(42,157,110,0.1)',
+      fill: true,
+      tension: 0.3,
+      pointRadius: raw.length === 1 ? 6 : 3,
+      pointBackgroundColor: '#2a9d6e',
+    }];
+
+    if (raw.length >= 7) {
+      datasets.push({
+        label: '7-day avg',
+        data: trailing7,
+        borderColor: '#2a9d6e',
+        borderDash: [6, 4],
+        borderWidth: 2,
+        fill: false,
+        tension: 0.3,
+        pointRadius: 0,
+        spanGaps: false,
+      });
+    }
+
     new Chart(canvas, {
       type: 'line',
-      data: {
-        labels,
-        datasets: [{
-          label: 'CSI Aggregate',
-          data: values,
-          borderColor: '#2a9d6e',
-          backgroundColor: 'rgba(42,157,110,0.1)',
-          fill: true,
-          tension: 0.3,
-          pointRadius: values.length === 1 ? 6 : 3,
-          pointBackgroundColor: '#2a9d6e',
-        }]
-      },
+      data: { labels, datasets },
       options: {
         responsive: true,
+        maintainAspectRatio: true,
+        aspectRatio: 2.2,
         plugins: {
-          legend: { display: false },
+          legend: { display: raw.length >= 7, labels: { color: cssVar('--text-primary'), usePointStyle: true } },
         },
         scales: {
           x: {
@@ -307,9 +335,10 @@ async function loadCSIChart() {
             grid: { color: 'rgba(0,0,0,0.06)' },
           },
           y: {
+            min: 3,
+            max: 5,
             ticks: { color: cssVar('--text-primary') },
             grid: { color: 'rgba(0,0,0,0.06)' },
-            beginAtZero: false,
           }
         }
       }
@@ -389,16 +418,16 @@ async function loadDashboardCost() {
 
       const chart = new Chart(canvas, {
         type: 'bar',
-        data: { labels, datasets: [{ data: values, backgroundColor: colors, borderColor: data.map(d => csiTierColor(d.csi)), borderWidth: 1, borderRadius: 3 }] },
+        data: { labels, datasets: [{ data: values, backgroundColor: colors, borderColor: data.map(d => csiTierColor(d.csi)), borderWidth: 1, borderRadius: 3, barPercentage: 0.75, categoryPercentage: 0.85 }] },
         options: {
-          indexAxis: 'y', responsive: true,
+          indexAxis: 'y', responsive: true, maintainAspectRatio: true, aspectRatio: 0.7,
           plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(ctx) { return fmtTaskCost(ctx.parsed.x) + ' per task'; } } } },
           scales: {
-            x: { type: 'logarithmic', title: { display: true, text: 'Cost per task (USD, log scale)', color: cssVar('--text-primary'), font: { size: 13 } }, ticks: { color: cssVar('--text-primary'), callback: function(val) { if ([0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5].includes(val)) return '$' + val; return ''; } }, grid: { color: 'rgba(0,0,0,0.06)' } },
-            y: { ticks: { color: cssVar('--text-primary'), font: { size: 12 } }, grid: { display: false } }
+            x: { type: 'logarithmic', title: { display: true, text: 'Cost per task (USD, log scale)', color: cssVar('--text-primary'), font: { size: 11 } }, ticks: { color: cssVar('--text-primary'), font: { size: 11 }, maxRotation: 0, autoSkip: false, callback: function(val) { var allowed = [0.001, 0.01, 0.1, 1]; for (var i = 0; i < allowed.length; i++) { if (Math.abs(val - allowed[i]) < allowed[i] * 0.01) return val < 1 ? '$' + val : '$' + val.toFixed(0); } return ''; } }, grid: { color: 'rgba(0,0,0,0.06)' } },
+            y: { ticks: { color: cssVar('--text-primary'), font: { size: 11 } }, grid: { display: false } }
           },
-          layout: { padding: { right: 65 } },
-          animation: { onComplete: function() { const ch = this; const cx = ch.ctx; cx.font = '12px "IBM Plex Mono", monospace'; cx.fillStyle = cssVar('--text-primary'); cx.textAlign = 'left'; cx.textBaseline = 'middle'; const meta = ch.getDatasetMeta(0); meta.data.forEach(function(bar, i) { cx.fillText(fmtTaskCost(values[i]), bar.x + 4, bar.y); }); } }
+          layout: { padding: { right: 60 } },
+          animation: { onComplete: function() { const ch = this; const cx = ch.ctx; cx.font = '11px "IBM Plex Mono", monospace'; cx.fillStyle = cssVar('--text-primary'); cx.textAlign = 'left'; cx.textBaseline = 'middle'; const meta = ch.getDatasetMeta(0); meta.data.forEach(function(bar, i) { cx.fillText(fmtTaskCost(values[i]), bar.x + 4, bar.y); }); } }
         }
       });
       _dashCostCharts.push(chart);
@@ -1097,11 +1126,15 @@ function drawDollarCharts(models) {
           borderColor: data.map(d => csiTierColor(d.csi)),
           borderWidth: 1,
           borderRadius: 3,
+          barPercentage: 0.75,
+          categoryPercentage: 0.85,
         }]
       },
       options: {
         indexAxis: 'y',
         responsive: true,
+        maintainAspectRatio: true,
+        aspectRatio: 0.7,
         plugins: {
           legend: { display: false },
           tooltip: {
@@ -1115,12 +1148,18 @@ function drawDollarCharts(models) {
         scales: {
           x: {
             type: 'logarithmic',
-            title: { display: true, text: 'Cost per task (USD, log scale)', color: cssVar('--text-primary'), font: { size: 13 } },
+            title: { display: true, text: 'Cost per task (USD, log scale)', color: cssVar('--text-primary'), font: { size: 11 } },
             ticks: {
               color: cssVar('--text-primary'),
+              font: { size: 11 },
+              maxRotation: 0,
+              autoSkip: false,
               callback: function(val) {
-                if ([0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5].includes(val)) {
-                  return '$' + val;
+                var allowed = [0.001, 0.01, 0.1, 1];
+                for (var i = 0; i < allowed.length; i++) {
+                  if (Math.abs(val - allowed[i]) < allowed[i] * 0.01) {
+                    return val < 1 ? '$' + val : '$' + val.toFixed(0);
+                  }
                 }
                 return '';
               }
@@ -1128,16 +1167,16 @@ function drawDollarCharts(models) {
             grid: { color: 'rgba(0,0,0,0.06)' },
           },
           y: {
-            ticks: { color: cssVar('--text-primary'), font: { size: 12 } },
+            ticks: { color: cssVar('--text-primary'), font: { size: 11 } },
             grid: { display: false },
           }
         },
-        layout: { padding: { right: 65 } },
+        layout: { padding: { right: 60 } },
         animation: {
           onComplete: function() {
             const ch = this;
             const cx = ch.ctx;
-            cx.font = '12px "IBM Plex Mono", monospace';
+            cx.font = '11px "IBM Plex Mono", monospace';
             cx.fillStyle = cssVar('--text-primary');
             cx.textAlign = 'left';
             cx.textBaseline = 'middle';
