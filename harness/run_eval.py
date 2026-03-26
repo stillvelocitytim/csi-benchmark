@@ -172,9 +172,13 @@ def store_measurement(row: dict):
 # API callers — each returns (response_text, prompt_tokens, completion_tokens)
 # ---------------------------------------------------------------------------
 
+# Per-call timeout in seconds — any single API call exceeding this is skipped.
+API_TIMEOUT = 90
+
+
 def call_anthropic(prompt: str, model_id: str):
     import anthropic
-    client = anthropic.Anthropic()
+    client = anthropic.Anthropic(timeout=API_TIMEOUT)
     msg = client.messages.create(
         model=model_id,
         max_tokens=4096,
@@ -186,7 +190,7 @@ def call_anthropic(prompt: str, model_id: str):
 
 def call_openai(prompt: str, model_id: str):
     import openai
-    client = openai.OpenAI()
+    client = openai.OpenAI(timeout=API_TIMEOUT)
     resp = client.chat.completions.create(
         model=model_id,
         max_tokens=4096,
@@ -202,6 +206,7 @@ def call_google(prompt: str, model_id: str):
     resp = model.generate_content(
         prompt,
         generation_config=genai.types.GenerationConfig(max_output_tokens=4096),
+        request_options={"timeout": API_TIMEOUT},
     )
     text = resp.text
     pt = getattr(resp.usage_metadata, "prompt_token_count", 0) or 0
@@ -214,6 +219,7 @@ def call_openrouter(prompt: str, model_id: str):
     client = openai.OpenAI(
         base_url="https://openrouter.ai/api/v1",
         api_key=os.environ["OPENROUTER_API_KEY"],
+        timeout=API_TIMEOUT,
     )
     resp = client.chat.completions.create(
         model=model_id,
