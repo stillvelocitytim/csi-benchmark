@@ -139,6 +139,17 @@ def _sb_url(table: str) -> str:
     return f"{os.environ['SUPABASE_URL']}/rest/v1/{table}"
 
 
+def fetch_existing_tasks(run_date: str) -> set[tuple[str, str]]:
+    """Return set of (model_id, task_id) already stored for this run_date."""
+    resp = httpx.get(
+        _sb_url("measurements"),
+        headers=_sb_headers(),
+        params={"select": "model,task_id", "run_date": f"eq.{run_date}"},
+    )
+    resp.raise_for_status()
+    return {(r["model"], r["task_id"]) for r in resp.json()}
+
+
 def fetch_pricing(model_id: str) -> tuple[float, float]:
     """Return (input_price_per_M_tokens, output_price_per_M_tokens) from Supabase pricing table."""
     if model_id in _pricing_cache:
@@ -362,9 +373,22 @@ def main():
 
     log.info("Running %d task(s) x %d model(s) = %d call(s)", len(tasks), len(model_keys), len(tasks) * len(model_keys))
 
+    # Fetch already-completed (model, task) pairs to skip duplicates
+    existing = set()
+    if not args.dry_run and not args.no_store:
+        try:
+            existing = fetch_existing_tasks(str(run_date))
+            log.info("Found %d existing measurements for %s — will skip those", len(existing), run_date)
+        except Exception as exc:
+            log.warning("Could not fetch existing measurements: %s — will run all", exc)
+
     results = []
     for model_key in model_keys:
+        cfg = MODEL_CONFIGS[model_key]
         for task in tasks:
+            if (cfg["model_id"], task["task_id"]) in existing:
+                log.info("  Skipping %s / %s (already exists)", model_key, task["task_id"])
+                continue
             try:
                 row = run_single(task, model_key, dry_run=args.dry_run, run_date=run_date)
             except Exception as exc:
@@ -380,7 +404,7 @@ def main():
                     except Exception as exc:
                         log.error("  Supabase write failed: %s", exc)
                 # Rate-limit pause
-                time.sleep(2)
+                time.sleep(0.5)
 
     # -----------------------------------------------------------------------
     # Summary table
