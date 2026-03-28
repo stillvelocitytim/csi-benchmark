@@ -40,6 +40,15 @@ jobs:
       - name: Compute CSI index
         run: python -m harness.compute_csi
 
-      - name: Compute forward curve
+      # Stallion patent (64/004,117) reduction-to-practice evidence:
+      # This autonomous daily loop IS the closed-loop forward-prediction engine.
+      # GH Actions logs serve as timestamped proof of continuous operation.
+      # Forward predictions are printed to stdout and captured in the log artifact.
+      - name: Compute forward curve (Stallion RTP — logged predictions)
         continue-on-error: true
-        run: python -m harness.compute_forward
+        env:
+          PYTHONUNBUFFERED: "1"
+        run: |
+          echo "========== STALLION RTP: Forward prediction run — $(date -u +%Y-%m-%dT%H:%M:%SZ) =========="
+          python -m harness.compute_forward
+          echo "========== STALLION RTP: Forward prediction complete =========="
