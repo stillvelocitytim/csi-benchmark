@@ -130,11 +130,13 @@ jobs:
             });
 
       - name: Send SMS via ntfy
-        if: ${{ secrets.NTFY_TOPIC != '' }}
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+        if: env.NTFY_TOPIC != ''
         run: |
           curl -s \
             -H "Title: CSI eval FAILED — $(date -u +%Y-%m-%d)" \
             -H "Priority: urgent" \
             -H "Tags: rotating_light" \
             -d "Daily eval pipeline failed after retry. Check GitHub Actions and run manually." \
-            "https://ntfy.sh/${{ secrets.NTFY_TOPIC }}"
+            "https://ntfy.sh/${NTFY_TOPIC}"
