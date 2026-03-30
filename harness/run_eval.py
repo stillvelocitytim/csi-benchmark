@@ -10,6 +10,8 @@ import logging
 import os
 import sys
 import time
+import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import date, timezone
 from pathlib import Path
 
@@ -123,6 +125,7 @@ MODEL_CONFIGS = {
 import httpx
 
 _pricing_cache: dict[str, tuple[float, float]] = {}
+_pricing_lock = threading.Lock()
 
 
 def _sb_headers() -> dict:
@@ -152,8 +155,9 @@ def fetch_existing_tasks(run_date: str) -> set[tuple[str, str]]:
 
 def fetch_pricing(model_id: str) -> tuple[float, float]:
     """Return (input_price_per_M_tokens, output_price_per_M_tokens) from Supabase pricing table."""
-    if model_id in _pricing_cache:
-        return _pricing_cache[model_id]
+    with _pricing_lock:
+        if model_id in _pricing_cache:
+            return _pricing_cache[model_id]
     resp = httpx.get(
         _sb_url("pricing"),
         headers=_sb_headers(),
@@ -164,7 +168,8 @@ def fetch_pricing(model_id: str) -> tuple[float, float]:
     if data:
         row = data[0]
         result = (float(row["input_price_per_million"]), float(row["output_price_per_million"]))
-        _pricing_cache[model_id] = result
+        with _pricing_lock:
+            _pricing_cache[model_id] = result
         return result
     log.warning("No pricing found for %s — using 0", model_id)
     return 0.0, 0.0
@@ -321,6 +326,32 @@ def run_single(task: dict, model_key: str, dry_run: bool = False, run_date: date
     return row
 
 
+def _run_model(model_key: str, tasks: list[dict], existing: set, dry_run: bool,
+                no_store: bool, run_date: date) -> list[dict]:
+    """Run all tasks for a single model. Designed to be called from a thread pool."""
+    cfg = MODEL_CONFIGS[model_key]
+    model_results = []
+    for task in tasks:
+        if (cfg["model_id"], task["task_id"]) in existing:
+            log.info("  Skipping %s / %s (already exists)", model_key, task["task_id"])
+            continue
+        try:
+            row = run_single(task, model_key, dry_run=dry_run, run_date=run_date)
+        except Exception as exc:
+            log.error("Unhandled error for %s / %s: %s", model_key, task["task_id"], exc)
+            continue
+        if row is not None:
+            model_results.append(row)
+            if not no_store and not dry_run:
+                try:
+                    store_measurement(row)
+                    log.info("  Stored in Supabase.")
+                except Exception as exc:
+                    log.error("  Supabase write failed: %s", exc)
+            time.sleep(0.5)
+    return model_results
+
+
 def main():
     parser = argparse.ArgumentParser(description="CSI Benchmark evaluation harness")
     parser.add_argument("--model", type=str, help="Run only this model key (claude, gpt4o, gemini, llama)")
@@ -331,6 +362,8 @@ def main():
                         help="Override run_date (YYYY-MM-DD) for backfills. Default: today")
     parser.add_argument("--no-llm-judge", action="store_true",
                         help="Disable LLM-as-judge scoring; use regex fallback for graded/code tasks")
+    parser.add_argument("--workers", type=int, default=4,
+                        help="Number of models to evaluate in parallel (default: 4)")
     args = parser.parse_args()
 
     # Configure LLM judge
@@ -382,29 +415,28 @@ def main():
         except Exception as exc:
             log.warning("Could not fetch existing measurements: %s — will run all", exc)
 
+    workers = min(args.workers, len(model_keys))
+    log.info("Evaluating %d model(s) with %d parallel worker(s)", len(model_keys), workers)
+
     results = []
-    for model_key in model_keys:
-        cfg = MODEL_CONFIGS[model_key]
-        for task in tasks:
-            if (cfg["model_id"], task["task_id"]) in existing:
-                log.info("  Skipping %s / %s (already exists)", model_key, task["task_id"])
-                continue
-            try:
-                row = run_single(task, model_key, dry_run=args.dry_run, run_date=run_date)
-            except Exception as exc:
-                log.error("Unhandled error for %s / %s: %s", model_key, task["task_id"], exc)
-                continue
-            if row is not None:
-                results.append(row)
-                # Store to Supabase
-                if not args.no_store and not args.dry_run:
-                    try:
-                        store_measurement(row)
-                        log.info("  Stored in Supabase.")
-                    except Exception as exc:
-                        log.error("  Supabase write failed: %s", exc)
-                # Rate-limit pause
-                time.sleep(0.5)
+    if workers <= 1:
+        # Sequential fallback (single model or --workers=1)
+        for model_key in model_keys:
+            results.extend(_run_model(model_key, tasks, existing, args.dry_run, args.no_store, run_date))
+    else:
+        with ThreadPoolExecutor(max_workers=workers) as pool:
+            futures = {
+                pool.submit(_run_model, mk, tasks, existing, args.dry_run, args.no_store, run_date): mk
+                for mk in model_keys
+            }
+            for future in as_completed(futures):
+                mk = futures[future]
+                try:
+                    model_results = future.result()
+                    results.extend(model_results)
+                    log.info("Finished model %s — %d results", mk, len(model_results))
+                except Exception as exc:
+                    log.error("Model %s failed: %s", mk, exc)
 
     # -----------------------------------------------------------------------
     # Summary table
