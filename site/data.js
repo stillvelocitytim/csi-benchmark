@@ -335,7 +335,7 @@ async function loadCSIChart() {
             grid: { color: 'rgba(0,0,0,0.06)' },
           },
           y: {
-            min: 3,
+            min: 1,
             max: 5,
             ticks: { color: cssVar('--text-primary') },
             grid: { color: 'rgba(0,0,0,0.06)' },
